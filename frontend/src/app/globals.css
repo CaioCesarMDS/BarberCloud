@@ -1,1 +1,51 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@layer base {
+  .dark {
+     --background: 225 9% 9%;
+    --foreground: 220 13% 95%;
+
+    --card: 225 10% 12%;
+    --card-foreground: 220 13% 95%;
+
+    --popover: 225 10% 12%;
+    --popover-foreground: 220 13% 95%;
+
+    --primary: 215 20% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 5% 20%;
+    --secondary-foreground: 220 13% 95%;
+
+    --muted: 225 5% 16%;
+    --muted-foreground: 220 10% 50%;
+
+    --accent: 35 85% 55%;
+    --accent-foreground: 0 0% 0%;
+
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 225 10% 25%;
+    --input: 225 10% 25%;
+    --ring: 215 20% 65%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+    border-width: 1px;
+    border-style: solid;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
