@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "",
   "author": "",
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
