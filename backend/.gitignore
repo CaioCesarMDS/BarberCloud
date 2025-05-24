@@ -1,3 +1,7 @@
+#prisma
+/generated
+generated/
+
 # compiled output
 /dist
 /node_modules
