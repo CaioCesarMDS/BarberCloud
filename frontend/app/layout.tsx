@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Karantina } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
+});
+
+const karantina = Karantina({
+  subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -18,11 +23,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.className} antialiased dark`}
-      >
-        {children}
-      </body>
+      <body className={`${inter.className} antialiased dark`}>{children}</body>
     </html>
   );
 }
+
+export { karantina };
