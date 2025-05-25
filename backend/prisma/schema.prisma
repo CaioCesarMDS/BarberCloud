@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -9,23 +8,26 @@ datasource db {
 }
 
 model User {
-  id   String @id @default(uuid())
-  name String
+  id       String @id @default(uuid())
+  name     String
+  phone    String @unique
+  email    String @unique
+  password String
 }
 
 model Barbershop {
-  id       String     @id @default(uuid())
+  id       String    @id @default(uuid())
   name     String
   address  String
   imageUrl String
-  services Services[]
+  services Service[] @relation("BarbershopService")
 }
 
-model Services {
+model Service {
   id           String     @id @default(uuid())
   name         String
   price        Decimal    @db.Decimal(10, 2)
   description  String
   barbershopId String
-  barbershop   Barbershop @relation(fields: [barbershopId], references: [id])
+  barbershop   Barbershop @relation("BarbershopService", fields: [barbershopId], references: [id])
 }
