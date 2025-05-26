@@ -4,17 +4,18 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { AuthenticatedRequest } from './interfaces/authenticated-request';
-import { JwtPayload } from './interfaces/jwt-payload';
+import { AuthenticatedRequest } from './interfaces/authenticated.request';
+import { JwtPayload } from './interfaces/jwt.payload';
+import { AuthResponseDto } from './dtos/authResponse.dto';
+import { User } from '@prisma/client';
+require("dotenv").config();
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    private jwtService: JwtService,
-    private configService: ConfigService,
-  ) {}
+    private jwtService: JwtService
+  ) { }
 
   private extractTokenFromHeader(
     request: AuthenticatedRequest,
@@ -35,7 +36,7 @@ export class AuthGuard implements CanActivate {
 
     try {
       const payload: JwtPayload = await this.jwtService.verifyAsync(token, {
-        secret: this.configService.get<string>('JWT_SECRET'),
+        secret: process.env.JWT_SECRET,
       });
 
       request.user = payload;
@@ -44,5 +45,25 @@ export class AuthGuard implements CanActivate {
     } catch {
       throw new UnauthorizedException('Invalid or expired access token.');
     }
+  }
+
+  async generateAccessToken(user: User): Promise<AuthResponseDto> {
+    const token = this.jwtService.signAsync({
+      name: user.name,
+      email: user.email,
+      role: user.role
+    },
+      {
+        expiresIn: "3h",
+        privateKey: process.env.JWT_SECRET
+      });
+    
+    return ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token: (await token.then()).toString()
+    }); 
   }
 }
