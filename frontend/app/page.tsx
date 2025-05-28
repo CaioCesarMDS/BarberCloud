@@ -1,4 +1,3 @@
-import { MenuIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./_components/shadcn/ui/button";
@@ -6,27 +5,24 @@ import { karantina } from "./layout";
 
 export default function Home() {
   return (
-    <div className="relative h-screen bg-home bg-cover bg-center">
-      <header className="w-full absolute flex justify-between items-center top-0 left-0 z-10 p-4">
-        <Image src="/logo.svg" alt="Barber logo" width={70} height={70} />
-        <Button variant="outline" size="icon">
-          <MenuIcon size={18} />
-        </Button>
+    <div className="min-h-screen flex flex-col items-center justify-center">
+      <header className="fixed top-0 left-0 z-10 px-4 py-2 flex items-center">
+        <Link href="/">
+          <Image src="/logo.png" alt="Barber logo" width={60} height={60} />
+        </Link>
       </header>
-      <div className="w-full absolute inset-0 bg-zinc-900/70 flex flex-col items-center justify-center text-center px-6">
-        <h1 className={`${karantina.className} text-white text-4xl max-w-xl`}>
+
+      <div className="w-full flex flex-col items-center justify-center text-center px-6">
+        <h1 className={`${karantina.className} text-white text-4xl max-w-xl mt-4`}>
           Mais do que um corte. Uma experiência de respeito.
         </h1>
-        <div className="flex gap-10">
+
+        <div className="flex gap-4 mt-6">
           <Link href="/signin">
-            <Button className="mt-6">
-              Entrar
-            </Button>
+            <Button>Entrar</Button>
           </Link>
           <Link href="/signup">
-            <Button variant="outline" className="mt-6">
-              Cadastrar-se
-            </Button>
+            <Button variant="outline">Cadastrar-se</Button>
           </Link>
         </div>
       </div>

@@ -1,65 +1,94 @@
-import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { PrismaService } from "prisma/prisma.service";
-import { AuthLoginDto } from "./dtos/authLogin.dto";
-import { PasswordService } from "./password.service";
-import { User } from "@prisma/client";
-import { randomUUID } from "crypto";
-import { AuthGuard } from "./auth.guard";
-import { AuthResponseDto } from "./dtos/authResponse.dto";
-import { AuthRegisterDto } from "./dtos/authRegister.dto";
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+import { PrismaService } from 'prisma/prisma.service';
+import { AuthResponseDTO } from './dtos/auth.response.dto';
+import { SignInDTO } from './dtos/sign-in.dto';
+import { SignUpDTO } from './dtos/sign-up.dto';
+import { JwtPayload } from './interfaces/jwt.payload';
 
 @Injectable()
 export class AuthService {
-    constructor(
-        private readonly prismaService: PrismaService,
-        private readonly passwordService: PasswordService,
-        private readonly authGuard: AuthGuard
-    ) { }
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
 
-    async signup(data: AuthRegisterDto): Promise<AuthResponseDto> {
-        const user = await this.createUser(data);
-        if (!user) throw new ConflictException('User creation failed');
+  async signUp(data: SignUpDTO): Promise<AuthResponseDTO> {
+    const emailInUse = await this.findByEmail(data.email);
+    if (emailInUse) throw new ConflictException('Email already in use');
 
-        return await this.authGuard.generateAccessToken(user);
+    const user = await this.createUser(data);
+    if (!user) throw new InternalServerErrorException('Failed to create user');
+
+    return this.generateAccessToken(user);
+  }
+
+  async signIn(data: SignInDTO): Promise<AuthResponseDTO> {
+    const user = await this.findByEmail(data.email);
+    if (!user || !(await this.isPasswordValid(data.password, user.password))) {
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    async signin(data: AuthLoginDto): Promise<AuthResponseDto> {
-        const user = await this.findByEmail(data.email);
-        if (!user) throw new UnauthorizedException('Invalid credentials');
+    return this.generateAccessToken(user);
+  }
 
-        await this.validatePassword(data.password, user.password);
+  private async createUser(data: SignUpDTO): Promise<User> {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
 
-        return await this.authGuard.generateAccessToken(user);
-    }
+    return this.prismaService.user.create({
+      data: {
+        name: data.name,
+        phone: data.phone,
+        birth: new Date(data.birth),
+        email: data.email,
+        password: hashedPassword,
+        role: data.role,
+      },
+    });
+  }
 
-    async findByEmail(email: string) {
-        return this.prismaService.user.findUnique({ where: { email: email } });
-    }
+  private async isPasswordValid(
+    password: string,
+    hash: string,
+  ): Promise<boolean> {
+    return await bcrypt.compare(password, hash);
+  }
 
-    async findByPhone(phone: string) {
-        return this.prismaService.user.findUnique({ where: { phone: phone } });
-    }
+  async generateAccessToken(user: User): Promise<AuthResponseDTO> {
+    const payload: JwtPayload = {
+      id: user.id.toString(),
+      name: user.name,
+      phone: user.phone,
+      email: user.email,
+    };
 
-    private async createUser(data: AuthRegisterDto): Promise<User> {
-        const hashedPassword = await this.passwordService.hash(data.password);
-        return await this.prismaService.user.create({
-            data: {
-                id: randomUUID(),
-                name: data.name,
-                email: data.email,
-                birth: new Date(data.birth),
-                phone: data.phone,
-                password: hashedPassword,
-                role: data.role
-            },
-        });
-    }
+    const token = await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: '3h',
+    });
 
-    private async validatePassword(password: string, hash: string): Promise<void> {
-        const passwordMatch = await this.passwordService.compare(password, hash);
+    return {
+      id: user.id,
+      name: user.name,
+      phone: user.phone,
+      email: user.email,
+      role: user.role,
+      token,
+    };
+  }
 
-        if (!passwordMatch) {
-            throw new UnauthorizedException('Invalid credentials');
-        }
-    }
+  async findByEmail(email: string) {
+    return this.prismaService.user.findUnique({ where: { email: email } });
+  }
+
+  async findByPhone(phone: string) {
+    return this.prismaService.user.findUnique({ where: { phone: phone } });
+  }
 }
