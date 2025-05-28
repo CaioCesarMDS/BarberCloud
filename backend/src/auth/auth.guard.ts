@@ -4,17 +4,17 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { AuthenticatedRequest } from './interfaces/authenticated-request';
-import { JwtPayload } from './interfaces/jwt-payload';
+import { AuthenticatedRequest } from './interfaces/authenticated.request';
+import { JwtPayload } from './interfaces/jwt.payload';
+
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(
-    private jwtService: JwtService,
-    private configService: ConfigService,
-  ) {}
+  constructor(private jwtService: JwtService) {}
 
   private extractTokenFromHeader(
     request: AuthenticatedRequest,
@@ -35,7 +35,7 @@ export class AuthGuard implements CanActivate {
 
     try {
       const payload: JwtPayload = await this.jwtService.verifyAsync(token, {
-        secret: this.configService.get<string>('JWT_SECRET'),
+        secret: process.env.JWT_SECRET,
       });
 
       request.user = payload;

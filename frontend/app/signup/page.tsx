@@ -16,12 +16,27 @@ import {
 import { Input } from "../_components/shadcn/ui/input";
 import api from "../services/api";
 
-const formSchema = z.object({
-  name: z.string().min(4, { message: "Name must be at least 4 characters." }),
-  phone: z.string().min(8, { message: "Phone must be at least 9 characters." }),
-  email: z.string().email({ message: "Invalid email address." }),
-  password: z.string().min(6, { message: "Password must be at least 8 characters." }),
-});
+const roles = ["ADMIN", "BARBER", "CLIENT"] as const;
+const RoleEnum = z.enum(roles);
+
+const formSchema = z
+  .object({
+    name: z.string().min(4, { message: "Name must be at least 4 characters." }),
+    phone: z.string().min(10, { message: "Phone must be at least 10 characters." }),
+    email: z.string().email({ message: "Invalid email address." }),
+    birth: z.coerce.date({
+      errorMap: () => ({ message: "Invalid date format" }),
+    }),
+    password: z.string().min(8, { message: "Password must be at least 8 characters." }),
+    confirmPassword: z
+      .string()
+      .min(8, { message: "Confirm Password must be at least 8 characters." }),
+    role: RoleEnum,
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 type FormData = z.infer<typeof formSchema>;
 
@@ -32,13 +47,17 @@ const SignUp = () => {
       name: "",
       phone: "",
       email: "",
+      birth: undefined,
       password: "",
+      confirmPassword: "",
+      role: "CLIENT",
     },
   });
 
   const onSubmit = async (data: FormData) => {
     try {
-      const response = await api.post("/auth/signup", data);
+      const userData = { ...data, confirmPassword: undefined };
+      const response = await api.post("/auth/signup", userData);
       if (response.status === 201) {
         console.log("User signed up successfully:", response.data);
       } else {
@@ -71,6 +90,7 @@ const SignUp = () => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="phone"
@@ -84,6 +104,7 @@ const SignUp = () => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="email"
@@ -97,6 +118,36 @@ const SignUp = () => {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="birth"
+              render={({ field }) => {
+                // converte Date para string YYYY-MM-DD para o input
+                const value =
+                  field.value instanceof Date
+                    ? field.value.toISOString().substring(0, 10)
+                    : field.value || "";
+
+                return (
+                  <FormItem>
+                    <FormLabel>Birth</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        value={value}
+                        onChange={(e) => field.onChange(e.target.value)}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+
             <FormField
               control={form.control}
               name="password"
@@ -105,6 +156,40 @@ const SignUp = () => {
                   <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Role</FormLabel>
+                  <FormControl>
+                    <select {...field} className="w-full border px-2 py-1 rounded">
+                      {roles.map((role) => (
+                        <option key={role} value={role}>
+                          {role}
+                        </option>
+                      ))}
+                    </select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
