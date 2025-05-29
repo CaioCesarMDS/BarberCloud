@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  ParseUUIDPipe,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -12,6 +13,7 @@ import { AuthResponseDTO } from './dtos/auth.response.dto';
 import { SignInDTO } from './dtos/sign-in.dto';
 import { SignUpDTO } from './dtos/sign-up.dto';
 import { JwtPayload } from './interfaces/jwt.payload';
+import { randomUUID } from 'node:crypto';
 
 @Injectable()
 export class AuthService {
@@ -44,11 +46,13 @@ export class AuthService {
 
     return this.prismaService.user.create({
       data: {
+        id: randomUUID(),
         name: data.name,
         phone: data.phone,
         birth: new Date(data.birth),
         email: data.email,
         password: hashedPassword,
+        barbershopId: data.barbershopId,
         role: data.role,
       },
     });
@@ -79,6 +83,7 @@ export class AuthService {
       name: user.name,
       phone: user.phone,
       email: user.email,
+      barbershopId: user.barbershopId,
       role: user.role,
       token,
     };

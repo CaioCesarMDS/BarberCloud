@@ -4,13 +4,13 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
-  // IsPhoneNumber,
   IsString,
-  // IsStrongPassword,
+  IsStrongPassword,
+  IsUUID,
   MinLength,
 } from 'class-validator';
-// import { EmailIsUnique } from '../validators/email.validator';
-// import { PhoneIsUnique } from '../validators/phone.validator';
+import { EmailIsUnique } from '../validators/email.validator';
+ import { PhoneIsUnique } from '../validators/phone.validator';
 
 export class SignUpDTO {
   @IsNotEmpty()
@@ -19,20 +19,22 @@ export class SignUpDTO {
 
   @IsNotEmpty()
   @MinLength(9)
-  // @IsPhoneNumber('BR')
-  // @PhoneIsUnique({ message: 'phone provided has already been registered' })
+  @PhoneIsUnique({ message: 'phone provided has already been registered' })
   phone!: string;
 
   @IsDateString()
   birth!: string;
 
+  @IsNotEmpty()
+  @IsUUID()
+  barbershopId!: string;
+
   @IsEmail()
-  // @EmailIsUnique({ message: 'email provided has already been registered!' })
+  @EmailIsUnique({ message: 'email provided has already been registered!' })
   email!: string;
 
   @IsNotEmpty()
-  @MinLength(8)
-  // @IsStrongPassword()
+  @IsStrongPassword()
   password!: string;
 
   @IsEnum(Role)
