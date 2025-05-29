@@ -15,7 +15,7 @@ model User {
   email        String    @unique
   password     String
   role         Role      @default(CLIENT)
-  barbershopId String    @unique
+  barbershopId String    
 
   Barbershop          Barbershop            @relation(fields: [barbershopId], references: [id])
   Scheduling_barber   SchedulingService[]   @relation("barber")
@@ -33,7 +33,7 @@ model Barbershop {
   schedulingsServices   SchedulingService[]
   noSchedulingsServices NoSchedulingService[]
 
-  User User?
+  User User[]
 }
 
 model BarberServices {

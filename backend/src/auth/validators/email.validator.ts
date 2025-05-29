@@ -13,8 +13,10 @@ export class EmailValidator implements ValidatorConstraintInterface {
   constructor(private readonly prisma: PrismaService) {}
 
   async validate(email: string): Promise<boolean> {
-    const user = await this.prisma.user.findUnique({ where: { email } });
-    return !user;
+    const [result] = await this.prisma.$queryRaw<
+            { exists: boolean }[]
+        >`SELECT EXISTS(SELECT 1 FROM "User" WHERE email = ${email}) AS "exists"`;
+        return !result.exists;
   }
 
   defaultMessage(): string {

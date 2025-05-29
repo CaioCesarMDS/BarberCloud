@@ -23,12 +23,15 @@ export class UserRequestDto {
   readonly phone!: string;
   @IsDate()
   readonly birth!: Date;
+  @IsEnum(Role)
+  readonly role!: Role;
+  @IsNotEmpty()
+  @IsUUID()
+  readonly barbershopId!: string
   @IsStrongPassword()
   readonly password!: string;
   @IsStrongPassword()
   readonly confirmPassword!: string;
-  @IsEnum(Role)
-  readonly role!: Role;
 }
 
 export class UserResponseDto {

@@ -37,6 +37,10 @@ export class SignUpDTO {
   @IsStrongPassword()
   password!: string;
 
+  @IsNotEmpty()
+  @IsStrongPassword()
+  confirmPassword!: string;
+
   @IsEnum(Role)
   role!: Role;
 }

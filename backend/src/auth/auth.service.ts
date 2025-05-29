@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
+import { Role, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthResponseDTO } from './dtos/auth.response.dto';
@@ -23,8 +23,8 @@ export class AuthService {
   ) {}
 
   async signUp(data: SignUpDTO): Promise<AuthResponseDTO> {
-    const emailInUse = await this.findByEmail(data.email);
-    if (emailInUse) throw new ConflictException('Email already in use');
+    // const emailInUse = await this.findByEmail(data.email);
+    // if (emailInUse) throw new ConflictException('Email already in use');
 
     const user = await this.createUser(data);
     if (!user) throw new InternalServerErrorException('Failed to create user');
@@ -42,20 +42,24 @@ export class AuthService {
   }
 
   private async createUser(data: SignUpDTO): Promise<User> {
-    const hashedPassword = await bcrypt.hash(data.password, 10);
-
-    return this.prismaService.user.create({
-      data: {
-        id: randomUUID(),
-        name: data.name,
-        phone: data.phone,
-        birth: new Date(data.birth),
-        email: data.email,
-        password: hashedPassword,
-        barbershopId: data.barbershopId,
-        role: data.role,
-      },
-    });
+    if(data.password === data.confirmPassword) {
+      const hashedPassword = await bcrypt.hash(data.password, 10);
+      
+      return this.prismaService.user.create({
+        data: {
+          id: randomUUID(),
+          name: data.name,
+          phone: data.phone,
+          birth: new Date(data.birth),
+          email: data.email,
+          password: hashedPassword,
+          barbershopId: data.barbershopId,
+          role: data.role,
+        },
+      });
+    } else {
+      throw new ConflictException("The Passwords Not Mached!");
+    }
   }
 
   private async isPasswordValid(
@@ -70,7 +74,10 @@ export class AuthService {
       id: user.id.toString(),
       name: user.name,
       phone: user.phone,
+      birth: user.birth?.toString(),
       email: user.email,
+      barbershopId: user.barbershopId,
+      role: user.role
     };
 
     const token = await this.jwtService.signAsync(payload, {
@@ -83,6 +90,7 @@ export class AuthService {
       name: user.name,
       phone: user.phone,
       email: user.email,
+      birth: user.birth?.toString(),
       barbershopId: user.barbershopId,
       role: user.role,
       token,
