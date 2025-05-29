@@ -36,6 +36,7 @@ export class UserService {
         birth: userData.birth,
         phone: userData.phone,
         password: userData.password,
+        barbershopId: userData.barbershopId,
         role: userData.role,
       },
     });
