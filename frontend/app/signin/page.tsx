@@ -3,17 +3,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import InputField from "../_components/form/fields/InputField";
+import { FormWrapper } from "../_components/form/FormWrapper";
 import Header from "../_components/header";
-import { Button } from "../_components/shadcn/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../_components/shadcn/ui/form";
-import { Input } from "../_components/shadcn/ui/input";
 import api from "../services/api";
 
 const formSchema = z.object({
@@ -46,48 +38,13 @@ const SignIn = () => {
   };
 
   return (
-    <div>
+    <main>
       <Header />
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col items-center justify-center min-h-screen"
-        >
-          <div className="w-10/12 max-w-md space-y-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <Button type="submit" className="mt-6 mx-auto w-1/3">
-            Sign Up
-          </Button>
-        </form>
-      </Form>
-    </div>
+      <FormWrapper form={form} onSubmit={onSubmit} submitLabel="Sign In">
+        <InputField control={form.control} name="email" label="Email" type="email" />
+        <InputField control={form.control} name="password" label="Password" type="password" />
+      </FormWrapper>
+    </main>
   );
 };
 
