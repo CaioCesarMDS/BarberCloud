@@ -2,11 +2,10 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
-  ParseUUIDPipe,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Role, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthResponseDTO } from './dtos/auth.response.dto';
@@ -23,17 +22,14 @@ export class AuthService {
   ) {}
 
   async signUp(data: SignUpDTO): Promise<AuthResponseDTO> {
-    // const emailInUse = await this.findByEmail(data.email);
-    // if (emailInUse) throw new ConflictException('Email already in use');
-
-    const user = await this.createUser(data);
+    const user: User = await this.createUser(data);
     if (!user) throw new InternalServerErrorException('Failed to create user');
 
     return this.generateAccessToken(user);
   }
 
   async signIn(data: SignInDTO): Promise<AuthResponseDTO> {
-    const user = await this.findByEmail(data.email);
+    const user: User | null = await this.findByEmail(data.email);
     if (!user || !(await this.isPasswordValid(data.password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -43,7 +39,7 @@ export class AuthService {
 
   private async createUser(data: SignUpDTO): Promise<User> {
     if(data.password === data.confirmPassword) {
-      const hashedPassword = await bcrypt.hash(data.password, 10);
+      const hashedPassword: string = await bcrypt.hash(data.password, 10);
       
       return this.prismaService.user.create({
         data: {
@@ -99,9 +95,5 @@ export class AuthService {
 
   async findByEmail(email: string) {
     return this.prismaService.user.findUnique({ where: { email: email } });
-  }
-
-  async findByPhone(phone: string) {
-    return this.prismaService.user.findUnique({ where: { phone: phone } });
   }
 }
