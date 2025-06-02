@@ -5,6 +5,8 @@ export class AuthResponseDTO {
   name!: string;
   phone!: string;
   email!: string;
+  birth?: string
+  barbershopId!: string;
   role!: Role;
   token!: string;
 }
