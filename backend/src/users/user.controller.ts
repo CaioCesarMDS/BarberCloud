@@ -22,6 +22,11 @@ export class UserController {
     return this.userService.findById(id);
   }
 
+  @Get('search/:name')
+  getAllUsersByName(@Param('name') name: string) {
+    return this.userService.getAllbyName(name);
+  }
+
   @Put(':id')
   update(
     @Param('id') id: string,

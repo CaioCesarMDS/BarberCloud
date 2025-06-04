@@ -5,8 +5,13 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import DatePickerField from "../_components/form/fields/DatePickerField";
 import InputField from "../_components/form/fields/InputField";
+<<<<<<< HEAD
 import FormWrapper from "../_components/form/FormWrapper";
 import Header from "../_components/Header";
+=======
+import { FormWrapper } from "../_components/form/FormWrapper";
+import Header from "../_components/header";
+>>>>>>> f76e8fa7dd25aee67496e78e61e613c8bd7cdf8d
 import api from "../services/api";
 
 const formSchema = z
@@ -15,6 +20,7 @@ const formSchema = z
     phone: z.string().min(10, { message: "Phone must be at least 10 characters." }),
     email: z.string().email({ message: "Invalid email address." }),
     birth: z.date({ message: "Invalid date." }),
+<<<<<<< HEAD
     password: z
       .string()
       .min(8, { message: "Be at least 8 characters long" })
@@ -25,6 +31,9 @@ const formSchema = z
         message: "Contain at least one special character.",
       })
       .trim(),
+=======
+    password: z.string().min(8, { message: "Password must be at least 8 characters." }),
+>>>>>>> f76e8fa7dd25aee67496e78e61e613c8bd7cdf8d
     confirmPassword: z.string().min(8, { message: "Confirm Password must be at least 8 characters." }),
     role: z.enum(["CLIENT"]),
   })
@@ -79,4 +88,10 @@ export default function SignUp() {
       </FormWrapper>
     </main>
   );
+<<<<<<< HEAD
 }
+=======
+};
+
+export default SignUp;
+>>>>>>> f76e8fa7dd25aee67496e78e61e613c8bd7cdf8d

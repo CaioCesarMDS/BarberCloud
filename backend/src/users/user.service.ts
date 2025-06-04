@@ -3,6 +3,7 @@ import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDTO } from './dtos/create-user.dto';
 import { UserUpdateDTO } from './dtos/user-update.dto';
+import { UserResponseDto } from './dtos/user.request.dto';
 import { UserRepository } from './user.repository';
 
 @Injectable()
@@ -28,6 +29,10 @@ export class UserService {
 
   async findByEmail(email: string): Promise<User | null> {
     return await this.userRepository.findByEmail(email);
+  }
+
+  async getAllbyName(name: string): Promise<UserResponseDto[]> {
+    return await this.userRepository.getAllbyName(name);
   }
 
   isPasswordValid(password: string, hash: string): Promise<boolean> {

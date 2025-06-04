@@ -1,12 +1,20 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+<<<<<<< HEAD
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../_components/form/fields/InputField";
 import FormWrapper from "../_components/form/FormWrapper";
 import Header from "../_components/Header";
+=======
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import InputField from "../_components/form/fields/InputField";
+import { FormWrapper } from "../_components/form/FormWrapper";
+import Header from "../_components/header";
+>>>>>>> f76e8fa7dd25aee67496e78e61e613c8bd7cdf8d
 import api from "../services/api";
 
 const formSchema = z.object({
@@ -47,4 +55,10 @@ export default function SignIn() {
       </FormWrapper>
     </main>
   );
+<<<<<<< HEAD
 }
+=======
+};
+
+export default SignIn;
+>>>>>>> f76e8fa7dd25aee67496e78e61e613c8bd7cdf8d

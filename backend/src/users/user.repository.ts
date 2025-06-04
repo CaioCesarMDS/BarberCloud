@@ -3,6 +3,7 @@ import { User } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateUserDTO } from './dtos/create-user.dto';
 import { UserUpdateDTO } from './dtos/user-update.dto';
+import { UserResponseDto } from './dtos/user.request.dto';
 import { IUserRepositoryInterface } from './interfaces/user-repository.interface';
 
 @Injectable()
@@ -41,6 +42,14 @@ export class UserRepository implements IUserRepositoryInterface {
 
   findById(id: string): Promise<User | null> {
     return this.prismaService.user.findUnique({ where: { id: id } });
+  }
+
+  async getAllbyName(name: string): Promise<UserResponseDto[]> {
+    const users = await this.prismaService.user.findMany({
+      where: { name: { contains: name, mode: 'insensitive' } },
+    });
+
+    return users.map((user) => new UserResponseDto(user));
   }
 
   findByEmail(email: string): Promise<User | null> {
