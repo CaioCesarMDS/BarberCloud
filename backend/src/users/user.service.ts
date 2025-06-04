@@ -11,28 +11,32 @@ export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async create(data: CreateUserDTO): Promise<User> {
-    const hashedPassword = await bcrypt.hash(data.password, 10);
-    return await this.userRepository.create(data, hashedPassword);
+    const hashedPassword = await this.hashPassword(data.password);
+    return this.userRepository.create(data, hashedPassword);
   }
 
-  async remove(id: string): Promise<User> {
-    return await this.userRepository.remove(id);
+  remove(id: string): Promise<User> {
+    return this.userRepository.remove(id);
   }
 
-  async update(id: string, userData: UserUpdateDTO): Promise<User | null> {
-    return await this.userRepository.update(id, userData);
+  update(id: string, userData: UserUpdateDTO): Promise<User | null> {
+    return this.userRepository.update(id, userData);
   }
 
-  async findById(id: string): Promise<User | null> {
-    return await this.userRepository.findById(id);
+  findAllByName(name: string): Promise<UserResponseDto[]> {
+    return this.userRepository.findAllByName(name);
   }
 
-  async findByEmail(email: string): Promise<User | null> {
-    return await this.userRepository.findByEmail(email);
+  findById(id: string): Promise<User | null> {
+    return this.userRepository.findById(id);
   }
 
-  async getAllbyName(name: string): Promise<UserResponseDto[]> {
-    return await this.userRepository.getAllbyName(name);
+  findByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findByEmail(email);
+  }
+
+  hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, 10);
   }
 
   isPasswordValid(password: string, hash: string): Promise<boolean> {

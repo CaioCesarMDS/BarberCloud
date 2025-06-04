@@ -19,6 +19,7 @@ export class UserRepository implements IUserRepositoryInterface {
         email: data.email,
         password: hashedPassword,
         role: data.role,
+        barbershopId: data.barbershopId,
       },
     });
   }
@@ -40,11 +41,7 @@ export class UserRepository implements IUserRepositoryInterface {
     });
   }
 
-  findById(id: string): Promise<User | null> {
-    return this.prismaService.user.findUnique({ where: { id: id } });
-  }
-
-  async getAllbyName(name: string): Promise<UserResponseDto[]> {
+  async findAllByName(name: string): Promise<UserResponseDto[]> {
     const users = await this.prismaService.user.findMany({
       where: { name: { contains: name, mode: 'insensitive' } },
     });
@@ -52,11 +49,19 @@ export class UserRepository implements IUserRepositoryInterface {
     return users.map((user) => new UserResponseDto(user));
   }
 
+  findById(id: string): Promise<User | null> {
+    return this.prismaService.user.findUnique({ where: { id: id } });
+  }
+
   findByEmail(email: string): Promise<User | null> {
-    return this.prismaService.user.findUnique({ where: { email: email } });
+    return this.prismaService.user.findUnique({
+      where: { email: email },
+    });
   }
 
   findByPhone(phone: string): Promise<User | null> {
-    return this.prismaService.user.findUnique({ where: { phone: phone } });
+    return this.prismaService.user.findUnique({
+      where: { phone: phone },
+    });
   }
 }

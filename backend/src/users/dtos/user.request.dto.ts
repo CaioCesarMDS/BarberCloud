@@ -7,6 +7,7 @@ export class UserResponseDto {
   readonly phone!: string;
   readonly birth?: string;
   readonly role!: Role;
+  readonly barbershopId?: string;
 
   constructor(user: User) {
     this.id = user.id;
@@ -15,5 +16,6 @@ export class UserResponseDto {
     this.birth = user.birth?.toISOString();
     this.phone = user.phone;
     this.role = user.role;
+    this.barbershopId = user.barbershopId;
   }
 }

@@ -46,4 +46,8 @@ export class CreateUserDTO {
   @MinLength(8)
   @IsStrongPassword()
   password!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  barbershopId!: string;
 }

@@ -8,32 +8,52 @@ datasource db {
 }
 
 model User {
-  id       String   @id @default(uuid())
-  name     String
-  birth    DateTime
-  phone    String   @unique
-  email    String   @unique
-  password String
-  role     Role     @default(CLIENT)
+  id           String    @id @unique @default(uuid())
+  name         String
+  birth        DateTime?
+  phone        String    @unique
+  email        String    @unique
+  password     String
+  role         Role      @default(CLIENT)
+  barbershopId String
 
-  Scheduling_barber   SchedulingService[]   @relation("barber")
-  Scheduling_client   SchedulingService[]   @relation("client")
-  NoScheduling_barber NoSchedulingService[] @relation("barber")
-  NoScheduling_client NoSchedulingService[] @relation("client")
+  barbershop          Barbershop            @relation(fields: [barbershopId], references: [id])
+  scheduling_barber   SchedulingService[]   @relation("barber")
+  scheduling_client   SchedulingService[]   @relation("client")
+  noScheduling_barber NoSchedulingService[] @relation("barber")
+  noScheduling_client NoSchedulingService[] @relation("client")
 }
 
 model Barbershop {
-  id                    String                @id @default(uuid())
+  id                    String                @id @unique @default(uuid())
   name                  String
-  address               String
+  timeOpen              String
+  timeClose             String
+  addressId             String                @unique
   imageUrl              String
-  services              Services[]
+  address               AddressBarbershop     @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  services              BarberServices[]
   schedulingsServices   SchedulingService[]
   noSchedulingsServices NoSchedulingService[]
+
+  user User[]
 }
 
-model Services {
-  id                 String                @id @default(uuid())
+model AddressBarbershop {
+  id           String      @id @unique @default(uuid())
+  number       String
+  street       String
+  complement   String
+  neighborhood String
+  city         String
+  state        String
+  country      String
+  zipCode      String
+  barbershop   Barbershop?
+}
+
+model BarberServices {
+  id                 String                @id @unique @default(uuid())
   name               String
   description        String
   price              Decimal               @db.Money
@@ -44,25 +64,26 @@ model Services {
 }
 
 model SchedulingService {
-  id           String     @id @default(uuid())
-  barbershopId String     @unique
-  clientId     String     @unique
-  barberId     String     @unique
-  services     Services[]
-  priceTotal   Decimal    @db.Money
-
-  barber     User       @relation("barber", fields: [barberId], references: [id])
-  client     User       @relation("client", fields: [clientId], references: [id])
-  barbershop Barbershop @relation(fields: [barbershopId], references: [id])
+  id           Int              @id @unique @default(autoincrement())
+  barbershopId String           @unique
+  clientId     String           @unique
+  barberId     String           @unique
+  services     BarberServices[]
+  dateHour     DateTime
+  priceTotal   Decimal          @db.Money
+  barber       User             @relation("barber", fields: [barberId], references: [id])
+  client       User             @relation("client", fields: [clientId], references: [id])
+  barbershop   Barbershop       @relation(fields: [barbershopId], references: [id])
 }
 
 model NoSchedulingService {
-  id           String     @id @default(uuid())
-  barbershopId String     @unique
-  clientId     String     @unique
-  barberId     String     @unique
-  services     Services[]
-  priceTotal   Decimal    @db.Money
+  id           Int              @id @unique @default(autoincrement())
+  barbershopId String           @unique
+  clientId     String           @unique
+  barberId     String           @unique
+  services     BarberServices[]
+  date         DateTime
+  priceTotal   Decimal          @db.Money
 
   barber     User       @relation("barber", fields: [barberId], references: [id])
   client     User       @relation("client", fields: [clientId], references: [id])
