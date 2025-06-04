@@ -20,9 +20,15 @@ const config: Config = {
     },
     extend: {
       backgroundImage: {
-        "home": "url('/bg-image.png')"
+        "home": "url('/bg-image.png')",
+        'blue-gradient': 'linear-gradient(to bottom right, #1e3a5f, #1a202c)',
+        'white-gradient': 'linear-gradient(to bottom right,#ffffff,#808080)',
       },
       colors: {
+        'blue':'#1e3a5f',
+        'barber-blue': '#1e3a5f',
+        'barber-blue-light': '#2c5282',
+        'barber-blue-dark': '#1a202c',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
