@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import DatePickerField from "../_components/form/fields/DatePickerField";
 import InputField from "../_components/form/fields/InputField";
-import { FormWrapper } from "../_components/form/FormWrapper";
-import Header from "../_components/header";
+import FormWrapper from "../_components/form/FormWrapper";
+import Header from "../_components/Header";
 import api from "../services/api";
 
 const formSchema = z
@@ -15,7 +15,16 @@ const formSchema = z
     phone: z.string().min(10, { message: "Phone must be at least 10 characters." }),
     email: z.string().email({ message: "Invalid email address." }),
     birth: z.date({ message: "Invalid date." }),
-    password: z.string().min(8, { message: "Password must be at least 8 characters." }),
+    password: z
+      .string()
+      .min(8, { message: "Be at least 8 characters long" })
+      .regex(/[a-z]/, { message: "Contains at least one lowercase letter." })
+      .regex(/[A-Z]/, { message: "Contains at least one uppercase letter." })
+      .regex(/[0-9]/, { message: "Contain at least one number." })
+      .regex(/[^a-zA-Z0-9]/, {
+        message: "Contain at least one special character.",
+      })
+      .trim(),
     confirmPassword: z.string().min(8, { message: "Confirm Password must be at least 8 characters." }),
     role: z.enum(["CLIENT"]),
   })
@@ -26,7 +35,7 @@ const formSchema = z
 
 type FormData = z.infer<typeof formSchema>;
 
-const SignUp = () => {
+export default function SignUp() {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -70,6 +79,4 @@ const SignUp = () => {
       </FormWrapper>
     </main>
   );
-};
-
-export default SignUp;
+}

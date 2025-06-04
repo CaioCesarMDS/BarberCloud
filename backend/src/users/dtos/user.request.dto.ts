@@ -1,27 +1,21 @@
-import { IsDateString, IsEmail, IsEnum, IsNotEmpty, IsString, IsStrongPassword, IsUUID } from "class-validator";
-import { EmailIsUnique } from "../validators/email.validator";
-import { PhoneIsUnique } from "../validators/phone.validator";
-import { Role } from "@prisma/client";
+import { Role, User } from '@prisma/client';
 
-export class UserRequestDto {
-    @IsString()
-    readonly name!: string;
-    @IsNotEmpty()
-    @PhoneIsUnique()
-    readonly phone!: string;
-    @IsDateString()
-    readonly birth!: Date;
-    @IsEnum(Role)
-    readonly role!: Role;
-    @IsNotEmpty()
-    @IsUUID()
-    readonly barbershopId!: string
-    @IsEmail()
-    @IsNotEmpty()
-    @EmailIsUnique()
-    readonly email!: string;
-    @IsStrongPassword()
-    readonly password!: string;
-    @IsStrongPassword()
-    readonly confirmPassword!: string;
+export class UserResponseDto {
+  readonly id!: string;
+  readonly name!: string;
+  readonly email!: string;
+  readonly phone!: string;
+  readonly birth?: string;
+  readonly role!: Role;
+  readonly barbershopId?: string;
+
+  constructor(user: User) {
+    this.id = user.id;
+    this.name = user.name;
+    this.email = user.email;
+    this.birth = user.birth?.toISOString();
+    this.phone = user.phone;
+    this.role = user.role;
+    this.barbershopId = user.barbershopId;
+  }
 }

@@ -1,11 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../_components/form/fields/InputField";
-import { FormWrapper } from "../_components/form/FormWrapper";
-import Header from "../_components/header";
+import FormWrapper from "../_components/form/FormWrapper";
+import Header from "../_components/Header";
 import api from "../services/api";
 
 const formSchema = z.object({
@@ -15,7 +16,9 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const SignIn = () => {
+export default function SignIn() {
+  const router = useRouter();
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -27,11 +30,9 @@ const SignIn = () => {
   const onSubmit = async (data: FormData) => {
     try {
       const response = await api.post("/auth/signin", data);
-      if (response.status === 201) {
-        console.log("user registered successfully:", response.data);
-      } else {
-        console.error("Error registering:", response.data);
-      }
+      localStorage.setItem("barber-token", response.data.token);
+      console.log("login successfully:", response.data);
+      router.push("/home");
     } catch (error) {
       console.error("Error during registration:", error);
     }
@@ -46,6 +47,4 @@ const SignIn = () => {
       </FormWrapper>
     </main>
   );
-};
-
-export default SignIn;
+}

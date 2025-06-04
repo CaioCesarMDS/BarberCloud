@@ -1,14 +1,20 @@
-import { Module } from '@nestjs/common';
-import { PrismaModule } from '../../prisma/prisma.module';
-import { BarbershopController } from './barbershop.controller';
-import { BarbershopService } from './barbershop.service';
-import { EmailValidator } from './validators/email.validator';
+import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthGuard } from './barbershop.guard';
+import { CommonModule } from 'src/common/common.module';
+import { PrismaModule } from '../../prisma/prisma.module';
+import { AuthModule } from '../auth/auth.module';
+import { BarbershopController } from './barbershop.controller';
+import { BarbershopRepository } from './barbershop.repository';
+import { BarbershopService } from './barbershop.service';
 
 @Module({
-  imports: [PrismaModule, JwtModule],
+  imports: [
+    PrismaModule,
+    JwtModule,
+    forwardRef(() => AuthModule),
+    CommonModule,
+  ],
   controllers: [BarbershopController],
-  providers: [BarbershopService, EmailValidator, AuthGuard],
+  providers: [BarbershopService, BarbershopRepository],
 })
 export class BarbershopModule {}

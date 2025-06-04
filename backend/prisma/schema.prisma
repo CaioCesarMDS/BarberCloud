@@ -27,8 +27,8 @@ model User {
 model Barbershop {
   id                    String                @id @unique @default(uuid())
   name                  String
-  timeOpen              String              
-  timeClose             String              
+  timeOpen              String
+  timeClose             String
   addressId             String                @unique
   imageUrl              String
   address               AddressBarbershop     @relation(fields: [addressId], references: [id], onDelete: Cascade)

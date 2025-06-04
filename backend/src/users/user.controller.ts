@@ -1,42 +1,52 @@
-import { BadRequestException, Body, Controller, Delete, Get, Headers, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { UserRequestDto } from './dtos/user.request.dto';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { User } from '@prisma/client';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { UserUpdateDTO } from './dtos/user-update.dto';
 import { UserService } from './user.service';
-import { JwtService } from '@nestjs/jwt';
-import { AuthGuard } from './auth.guard';
-import { UserUpdateDto } from './dtos/user.update.dto';
 
-@Controller('/user')
+@UseGuards(AuthGuard, RolesGuard)
+@Controller('/users')
 export class UserController {
+  constructor(private readonly userService: UserService) {}
 
-  constructor(private userService: UserService, private jwtService: JwtService) { }
-
-  @UseGuards(AuthGuard)
-  @Post('/create')
-  createUser(@Body() body: UserRequestDto) {
-    return this.userService.create(body);
-  }
-
-  @UseGuards(AuthGuard)
   @Get(':id')
-  getUserById(@Param('id') id: string) {
-    return this.userService.getbyId(id);
+  findOne(@Param('id') id: string): Promise<User | null> {
+    return this.userService.findById(id);
   }
 
-  @UseGuards(AuthGuard)
-  @Get('search/:name')
-  getAllUserByName(@Param('name') name: string) {
-    return this.userService.getAllbyName(name);
+  @Get('search')
+  @Roles('ADMIN')
+  getAllUsersByName(@Query('name') name: string) {
+    if (!name?.trim()) {
+      return new BadRequestException('Name query parameter is required');
+    }
+    return this.userService.findAllByName(name);
   }
 
-  @UseGuards(AuthGuard)
-  @Put('update/:id')
-  updateUserById(@Param('id') id: string, @Body() userData: UserUpdateDto) {
-    return this.userService.updateById(id, userData);
+  @Put(':id')
+  @Roles('ADMIN')
+  update(
+    @Param('id') id: string,
+    @Body() data: UserUpdateDTO,
+  ): Promise<User | null> {
+    return this.userService.update(id, data);
   }
 
-  @UseGuards(AuthGuard)
   @Delete(':id')
-  deleteUserById(@Param('id') id: string) {
-    return this.userService.deleteById(id);
+  @Roles('ADMIN')
+  remove(@Param('id') id: string): Promise<User> {
+    return this.userService.remove(id);
   }
 }

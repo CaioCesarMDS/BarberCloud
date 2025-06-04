@@ -1,93 +1,45 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
-import { UserRequestDto } from './dtos/user.request.dto';
-import { UserResponseDto } from './dtos/user.response.dto';
+import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { UserUpdateDto } from './dtos/user.update.dto';
-import { userInfo } from 'os';
+import { CreateUserDTO } from './dtos/create-user.dto';
+import { UserUpdateDTO } from './dtos/user-update.dto';
+import { UserResponseDto } from './dtos/user.request.dto';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
+  constructor(private readonly userRepository: UserRepository) {}
 
-  constructor(private prisma: PrismaService) { }
-
-  async create(userData: UserRequestDto): Promise<UserResponseDto | null> {
-    const createToken: string = '';
-
-    if (userData.password !== userData.confirmPassword) {
-      throw new BadRequestException("the passwords has not been coincided!");
-    }
-
-    const user = await this.prisma.user.create({
-      data: {
-        name: userData.name,
-        email: userData.email,
-        birth: userData.birth,
-        phone: userData.phone,
-        password: userData.password,
-        barbershopId: userData.barbershopId,
-        role: userData.role,
-      },
-    });
-
-    return new UserResponseDto(user);
+  async create(data: CreateUserDTO): Promise<User> {
+    const hashedPassword = await this.hashPassword(data.password);
+    return this.userRepository.create(data, hashedPassword);
   }
 
-  async getbyId(userId: string): Promise<UserResponseDto | null> {
-    const user: User | null = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (user) {
-      return new UserResponseDto(user);
-    } else {
-      throw new BadRequestException("User not found!");
-    }
+  remove(id: string): Promise<User> {
+    return this.userRepository.remove(id);
   }
 
-  async getAllbyName(name: string): Promise<UserResponseDto[] | null> {
-    console.log(name);
-    const users: User[] | null = await this.prisma.user.findMany({ where: { name: { contains: name, mode: 'insensitive'} } });
-    if (users) {
-      return users.map((user) => new UserResponseDto(user));
-    } else {
-      throw new BadRequestException("User not found!");
-    }
+  update(id: string, userData: UserUpdateDTO): Promise<User | null> {
+    return this.userRepository.update(id, userData);
   }
 
-  async updateById(userId: string, userData: UserUpdateDto): Promise<UserResponseDto | null> {
-    const user: User | null = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (user) {
-      if (userData.password !== userData.confirmPassword) {
-        throw new BadRequestException("the passwords has not been coincided!");
-      }
-      const passwordHashed: string = await bcrypt.hash(userData.password, 10);
-      await this.prisma.user.update(
-        {
-          where: { id: userId },
-          data: {
-            name: userData.name,
-            birth: new Date(userData.birth),
-            phone: userData.phone,
-            email: userData.email,
-            role: userData.role,
-            password: passwordHashed
-          }
-        });
-      return await this.getbyId(userId);
-    } else {
-      throw new BadRequestException("User not found!");
-    }
+  findAllByName(name: string): Promise<UserResponseDto[]> {
+    return this.userRepository.findAllByName(name);
   }
 
-  async deleteById(userId: string): Promise<any | null> {
-    const user: User | null = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (user) {
-      await this.prisma.user.delete({ where: { id: userId } });
-      return {
-        success: true,
-        message: "User has been deleted with success!"
-      }
-    } else {
-      throw new BadRequestException("User not found!");
-    }
+  findById(id: string): Promise<User | null> {
+    return this.userRepository.findById(id);
+  }
+
+  findByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findByEmail(email);
+  }
+
+  hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, 10);
+  }
+
+  isPasswordValid(password: string, hash: string): Promise<boolean> {
+    return bcrypt.compare(password, hash);
   }
 }

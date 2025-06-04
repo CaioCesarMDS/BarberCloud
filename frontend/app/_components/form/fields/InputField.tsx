@@ -9,7 +9,7 @@ interface InputFieldProps<T extends FieldValues> {
   type?: string;
 }
 
-export const InputField = <T extends FieldValues>({ control, name, label, type = "text" }: InputFieldProps<T>) => {
+export default function InputField<T extends FieldValues>({ control, name, label, type = "text" }: InputFieldProps<T>) {
   return (
     <FormField
       control={control}
@@ -18,13 +18,11 @@ export const InputField = <T extends FieldValues>({ control, name, label, type =
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input type={type} {...field}/>
+            <Input type={type} {...field} />
           </FormControl>
           <FormMessage />
         </FormItem>
       )}
     />
   );
-};
-
-export default InputField;
+}

@@ -5,18 +5,16 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { PrismaService } from 'prisma/prisma.service';
+import { UserRepository } from '../user.repository';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
 export class PhoneValidator implements ValidatorConstraintInterface {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   async validate(phone: string): Promise<boolean> {
-    const [result] = await this.prisma.$queryRaw<
-            { exists: boolean }[]
-        >`SELECT EXISTS(SELECT 1 FROM "User" WHERE phone = ${phone}) AS "exists"`;
-        return !result.exists;
+    const user = await this.userRepository.findByPhone(phone);
+    return !user;
   }
 
   defaultMessage(): string {

@@ -13,7 +13,7 @@ interface DatePickerFieldProps<T extends FieldValues> {
   label: string;
 }
 
-export const DatePickerField = <T extends FieldValues>({ control, name, label }: DatePickerFieldProps<T>) => {
+export default function DatePickerField<T extends FieldValues>({ control, name, label }: DatePickerFieldProps<T>) {
   return (
     <FormField
       control={control}
@@ -35,7 +35,7 @@ export const DatePickerField = <T extends FieldValues>({ control, name, label }:
                 mode="single"
                 selected={field.value}
                 onSelect={field.onChange}
-                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                disabled={(date: Date) => date > new Date() || date < new Date("1900-01-01")}
                 initialFocus
               />
             </PopoverContent>
@@ -45,6 +45,4 @@ export const DatePickerField = <T extends FieldValues>({ control, name, label }:
       )}
     />
   );
-};
-
-export default DatePickerField;
+}

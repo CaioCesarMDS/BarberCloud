@@ -9,12 +9,12 @@ interface FormWrapperProps<T extends FieldValues> {
   submitLabel?: string;
 }
 
-export const FormWrapper = <T extends FieldValues>({
+export default function FormWrapper<T extends FieldValues>({
   form,
   onSubmit,
   children,
   submitLabel = "Submit",
-}: FormWrapperProps<T>) => {
+}: FormWrapperProps<T>) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col items-center justify-center min-h-screen">
@@ -25,4 +25,4 @@ export const FormWrapper = <T extends FieldValues>({
       </form>
     </Form>
   );
-};
+}
