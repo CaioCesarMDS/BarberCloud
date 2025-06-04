@@ -14,13 +14,13 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { BarbershopService } from './barbershop.service';
 import { BarbershopRequestDto } from './dtos/barbershop.request.dto';
 
-@UseGuards(AuthGuard, RolesGuard)
+@UseGuards(RolesGuard)
 @Controller('/barbershop')
 export class BarbershopController {
   constructor(private BarbershopService: BarbershopService) {}
 
-  @Post('/create')
   @Roles('ADMIN')
+  @Post('/create')
   createbBarbershop(@Body() body: BarbershopRequestDto) {
     return this.BarbershopService.create(body);
   }
@@ -28,15 +28,17 @@ export class BarbershopController {
   @UseGuards(AuthGuard)
   @Get(':id')
   getUserById(@Param('id') id: string) {
-    return this.BarbershopService.getbyId(id);
+    return this.BarbershopService.getById(id);
   }
 
+  @Roles('ADMIN')
   @UseGuards(AuthGuard)
   @Put('update/:id')
   updateUserById(@Param('id') id: string, @Body() data: BarbershopRequestDto) {
     return this.BarbershopService.updateById(id, data);
   }
 
+  @Roles('ADMIN')
   @UseGuards(AuthGuard)
   @Delete(':id')
   deleteUserById(@Param('id') id: string) {

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "./shadcn/ui/button";
 import { Card, CardContent } from "./shadcn/ui/card";
 
-const Header = () => {
+export default function Header() {
   return (
     <Card>
       <CardContent className="px-5 py-4 flex justify-between items-center">
@@ -17,6 +17,4 @@ const Header = () => {
       </CardContent>
     </Card>
   );
-};
-
-export default Header;
+}

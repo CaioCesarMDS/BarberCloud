@@ -1,110 +1,58 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { AddressBarbershop, Barbershop } from '@prisma/client';
-import { PrismaService } from 'prisma/prisma.service';
+// src/barbershop/barbershop.service.ts
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { BarbershopRepository } from './barbershop.repository';
 import { BarbershopRequestDto } from './dtos/barbershop.request.dto';
 import { BarbershopResponseDto } from './dtos/barbershop.response.dto';
 
 @Injectable()
 export class BarbershopService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly barbershopRepository: BarbershopRepository) {}
 
-  async create(
-    data: BarbershopRequestDto,
-  ): Promise<BarbershopResponseDto | null> {
-    const address = await this.prisma.addressBarbershop.create({
-      data: {
-        number: data.number,
-        street: data.street,
-        complement: data.complement,
-        neighborhood: data.neighborhood,
-        city: data.city,
-        state: data.state,
-        country: data.country,
-        zipCode: data.zipCode,
-      },
-    });
-    const barbershop = await this.prisma.barbershop.create({
-      data: {
-        name: data.name,
-        imageUrl: data.imageUrl,
-        timeOpen: data.timeOpen,
-        timeClose: data.timeClose,
-        addressId: address.id,
-      },
-    });
+  async create(data: BarbershopRequestDto): Promise<BarbershopResponseDto> {
+    const address = await this.barbershopRepository.createAddress(data);
+
+    const barbershop = await this.barbershopRepository.createBarbershop(
+      data,
+      address.id,
+    );
 
     return new BarbershopResponseDto(barbershop, address);
   }
 
-  async getbyId(barbershopId: string): Promise<BarbershopResponseDto | null> {
-    const barbershop: Barbershop | null =
-      await this.prisma.barbershop.findUnique({ where: { id: barbershopId } });
-    const address: AddressBarbershop | null =
-      await this.prisma.addressBarbershop.findUnique({
-        where: { id: barbershop?.addressId },
-      });
-    if (barbershop && address) {
-      return new BarbershopResponseDto(barbershop, address);
-    } else {
-      throw new BadRequestException('Barbershop not found!');
-    }
+  async getById(id: string): Promise<BarbershopResponseDto> {
+    const barbershop = await this.barbershopRepository.findById(id);
+    if (!barbershop) throw new NotFoundException('Barbershop not found');
+
+    const address = await this.barbershopRepository.findAddressById(
+      barbershop.addressId,
+    );
+    if (!address) throw new NotFoundException('Address not found');
+
+    return new BarbershopResponseDto(barbershop, address);
   }
 
   async updateById(
-    barbershopId: string,
+    id: string,
     data: BarbershopRequestDto,
-  ): Promise<BarbershopResponseDto | null> {
-    const barbershop: Barbershop | null =
-      await this.prisma.barbershop.findUnique({ where: { id: barbershopId } });
-    const address: AddressBarbershop | null =
-      await this.prisma.addressBarbershop.findUnique({
-        where: { id: barbershop?.addressId },
-      });
+  ): Promise<BarbershopResponseDto> {
+    const barbershop = await this.barbershopRepository.findById(id);
+    if (!barbershop) throw new NotFoundException('Barbershop not found');
 
-    if (barbershop && address) {
-      await this.prisma.addressBarbershop.update({
-        where: { id: barbershop?.addressId },
-        data: {
-          number: data.number,
-          street: data.street,
-          complement: data.complement,
-          neighborhood: data.neighborhood,
-          city: data.city,
-          state: data.state,
-          country: data.country,
-          zipCode: data.zipCode,
-        },
-      });
-      await this.prisma.barbershop.update({
-        where: { id: barbershopId },
-        data: {
-          name: data.name,
-          imageUrl: data.imageUrl,
-          timeOpen: data.timeOpen,
-          timeClose: data.timeClose,
-          addressId: address.id,
-        },
-      });
+    await this.barbershopRepository.updateAddress(barbershop.addressId, data);
 
-      return await this.getbyId(barbershopId);
-    } else {
-      throw new BadRequestException('Barbershop not found!');
-    }
+    await this.barbershopRepository.updateBarbershop(id, data);
+
+    return this.getById(id);
   }
 
-  async deleteById(
-    barbershopId: string,
-  ): Promise<{ success: boolean; message: string } | null> {
-    const barbershop: Barbershop | null =
-      await this.prisma.barbershop.findUnique({ where: { id: barbershopId } });
-    if (barbershop) {
-      await this.prisma.barbershop.delete({ where: { id: barbershopId } });
-      return {
-        success: true,
-        message: 'User has been deleted with success!',
-      };
-    } else {
-      throw new BadRequestException('Barbershop not found!');
-    }
+  async deleteById(id: string): Promise<{ success: boolean; message: string }> {
+    const barbershop = await this.barbershopRepository.findById(id);
+    if (!barbershop) throw new NotFoundException('Barbershop not found');
+
+    await this.barbershopRepository.deleteById(id);
+    return {
+      success: true,
+      message: 'Barbershop deleted successfully',
+    };
   }
 }
