@@ -1,22 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateUserDto } from './dtos/create-user.dto';
-import { UserRepositoryInterface } from './interfaces/user-repository.interface';
+import { PrismaService } from 'prisma/prisma.service';
+import { CreateUserDTO } from './dtos/create-user.dto';
+import { UserUpdateDTO } from './dtos/user-update.dto';
+import { IUserRepositoryInterface } from './interfaces/user-repository.interface';
 
 @Injectable()
-export class UserRepository implements UserRepositoryInterface {
+export class UserRepository implements IUserRepositoryInterface {
   constructor(private readonly prismaService: PrismaService) {}
 
-  findByEmail(email: string): Promise<User | null> {
-    return this.prismaService.user.findUnique({ where: { email: email } });
-  }
-
-  findByPhone(phone: string): Promise<User | null> {
-    return this.prismaService.user.findUnique({ where: { phone: phone } });
-  }
-
-  create(data: CreateUserDto, hashedPassword: string): Promise<User> {
+  create(data: CreateUserDTO, hashedPassword: string): Promise<User> {
     return this.prismaService.user.create({
       data: {
         name: data.name,
@@ -27,5 +20,34 @@ export class UserRepository implements UserRepositoryInterface {
         role: data.role,
       },
     });
+  }
+
+  remove(id: string): Promise<User> {
+    return this.prismaService.user.delete({ where: { id: id } });
+  }
+
+  update(id: string, data: UserUpdateDTO): Promise<User | null> {
+    return this.prismaService.user.update({
+      where: { id: id },
+      data: {
+        name: data.name,
+        phone: data.phone,
+        birth: data.birth,
+        email: data.email,
+        role: data.role,
+      },
+    });
+  }
+
+  findById(id: string): Promise<User | null> {
+    return this.prismaService.user.findUnique({ where: { id: id } });
+  }
+
+  findByEmail(email: string): Promise<User | null> {
+    return this.prismaService.user.findUnique({ where: { email: email } });
+  }
+
+  findByPhone(phone: string): Promise<User | null> {
+    return this.prismaService.user.findUnique({ where: { phone: phone } });
   }
 }

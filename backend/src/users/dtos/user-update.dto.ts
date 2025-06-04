@@ -1,49 +1,48 @@
 import { Role } from '@prisma/client';
-import { Type } from 'class-transformer';
 import {
   IsDate,
   IsEmail,
   IsEnum,
-  IsNotEmpty,
+  IsOptional,
   IsPhoneNumber,
   IsString,
   IsStrongPassword,
   MinLength,
 } from 'class-validator';
+
 import { EmailIsUnique } from '../validators/email.validator';
 import { PhoneIsUnique } from '../validators/phone.validator';
 
-export class CreateUserDTO {
-  @IsNotEmpty()
+export class UserUpdateDTO {
+  @IsOptional()
   @IsString()
   @MinLength(4)
-  name!: string;
+  name?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MinLength(9)
   @IsPhoneNumber('BR')
   @PhoneIsUnique()
-  phone!: string;
+  phone?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsDate()
-  @Type(() => Date)
-  birth!: Date;
+  birth?: Date;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(Role)
-  role!: Role;
+  role?: Role;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @IsEmail()
   @EmailIsUnique()
-  email!: string;
+  email?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MinLength(8)
   @IsStrongPassword()
-  password!: string;
+  password?: string;
 }

@@ -15,13 +15,13 @@ export class AuthService {
   ) {}
 
   async signUp(data: SignUpDTO): Promise<AuthResponseDTO> {
-    const newUser = await this.userService.createUser(data);
+    const newUser = await this.userService.create(data);
 
-    return this.generateAccessToken(newUser);
+    return this.buildAuthResponse(newUser);
   }
 
   async signIn(data: SignInDTO): Promise<AuthResponseDTO> {
-    const user = await this.userService.findUser(data.email);
+    const user = await this.userService.findByEmail(data.email);
     if (
       !user ||
       !(await this.userService.isPasswordValid(data.password, user.password))
@@ -29,29 +29,27 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    return this.generateAccessToken(user);
+    return this.buildAuthResponse(user);
   }
 
-  async generateAccessToken(user: User): Promise<AuthResponseDTO> {
-    const payload: JwtPayload = {
-      id: user.id.toString(),
-      name: user.name,
-      phone: user.phone,
-      email: user.email,
-    };
-
-    const token = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_SECRET,
-      expiresIn: '3h',
-    });
+  async buildAuthResponse(user: User): Promise<AuthResponseDTO> {
+    const token = await this.generateToken(user);
 
     return {
       id: user.id,
       name: user.name,
-      phone: user.phone,
       email: user.email,
       role: user.role,
       token,
     };
+  }
+
+  private async generateToken(user: User): Promise<string> {
+    const payload: JwtPayload = {
+      id: user.id,
+      role: user.role,
+    };
+
+    return await this.jwtService.signAsync(payload);
   }
 }

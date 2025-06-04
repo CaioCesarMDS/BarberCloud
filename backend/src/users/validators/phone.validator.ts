@@ -5,15 +5,15 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { UserRepository } from '../user.repository';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
 export class PhoneValidator implements ValidatorConstraintInterface {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   async validate(phone: string): Promise<boolean> {
-    const user = await this.prisma.user.findUnique({ where: { phone } });
+    const user = await this.userRepository.findByPhone(phone);
     return !user;
   }
 

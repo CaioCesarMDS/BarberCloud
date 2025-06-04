@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { forwardRef, Module } from '@nestjs/common';
+import { PrismaModule } from 'prisma/prisma.module';
+import { AuthModule } from 'src/auth/auth.module';
 import { UserController } from './user.controller';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
@@ -7,15 +8,9 @@ import { EmailValidator } from './validators/email.validator';
 import { PhoneValidator } from './validators/phone.validator';
 
 @Module({
-  imports: [],
+  imports: [PrismaModule, forwardRef(() => AuthModule)],
   controllers: [UserController],
-  providers: [
-    UserService,
-    UserRepository,
-    PrismaService,
-    EmailValidator,
-    PhoneValidator,
-  ],
+  providers: [UserService, UserRepository, EmailValidator, PhoneValidator],
   exports: [UserService],
 })
 export class UserModule {}

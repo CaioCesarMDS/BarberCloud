@@ -5,15 +5,15 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { UserRepository } from '../user.repository';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
 export class EmailValidator implements ValidatorConstraintInterface {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   async validate(email: string): Promise<boolean> {
-    const user = await this.prisma.user.findUnique({ where: { email } });
+    const user = await this.userRepository.findByEmail(email);
     return !user;
   }
 
@@ -22,11 +22,11 @@ export class EmailValidator implements ValidatorConstraintInterface {
   }
 }
 
-export const EmailIsUnique = (validatorOptions: ValidationOptions) => {
-  return (object: object, property: string) => {
+export const EmailIsUnique = (validatorOptions?: ValidationOptions) => {
+  return (object: object, propertyName: string) => {
     registerDecorator({
       target: object.constructor,
-      propertyName: property.toString(),
+      propertyName,
       options: validatorOptions,
       constraints: [],
       validator: EmailValidator,
