@@ -15,25 +15,41 @@ model User {
   email        String    @unique
   password     String
   role         Role      @default(CLIENT)
-  barbershopId String    
+  barbershopId String
 
-  Barbershop          Barbershop            @relation(fields: [barbershopId], references: [id])
-  Scheduling_barber   SchedulingService[]   @relation("barber")
-  Scheduling_client   SchedulingService[]   @relation("client")
-  NoScheduling_barber NoSchedulingService[] @relation("barber")
-  NoScheduling_client NoSchedulingService[] @relation("client")
+  barbershop          Barbershop            @relation(fields: [barbershopId], references: [id])
+  scheduling_barber   SchedulingService[]   @relation("barber")
+  scheduling_client   SchedulingService[]   @relation("client")
+  noScheduling_barber NoSchedulingService[] @relation("barber")
+  noScheduling_client NoSchedulingService[] @relation("client")
 }
 
 model Barbershop {
   id                    String                @id @unique @default(uuid())
   name                  String
-  address               String
+  timeOpen              String              
+  timeClose             String              
+  addressId             String                @unique
   imageUrl              String
+  address               AddressBarbershop     @relation(fields: [addressId], references: [id], onDelete: Cascade)
   services              BarberServices[]
   schedulingsServices   SchedulingService[]
   noSchedulingsServices NoSchedulingService[]
 
-  User User[]
+  user User[]
+}
+
+model AddressBarbershop {
+  id           String      @id @unique @default(uuid())
+  number       String
+  street       String
+  complement   String
+  neighborhood String
+  city         String
+  state        String
+  country      String
+  zipCode      String
+  barbershop   Barbershop?
 }
 
 model BarberServices {
@@ -48,7 +64,7 @@ model BarberServices {
 }
 
 model SchedulingService {
-  id           String           @id @unique @default(uuid())
+  id           Int              @id @unique @default(autoincrement())
   barbershopId String           @unique
   clientId     String           @unique
   barberId     String           @unique
@@ -61,7 +77,7 @@ model SchedulingService {
 }
 
 model NoSchedulingService {
-  id           String           @id @unique @default(uuid())
+  id           Int              @id @unique @default(autoincrement())
   barbershopId String           @unique
   clientId     String           @unique
   barberId     String           @unique
