@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Headers, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Headers, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { UserRequestDto } from './dtos/user.request.dto';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -35,7 +35,7 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Get(':id')
+  @Delete(':id')
   deleteUserById(@Param('id') id: string) {
     return this.userService.deleteById(id);
   }
