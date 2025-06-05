@@ -2,7 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { BarbershopModule } from 'src/barbershop/barbershop.module';
-import { UserModule } from 'src/users/user.module';
+import { UserModule } from 'src/users/employee.module';
 import { AuthController } from './auth.controller';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';

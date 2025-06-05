@@ -13,7 +13,7 @@ import {
 import { EmailIsUnique } from '../validators/email.validator';
 import { PhoneIsUnique } from '../validators/phone.validator';
 
-export class UserUpdateDTO {
+export class EmployeeUpdateDTO {
   @IsOptional()
   @IsString()
   @MinLength(4)

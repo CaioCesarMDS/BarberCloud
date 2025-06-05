@@ -13,28 +13,24 @@ import {
 import { EmailIsUnique } from '../validators/email.validator';
 import { PhoneIsUnique } from '../validators/phone.validator';
 
-export class CreateUserDTO {
+export class CreateEmployeeDTO {
   @IsNotEmpty()
   @IsString()
   @MinLength(4)
   name!: string;
-
+  
+  @IsNotEmpty()
+  @IsDate()
+  @Type(() => Date)
+  birth!: Date;
+  
   @IsNotEmpty()
   @IsString()
   @MinLength(9)
   @IsPhoneNumber('BR')
   @PhoneIsUnique()
   phone!: string;
-
-  @IsNotEmpty()
-  @IsDate()
-  @Type(() => Date)
-  birth!: Date;
-
-  @IsNotEmpty()
-  @IsEnum(Role)
-  role!: Role;
-
+  
   @IsNotEmpty()
   @IsString()
   @IsEmail()
@@ -42,12 +38,16 @@ export class CreateUserDTO {
   email!: string;
 
   @IsNotEmpty()
+  @IsEnum(Role)
+  role!: Role;
+  
+  @IsNotEmpty()
+  @IsString()
+  barbershopId!: string;
+  
+  @IsNotEmpty()
   @IsString()
   @MinLength(8)
   @IsStrongPassword()
   password!: string;
-
-  @IsNotEmpty()
-  @IsString()
-  barbershopId!: string;
 }
