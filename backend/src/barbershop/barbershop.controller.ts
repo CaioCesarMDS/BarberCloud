@@ -2,8 +2,8 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   UseGuards,
@@ -12,36 +12,33 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { BarbershopService } from './barbershop.service';
-import { BarbershopRequestDto } from './dtos/barbershop.request.dto';
+import { BarbershopCreateDto } from './dtos/barbershop-create.dto';
+import { BarbershopUpdateDto } from './dtos/barbershop-update.dto';
 
-@UseGuards(RolesGuard)
+@UseGuards(AuthGuard, RolesGuard)
+@Roles('ADMIN')
 @Controller('/barbershop')
 export class BarbershopController {
-  constructor(private BarbershopService: BarbershopService) {}
+  constructor(private barbershopService: BarbershopService) {}
 
-  @Roles('ADMIN')
-  @Post('/create')
-  createbBarbershop(@Body() body: BarbershopRequestDto) {
-    return this.BarbershopService.create(body);
+  @Post('create/:addressId')
+  create(
+    @Param('addressId', ParseUUIDPipe) AddressId: string,
+    @Body() data: BarbershopCreateDto,
+  ) {
+    return this.barbershopService.create(AddressId, data);
   }
 
-  @UseGuards(AuthGuard)
-  @Get(':id')
-  getUserById(@Param('id') id: string) {
-    return this.BarbershopService.getById(id);
-  }
-
-  @Roles('ADMIN')
-  @UseGuards(AuthGuard)
   @Put('update/:id')
-  updateUserById(@Param('id') id: string, @Body() data: BarbershopRequestDto) {
-    return this.BarbershopService.updateById(id, data);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() data: BarbershopUpdateDto,
+  ) {
+    return this.barbershopService.update(id, data);
   }
 
-  @Roles('ADMIN')
-  @UseGuards(AuthGuard)
   @Delete(':id')
-  deleteUserById(@Param('id') id: string) {
-    return this.BarbershopService.deleteById(id);
+  delete(@Param('id', ParseUUIDPipe) id: string) {
+    return this.barbershopService.delete(id);
   }
 }

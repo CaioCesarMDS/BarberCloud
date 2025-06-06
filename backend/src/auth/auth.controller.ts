@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { JwtPayload } from '../common/interfaces/jwt.payload';
+import { JwtPayload } from '../common/interfaces/jwt-payload';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { User } from './decorators/auth.decorator';
@@ -11,13 +11,13 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('signup')
-  async signUp(@Body() body: SignUpDTO) {
-    return await this.authService.signUp(body);
+  async signUp(@Body() data: SignUpDTO) {
+    return await this.authService.signUp(data);
   }
 
   @Post('signin')
-  async signIn(@Body() body: SignInDTO) {
-    return await this.authService.signIn(body);
+  async signIn(@Body() data: SignInDTO) {
+    return await this.authService.signIn(data);
   }
 
   @UseGuards(AuthGuard)

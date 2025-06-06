@@ -1,92 +1,46 @@
-// src/barbershop/barbershop.repository.ts
 import { Injectable } from '@nestjs/common';
+import { Barbershop } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
-import { Barbershop, AddressBarbershop } from '@prisma/client';
-import { BarbershopRequestDto } from './dtos/barbershop.request.dto';
+import { BarbershopCreateDto } from './dtos/barbershop-create.dto';
+import { BarbershopUpdateDto } from './dtos/barbershop-update.dto';
+import { IBarbershopRepository } from './interfaces/barbershop-repository.interface';
 
 @Injectable()
-export class BarbershopRepository {
+export class BarbershopRepository implements IBarbershopRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createAddress(data: BarbershopRequestDto): Promise<AddressBarbershop> {
-    return this.prisma.addressBarbershop.create({
-      data: {
-        number: data.number,
-        street: data.street,
-        complement: data.complement,
-        neighborhood: data.neighborhood,
-        city: data.city,
-        state: data.state,
-        country: data.country,
-        zipCode: data.zipCode,
-      },
-    });
-  }
-
-  async createBarbershop(
-    data: BarbershopRequestDto,
-    addressId: string,
-  ): Promise<Barbershop> {
+  create(addressId: string, data: BarbershopCreateDto): Promise<Barbershop> {
     return this.prisma.barbershop.create({
       data: {
         name: data.name,
-        imageUrl: data.imageUrl,
-        timeOpen: data.timeOpen,
-        timeClose: data.timeClose,
+        description: data.description,
         addressId,
       },
     });
   }
 
-  async findById(barbershopId: string): Promise<Barbershop | null> {
-    return this.prisma.barbershop.findUnique({
-      where: { id: barbershopId },
-    });
-  }
-
-  async findAddressById(addressId: string): Promise<AddressBarbershop | null> {
-    return this.prisma.addressBarbershop.findUnique({
-      where: { id: addressId },
-    });
-  }
-
-  async updateAddress(
-    addressId: string,
-    data: BarbershopRequestDto,
-  ): Promise<AddressBarbershop> {
-    return this.prisma.addressBarbershop.update({
-      where: { id: addressId },
-      data: {
-        number: data.number,
-        street: data.street,
-        complement: data.complement,
-        neighborhood: data.neighborhood,
-        city: data.city,
-        state: data.state,
-        country: data.country,
-        zipCode: data.zipCode,
-      },
-    });
-  }
-
-  async updateBarbershop(
-    barbershopId: string,
-    data: BarbershopRequestDto,
-  ): Promise<Barbershop> {
+  update(id: string, data: BarbershopUpdateDto): Promise<Barbershop> {
     return this.prisma.barbershop.update({
-      where: { id: barbershopId },
+      where: { id: id },
       data: {
         name: data.name,
-        imageUrl: data.imageUrl,
-        timeOpen: data.timeOpen,
-        timeClose: data.timeClose,
+        description: data.description,
       },
     });
   }
 
-  async deleteById(barbershopId: string): Promise<Barbershop> {
-    return this.prisma.barbershop.delete({
-      where: { id: barbershopId },
+  softDelete(id: string): Promise<Barbershop> {
+    return this.prisma.barbershop.update({
+      where: { id: id },
+      data: {
+        isActive: false,
+      },
+    });
+  }
+
+  find(id: string): Promise<Barbershop | null> {
+    return this.prisma.barbershop.findUnique({
+      where: { id: id },
     });
   }
 }

@@ -1,9 +1,9 @@
-import { Role } from '@prisma/client';
+import { SystemRole } from '@prisma/client';
 
 export class AuthResponseDTO {
   id!: string;
   name!: string;
   email!: string;
-  role!: Role;
+  role!: SystemRole;
   token!: string;
 }

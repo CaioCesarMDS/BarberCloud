@@ -1,41 +1,55 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDTO } from './dtos/create-user.dto';
-import { UserUpdateDTO } from './dtos/user-update.dto';
-import { UserResponseDto } from './dtos/user.request.dto';
+import { UserCreateDto } from './dtos/user-create.dto';
+import { UserUpdateDto } from './dtos/user-update.dto';
 import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async create(data: CreateUserDTO): Promise<User> {
+  async create(data: UserCreateDto): Promise<User> {
     const hashedPassword = await this.hashPassword(data.password);
     return this.userRepository.create(data, hashedPassword);
   }
 
-  remove(id: string): Promise<User> {
-    return this.userRepository.remove(id);
+  async update(id: string, data: UserUpdateDto): Promise<User> {
+    const user = await this.userRepository.update(id, data);
+    return this.ensureUserExists(user);
   }
 
-  update(id: string, userData: UserUpdateDTO): Promise<User | null> {
-    return this.userRepository.update(id, userData);
+  async delete(id: string): Promise<User> {
+    const user = await this.userRepository.softDelete(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
   }
 
-  findAllByName(name: string): Promise<UserResponseDto[]> {
-    return this.userRepository.findAllByName(name);
+  async findById(id: string): Promise<User> {
+    const user = await this.userRepository.findById(id);
+    return this.ensureUserExists(user);
   }
 
-  findById(id: string): Promise<User | null> {
-    return this.userRepository.findById(id);
+  async findByPhone(phone: string): Promise<User> {
+    const user = await this.userRepository.findByPhone(phone);
+    return this.ensureUserExists(user);
   }
 
-  findByEmail(email: string): Promise<User | null> {
-    return this.userRepository.findByEmail(email);
+  async findByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.findByEmail(email);
+    return this.ensureUserExists(user);
   }
 
-  hashPassword(password: string): Promise<string> {
+  private ensureUserExists(user: User | null): User {
+    if (!user || !user.isActive) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
+  private hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, 10);
   }
 
