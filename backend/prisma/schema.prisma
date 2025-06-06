@@ -24,7 +24,7 @@ model ClientSubscribeBarbershop {
   clientId     String
   Barbershop   Barbershop @relation(fields: [barbershopId], references: [id])
   barbershopId String
-  subscribeIn  DateTime @default(now())
+  subscribeIn  DateTime   @default(now())
 
   @@id([clientId, barbershopId])
 }
@@ -32,14 +32,29 @@ model ClientSubscribeBarbershop {
 model Barbershop {
   id        String @id @unique @default(uuid())
   name      String
-  address   String
   imageUrl  String
   timeOpen  String
   timeClose String
+  addressId String @unique
 
   clientSubscribeBarbershop ClientSubscribeBarbershop[]
   services                  Services[]
   User                      Employee[]
+
+  address AddressBarbershop @relation(fields: [addressId], references: [id], onDelete: Cascade)
+}
+
+model AddressBarbershop {
+  id           String      @id @unique @default(uuid())
+  number       String
+  street       String
+  complement   String
+  neighborhood String
+  city         String
+  state        String
+  country      String
+  zipCode      String
+  barbershop   Barbershop?
 }
 
 model Employee {
@@ -72,7 +87,6 @@ model ServicesOnScheduling {
   serviceId    String
   scheduling   Scheduling @relation(fields: [schedulingId], references: [id])
   schedulingId String
-  priceTotal   Decimal    @db.Money
 
   @@id([serviceId, schedulingId])
 }
@@ -83,6 +97,7 @@ model Scheduling {
   clientId     String                 @unique
   employeeId   String                 @unique
   dateTime     DateTime
+  priceTotal   Decimal    @db.Money
   services     ServicesOnScheduling[]
 
   client   Client   @relation(fields: [clientId], references: [id])
