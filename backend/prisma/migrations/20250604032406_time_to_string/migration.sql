@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "Barbershop" ALTER COLUMN "timeClose" SET DATA TYPE TEXT,
-ALTER COLUMN "timeOpen" SET DATA TYPE TEXT;

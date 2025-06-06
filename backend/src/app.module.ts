@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { UserModule } from './users/user.module';
+import { EmployeeModule } from './employee/employee.module';
 
 @Module({
   imports: [
@@ -9,7 +9,7 @@ import { UserModule } from './users/user.module';
       isGlobal: true,
     }),
     AuthModule,
-    UserModule,
+    EmployeeModule,
   ],
   controllers: [],
   providers: [],

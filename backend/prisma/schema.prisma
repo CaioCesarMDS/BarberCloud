@@ -7,36 +7,41 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id           String    @id @unique @default(uuid())
-  name         String
-  birth        DateTime?
-  phone        String    @unique
-  email        String    @unique
-  password     String
-  role         Role      @default(CLIENT)
-  barbershopId String
+model Client {
+  id       String   @id @unique @default(uuid())
+  name     String
+  birth    DateTime
+  phone    String   @unique
+  email    String   @unique
+  password String
 
-  barbershop          Barbershop            @relation(fields: [barbershopId], references: [id])
-  scheduling_barber   SchedulingService[]   @relation("barber")
-  scheduling_client   SchedulingService[]   @relation("client")
-  noScheduling_barber NoSchedulingService[] @relation("barber")
-  noScheduling_client NoSchedulingService[] @relation("client")
+  clientSubscribeBarbershop ClientSubscribeBarbershop[]
+  Scheduling                Scheduling[]
+}
+
+model ClientSubscribeBarbershop {
+  Client       Client     @relation(fields: [clientId], references: [id])
+  clientId     String
+  Barbershop   Barbershop @relation(fields: [barbershopId], references: [id])
+  barbershopId String
+  subscribeIn  DateTime   @default(now())
+
+  @@id([clientId, barbershopId])
 }
 
 model Barbershop {
-  id                    String                @id @unique @default(uuid())
-  name                  String
-  timeOpen              String
-  timeClose             String
-  addressId             String                @unique
-  imageUrl              String
-  address               AddressBarbershop     @relation(fields: [addressId], references: [id], onDelete: Cascade)
-  services              BarberServices[]
-  schedulingsServices   SchedulingService[]
-  noSchedulingsServices NoSchedulingService[]
+  id        String @id @unique @default(uuid())
+  name      String
+  imageUrl  String
+  timeOpen  String
+  timeClose String
+  addressId String @unique
 
-  user User[]
+  clientSubscribeBarbershop ClientSubscribeBarbershop[]
+  services                  Services[]
+  User                      Employee[]
+
+  address AddressBarbershop @relation(fields: [addressId], references: [id], onDelete: Cascade)
 }
 
 model AddressBarbershop {
@@ -52,46 +57,54 @@ model AddressBarbershop {
   barbershop   Barbershop?
 }
 
-model BarberServices {
-  id                 String                @id @unique @default(uuid())
-  name               String
-  description        String
-  price              Decimal               @db.Money
-  barbershopId       String
-  schedulesService   SchedulingService[]
-  noSchedulesService NoSchedulingService[]
-  barbershop         Barbershop            @relation(fields: [barbershopId], references: [id])
+model Employee {
+  id           String   @id @unique @default(uuid())
+  name         String
+  birth        DateTime
+  phone        String   @unique
+  email        String   @unique
+  password     String
+  role         Role     @default(EMPLOYEE)
+  barbershopId String
+
+  Barbershop Barbershop   @relation(fields: [barbershopId], references: [id])
+  Scheduling Scheduling[]
 }
 
-model SchedulingService {
-  id           Int              @id @unique @default(autoincrement())
-  barbershopId String           @unique
-  clientId     String           @unique
-  barberId     String           @unique
-  services     BarberServices[]
-  dateHour     DateTime
-  priceTotal   Decimal          @db.Money
-  barber       User             @relation("barber", fields: [barberId], references: [id])
-  client       User             @relation("client", fields: [clientId], references: [id])
-  barbershop   Barbershop       @relation(fields: [barbershopId], references: [id])
+model Services {
+  id           String  @id @unique @default(uuid())
+  name         String
+  description  String
+  price        Decimal @db.Money
+  barbershopId String
+
+  schedules  ServicesOnScheduling[]
+  barbershop Barbershop             @relation(fields: [barbershopId], references: [id])
 }
 
-model NoSchedulingService {
-  id           Int              @id @unique @default(autoincrement())
-  barbershopId String           @unique
-  clientId     String           @unique
-  barberId     String           @unique
-  services     BarberServices[]
-  date         DateTime
-  priceTotal   Decimal          @db.Money
+model ServicesOnScheduling {
+  service      Services   @relation(fields: [serviceId], references: [id])
+  serviceId    String
+  scheduling   Scheduling @relation(fields: [schedulingId], references: [id])
+  schedulingId String
 
-  barber     User       @relation("barber", fields: [barberId], references: [id])
-  client     User       @relation("client", fields: [clientId], references: [id])
-  barbershop Barbershop @relation(fields: [barbershopId], references: [id])
+  @@id([serviceId, schedulingId])
+}
+
+model Scheduling {
+  id           String                 @id @unique @default(uuid())
+  barbershopId String                 @unique
+  clientId     String                 @unique
+  employeeId   String                 @unique
+  dateTime     DateTime
+  priceTotal   Decimal    @db.Money
+  services     ServicesOnScheduling[]
+
+  client   Client   @relation(fields: [clientId], references: [id])
+  employee Employee @relation(fields: [employeeId], references: [id])
 }
 
 enum Role {
   ADMIN
-  BARBER
-  CLIENT
+  EMPLOYEE
 }
