@@ -12,9 +12,9 @@ import api from "../services/api";
 const formSchema = z
   .object({
     name: z.string().min(4, { message: "Name must be at least 4 characters." }),
+    birthDate: z.date({ message: "Invalid date." }),
     phone: z.string().min(10, { message: "Phone must be at least 10 characters." }),
     email: z.string().email({ message: "Invalid email address." }),
-    birth: z.date({ message: "Invalid date." }),
     password: z
       .string()
       .min(8, { message: "Be at least 8 characters long" })
@@ -40,9 +40,9 @@ export default function SignUp() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      birthDate: undefined,
       phone: "",
       email: "",
-      birth: undefined,
       password: "",
       confirmPassword: "",
       role: "CLIENT",
@@ -72,7 +72,7 @@ export default function SignUp() {
         <InputField control={form.control} name="phone" label="Phone" type="tel" />
         <InputField control={form.control} name="email" label="Email" type="email" />
 
-        <DatePickerField control={form.control} name="birth" label="Birth" />
+        <DatePickerField control={form.control} name="birthDate" label="Date Of Birth" />
 
         <InputField control={form.control} name="password" label="Password" type="password" />
         <InputField control={form.control} name="confirmPassword" label="Confirm Password" type="password" />

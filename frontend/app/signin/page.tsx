@@ -11,7 +11,7 @@ import api from "../services/api";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
-  password: z.string().min(6, { message: "Password must be at least 8 characters." }),
+  password: z.string().min(8, { message: "Password must be at least 8 characters." }),
 });
 
 type FormData = z.infer<typeof formSchema>;
