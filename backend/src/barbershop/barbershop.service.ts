@@ -1,39 +1,58 @@
-import { Injectable } from '@nestjs/common';
-import { Barbershop } from '@prisma/client';
+// src/barbershop/barbershop.service.ts
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { BarbershopRepository } from './barbershop.repository';
-import { BarbershopCreateDto } from './dtos/barbershop-create.dto';
-import { BarbershopUpdateDto } from './dtos/barbershop-update.dto';
+import { BarbershopResponseDto } from './dtos/barbershop.response.dto';
+import { BarbershopRequestDto } from './dtos/barbeshop.request.dto';
 
 @Injectable()
 export class BarbershopService {
   constructor(private readonly barbershopRepository: BarbershopRepository) {}
 
-  create(addressId: string, data: BarbershopCreateDto): Promise<Barbershop> {
-    return this.barbershopRepository.create(addressId, data);
+  async create(data: BarbershopRequestDto): Promise<BarbershopResponseDto> {
+    const address = await this.barbershopRepository.createAddress(data);
+
+    const barbershop = await this.barbershopRepository.createBarbershop(
+      data,
+      address.id,
+    );
+
+    return new BarbershopResponseDto(barbershop, address);
   }
 
-  async update(id: string, data: BarbershopUpdateDto): Promise<Barbershop> {
-    const barbershop = await this.barbershopRepository.update(id, data);
-    return this.ensureBarbershopExists(barbershop);
+  async getById(id: string): Promise<BarbershopResponseDto> {
+    const barbershop = await this.barbershopRepository.findById(id);
+    if (!barbershop) throw new NotFoundException('Barbershop not found');
+
+    const address = await this.barbershopRepository.findAddressById(
+      barbershop.addressId,
+    );
+    if (!address) throw new NotFoundException('Address not found');
+
+    return new BarbershopResponseDto(barbershop, address);
   }
 
-  async delete(id: string): Promise<Barbershop | null> {
-    const barbershop = await this.barbershopRepository.softDelete(id);
-    if (!barbershop) {
-      throw new Error('Barbershop not found');
-    }
-    return barbershop;
+  async updateById(
+    id: string,
+    data: BarbershopRequestDto,
+  ): Promise<BarbershopResponseDto> {
+    const barbershop = await this.barbershopRepository.findById(id);
+    if (!barbershop) throw new NotFoundException('Barbershop not found');
+
+    await this.barbershopRepository.updateAddress(barbershop.addressId, data);
+
+    await this.barbershopRepository.updateBarbershop(id, data);
+
+    return this.getById(id);
   }
 
-  async find(id: string): Promise<Barbershop | null> {
-    const barbershop = await this.barbershopRepository.find(id);
-    return this.ensureBarbershopExists(barbershop);
-  }
+  async deleteById(id: string): Promise<{ success: boolean; message: string }> {
+    const barbershop = await this.barbershopRepository.findById(id);
+    if (!barbershop) throw new NotFoundException('Barbershop not found');
 
-  private ensureBarbershopExists(barbershop: Barbershop | null): Barbershop {
-    if (!barbershop || !barbershop.isActive) {
-      throw new Error('Barbershop not found');
-    }
-    return barbershop;
+    await this.barbershopRepository.deleteById(id);
+    return {
+      success: true,
+      message: 'Barbershop deleted successfully',
+    };
   }
 }

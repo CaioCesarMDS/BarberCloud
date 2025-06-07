@@ -1,28 +1,45 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { JwtPayload } from '../common/interfaces/jwt-payload';
+import { RoleJwtPayload } from '../common/interfaces/jwt.payload';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { User } from './decorators/auth.decorator';
 import { SignInDTO } from './dtos/sign-in.dto';
-import { SignUpDTO } from './dtos/sign-up.dto';
+import { ClientSignUpDTO, EmployeeSignUpDTO } from './dtos/sign-up.dto';
+import { JwtPayload } from './interfaces/jwt.payload';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('signup')
-  async signUp(@Body() data: SignUpDTO) {
-    return await this.authService.signUp(data);
+  @Post('client/signup')
+  async clientSignUp(@Body() body: ClientSignUpDTO) {
+    return await this.authService.clientSignUp(body);
   }
 
-  @Post('signin')
-  async signIn(@Body() data: SignInDTO) {
-    return await this.authService.signIn(data);
+  @Post('employee/signup')
+  async EmployeeSignUp(@Body() body: EmployeeSignUpDTO) {
+    return await this.authService.employeeSignUp(body);
+  }
+
+  @Post('client/signin')
+  async clientSignIn(@Body() body: SignInDTO) {
+    return await this.authService.clientSignIn(body);
+  }
+
+  @Post('employee/signin')
+  async employeeSignIn(@Body() body: SignInDTO) {
+    return await this.authService.employeeSignIn(body);
   }
 
   @UseGuards(AuthGuard)
-  @Get('me')
-  getProfile(@User() user: JwtPayload) {
+  @Get('employee/me')
+  employeeGetProfile(@User() user: RoleJwtPayload) {
+    return user;
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('client/me')
+  clientGetProfile(@User() user: JwtPayload) {
     return user;
   }
 }

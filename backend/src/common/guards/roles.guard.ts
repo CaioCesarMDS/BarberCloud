@@ -3,16 +3,32 @@ import {
   ExecutionContext,
   ForbiddenException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
+import { JwtService } from '@nestjs/jwt';
 import { ROLES_KEY } from '../decorators/roles.decorator';
-import { AuthenticatedRequest } from '../interfaces/authenticated-request';
+import { AuthenticatedRequest } from '../interfaces/authenticated.request';
+import { RoleJwtPayload } from '../interfaces/jwt.payload';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(
+    private reflector: Reflector,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  private extractTokenFromHeader(
+    request: AuthenticatedRequest,
+  ): string | undefined {
+    const [type, token] = request.headers['authorization']?.split(' ') ?? [];
+
+    return type === 'Bearer' ? token : undefined;
+  }
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredRoles = this.reflector.getAllAndOverride<string[]>(
       ROLES_KEY,
       [context.getHandler(), context.getClass()],
@@ -21,16 +37,22 @@ export class RolesGuard implements CanActivate {
     if (!requiredRoles || requiredRoles.length === 0) {
       return true;
     }
-
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
-    const user = request.user;
+    const token = this.extractTokenFromHeader(request);
 
+    if (!token) {
+      throw new UnauthorizedException('Access token is missing or malformed.');
+    }
+
+    const payload: RoleJwtPayload = await this.jwtService.verifyAsync(token, {
+      secret: this.configService.get<string>('JWT_SECRET'),
+    });
+    const user = payload;
     if (!user || !requiredRoles.includes(user.role)) {
       throw new ForbiddenException(
         `Access denied. User role '${user?.role}' does not have permission to access this resource.`,
       );
     }
-
     return true;
   }
 }

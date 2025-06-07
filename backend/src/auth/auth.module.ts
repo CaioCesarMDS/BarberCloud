@@ -1,18 +1,18 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { AddressModule } from 'src/address/address.module';
 import { BarbershopModule } from 'src/barbershop/barbershop.module';
-import { UserModule } from 'src/users/user.module';
+import { ClientModule } from 'src/client/client.module';
+import { EmployeeModule } from 'src/employee/employee.module';
 import { AuthController } from './auth.controller';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 
 @Module({
   imports: [
-    forwardRef(() => UserModule),
+    forwardRef(() => EmployeeModule),
     forwardRef(() => BarbershopModule),
-    forwardRef(() => AddressModule),
+    forwardRef(() => ClientModule),
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -20,7 +20,8 @@ import { AuthService } from './auth.service';
         signOptions: { expiresIn: configService.get<string>('JWT_EXPIRATION') },
       }),
     }),
-    UserModule,
+    EmployeeModule,
+    ClientModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, AuthGuard],

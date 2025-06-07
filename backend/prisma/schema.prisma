@@ -7,114 +7,104 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum SystemRole {
-  ADMIN
-  BARBER
-  CLIENT
+model Client {
+  id       String   @id @unique @default(uuid())
+  name     String
+  birth    DateTime
+  phone    String   @unique
+  email    String   @unique
+  password String
+
+  clientSubscribeBarbershop ClientSubscribeBarbershop[]
+  Scheduling                Scheduling[]
 }
 
-enum BarbershopRole {
-  OWNER
-  BARBER
-}
+model ClientSubscribeBarbershop {
+  Client       Client     @relation(fields: [clientId], references: [id])
+  clientId     String
+  Barbershop   Barbershop @relation(fields: [barbershopId], references: [id])
+  barbershopId String
+  subscribeIn  DateTime   @default(now())
 
-model User {
-  id        String   @id @default(uuid())
-  name      String
-  birthDate DateTime
-  phone     String   @unique
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  isActive  Boolean  @default(true)
-
-  role SystemRole @default(CLIENT)
-
-  bookings     Booking[]
-  affiliations BarbershopEmployee[]
+  @@id([clientId, barbershopId])
 }
 
 model Barbershop {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  isActive    Boolean  @default(true)
-  addressId String  @unique
+  id        String @id @unique @default(uuid())
+  name      String
+  imageUrl  String
+  timeOpen  String
+  timeClose String
+  addressId String @unique
 
-  address   Address @relation(fields: [addressId], references: [id], onDelete: Restrict)
+  clientSubscribeBarbershop ClientSubscribeBarbershop[]
+  services                  Services[]
+  User                      Employee[]
 
-  services  Service[]
-  bookings  Booking[]
-  employees BarbershopEmployee[]
+  address AddressBarbershop @relation(fields: [addressId], references: [id], onDelete: Cascade)
 }
 
-model BarbershopEmployee {
-  id           String         @id @default(uuid())
-  createdAt    DateTime       @default(now())
-  userId       String
-  barbershopId String
-  role         BarbershopRole @default(BARBER)
-
-  user       User       @relation(fields: [userId], references: [id])
-  barbershop Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Restrict)
-  bookings   Booking[]  @relation("EmployeeBookings")
-
-  @@unique([userId, barbershopId])
-}
-
-model Address {
-  id           String @id @default(uuid())
+model AddressBarbershop {
+  id           String      @id @unique @default(uuid())
   number       String
   street       String
+  complement   String
   neighborhood String
   city         String
   state        String
   country      String
   zipCode      String
-
-  barbershop Barbershop?
+  barbershop   Barbershop?
 }
 
-model Service {
-  id          String          @id @default(uuid())
-  name        String
-  description String?
-  category    ServiceCategory
-  price       Decimal         @db.Decimal(10, 2)
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-
+model Employee {
+  id           String   @id @unique @default(uuid())
+  name         String
+  birth        DateTime
+  phone        String   @unique
+  email        String   @unique
+  password     String
+  role         Role     @default(EMPLOYEE)
   barbershopId String
-  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Restrict)
 
-  bookings Booking[]
+  Barbershop Barbershop   @relation(fields: [barbershopId], references: [id])
+  Scheduling Scheduling[]
 }
 
-enum ServiceCategory {
-  HAIRCUT
-  BEARD
-  FINISHING
-  COLORING
-  COMBOS
-  OTHER
-}
-
-model Booking {
-  id        String   @id @default(uuid())
-  date      DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  userId       String
+model Services {
+  id           String  @id @unique @default(uuid())
+  name         String
+  description  String
+  price        Decimal @db.Money
   barbershopId String
+
+  schedules  ServicesOnScheduling[]
+  barbershop Barbershop             @relation(fields: [barbershopId], references: [id])
+}
+
+model ServicesOnScheduling {
+  service      Services   @relation(fields: [serviceId], references: [id])
   serviceId    String
-  employeeId   String?
+  scheduling   Scheduling @relation(fields: [schedulingId], references: [id])
+  schedulingId String
 
-  user       User                @relation(fields: [userId], references: [id], onDelete: Restrict)
-  barbershop Barbershop          @relation(fields: [barbershopId], references: [id], onDelete: Restrict)
-  service    Service             @relation(fields: [serviceId], references: [id], onDelete: Restrict)
-  employee   BarbershopEmployee? @relation("EmployeeBookings", fields: [employeeId], references: [id], onDelete: SetNull)
+  @@id([serviceId, schedulingId])
+}
+
+model Scheduling {
+  id           String                 @id @unique @default(uuid())
+  barbershopId String                 @unique
+  clientId     String                 @unique
+  employeeId   String                 @unique
+  dateTime     DateTime
+  priceTotal   Decimal                @db.Money
+  services     ServicesOnScheduling[]
+
+  client   Client   @relation(fields: [clientId], references: [id])
+  employee Employee @relation(fields: [employeeId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  EMPLOYEE
 }
