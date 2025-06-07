@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Barbershop, Client, ClientSubscribeBarbershop } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { ClientRepository } from './client.repository';
 import { CreateClientDTO } from './dtos/client-create.dto';
+import { ClientDetailsDto } from './dtos/client-details.dto';
 import { ClientUpdateDTO } from './dtos/client-update.dto';
 import { ClientResponseDto } from './dtos/client.response.dto';
-import { ClientRepository } from './client.repository';
-import { ClientDetailsDto } from './dtos/client-details.dto';
 
 @Injectable()
 export class ClientService {
@@ -17,31 +17,51 @@ export class ClientService {
   }
 
   async remove(id: string): Promise<ClientResponseDto> {
-    return new ClientResponseDto(await this.clientRepository.remove(id))
+    return new ClientResponseDto(await this.clientRepository.remove(id));
   }
 
-  async update(id: string, clientData: ClientUpdateDTO): Promise<ClientResponseDto | null> {
-    const clientUpdated: Client | null = await this.clientRepository.update(id, clientData);
-    return clientUpdated? new ClientResponseDto(clientUpdated): null;
+  async update(
+    id: string,
+    clientData: ClientUpdateDTO,
+  ): Promise<ClientResponseDto | null> {
+    const clientUpdated: Client | null = await this.clientRepository.update(
+      id,
+      clientData,
+    );
+    return clientUpdated ? new ClientResponseDto(clientUpdated) : null;
   }
 
-  findAllByName(name: string): Promise<ClientResponseDto[]> {
-    return this.clientRepository.findAllByName(name);
+  async findAllByName(name: string): Promise<ClientResponseDto[]> {
+    console.log(name);
+    return await this.clientRepository.findAllByName(name);
   }
 
-  findById(id: string): Promise<Client | null> {
-    return this.clientRepository.findById(id);
+  async findById(id: string): Promise<ClientResponseDto> {
+    const client: Client | null = await this.clientRepository.findById(id);
+    if (client) {
+      return new ClientResponseDto(client);
+    } else {
+      throw new BadRequestException('Client Not Found!');
+    }
   }
 
   async findDetailsById(id: string): Promise<ClientDetailsDto | null> {
-    const client: Client | null = await this.findById(id);
-    const subscribeIn: ClientSubscribeBarbershop[] | null = await this.clientRepository.findBarbershopsSubscribeById(id);
-    const barbershops: any = [];
-    if(subscribeIn && client) {
-      subscribeIn.map((sucribe) => {
-        barbershops.push(this.clientRepository.findBarbershopById(sucribe.barbershopId));
-      });
-      return new ClientDetailsDto(client, subscribeIn, barbershops)
+    const client: Client | null = await this.clientRepository.findById(id);
+    const subscribeIn: ClientSubscribeBarbershop[] | null =
+      await this.clientRepository.findBarbershopsSubscribeById(id);
+    const barbershops: Barbershop[] = [];
+    if (subscribeIn && client) {
+      for (const sucribe of subscribeIn) {
+        const barbershop = await this.clientRepository.findBarbershopById(
+          sucribe.barbershopId,
+        );
+        if (barbershop) {
+          barbershops.push(barbershop);
+        } else {
+          throw new BadRequestException('Barbershop Not Found!');
+        }
+      }
+      return new ClientDetailsDto(client, subscribeIn, barbershops);
     } else {
       return null;
     }

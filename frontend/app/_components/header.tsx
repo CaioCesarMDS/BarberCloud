@@ -9,7 +9,7 @@ export default function Header() {
     <Card>
       <CardContent className="px-5 py-4 flex justify-between items-center">
         <Link href="/">
-          <Image src="/logo.png" alt="IF Barber logo" width={50} height={50} />
+          <Image src="/logo.png" alt="IF Barber logo" width={60} height={60} />
         </Link>
         <Button variant="outline" size="icon">
           <MenuIcon size={18} />

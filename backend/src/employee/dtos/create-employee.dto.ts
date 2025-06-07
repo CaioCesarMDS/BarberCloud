@@ -10,27 +10,27 @@ import {
   IsStrongPassword,
   MinLength,
 } from 'class-validator';
-import { EmailIsUnique } from '../validators/email.validator';
-import { PhoneIsUnique } from '../validators/phone.validator';
+import { EmailIsUnique } from '../../auth/validators/email.validator';
+import { PhoneIsUnique } from '../../auth/validators/phone.validator';
 
 export class CreateEmployeeDTO {
   @IsNotEmpty()
   @IsString()
   @MinLength(4)
   name!: string;
-  
+
   @IsNotEmpty()
   @IsDate()
   @Type(() => Date)
   birth!: Date;
-  
+
   @IsNotEmpty()
   @IsString()
   @MinLength(9)
   @IsPhoneNumber('BR')
   @PhoneIsUnique()
   phone!: string;
-  
+
   @IsNotEmpty()
   @IsString()
   @IsEmail()
@@ -40,11 +40,11 @@ export class CreateEmployeeDTO {
   @IsNotEmpty()
   @IsEnum(Role)
   role!: Role;
-  
+
   @IsNotEmpty()
   @IsString()
   barbershopId!: string;
-  
+
   @IsNotEmpty()
   @IsString()
   @MinLength(8)

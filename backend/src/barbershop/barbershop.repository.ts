@@ -1,8 +1,8 @@
 // src/barbershop/barbershop.repository.ts
 import { Injectable } from '@nestjs/common';
+import { AddressBarbershop, Barbershop } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
-import { Barbershop, AddressBarbershop } from '@prisma/client';
-import { BarbershopRequestDto } from './dtos/barbershop.request.dto';
+import { BarbershopRequestDto } from './dtos/barbeshop.request.dto';
 
 @Injectable()
 export class BarbershopRepository {

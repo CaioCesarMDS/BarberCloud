@@ -1,8 +1,6 @@
-import { Role } from '@prisma/client';
 import {
   IsDate,
   IsEmail,
-  IsEnum,
   IsOptional,
   IsPhoneNumber,
   IsString,
@@ -10,8 +8,8 @@ import {
   MinLength,
 } from 'class-validator';
 
-import { EmailIsUnique } from '../validators/email.validator';
-import { PhoneIsUnique } from '../validators/phone.validator';
+import { EmailIsUnique } from '../../auth/validators/email.validator';
+import { PhoneIsUnique } from '../../auth/validators/phone.validator';
 
 export class ClientUpdateDTO {
   @IsOptional()
@@ -31,13 +29,9 @@ export class ClientUpdateDTO {
   birth?: Date;
 
   @IsOptional()
-  @IsEnum(Role)
-  role?: Role;
-
-  @IsOptional()
   @IsString()
   @IsEmail()
-  @EmailIsUnique()
+  @EmailIsUnique({ message: 'Email must be unique' })
   email?: string;
 
   @IsOptional()

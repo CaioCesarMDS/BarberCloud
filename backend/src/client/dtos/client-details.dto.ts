@@ -8,7 +8,11 @@ export class ClientDetailsDto {
   readonly birth?: string;
   readonly subscribeIn?: BarbershopsSubscribe[];
 
-  constructor(client: Client, subscribes: ClientSubscribeBarbershop[], barbershops: Barbershop[]) {
+  constructor(
+    client: Client,
+    subscribes: ClientSubscribeBarbershop[],
+    barbershops: Barbershop[],
+  ) {
     this.id = client.id;
     this.name = client.name;
     this.email = client.email;
@@ -16,20 +20,22 @@ export class ClientDetailsDto {
     this.phone = client.phone;
     let count: number = 0;
     subscribes.map((subscription) => {
-      this.subscribeIn?.push(new BarbershopsSubscribe(subscription, barbershops[0]));
+      this.subscribeIn?.push(
+        new BarbershopsSubscribe(subscription, barbershops[0]),
+      );
       count++;
     });
   }
 }
 
 class BarbershopsSubscribe {
-    readonly barbershopId!: string;
-    readonly name!: string;
-    readonly subscribeIn!: Date;
+  readonly barbershopId!: string;
+  readonly name!: string;
+  readonly subscribeIn!: Date;
 
-    constructor(subscription: ClientSubscribeBarbershop, barbershop: Barbershop) {
-      this.barbershopId = barbershop.id;
-      this.name = barbershop.name;
-      this.subscribeIn = subscription.subscribeIn;
-    }
+  constructor(subscription: ClientSubscribeBarbershop, barbershop: Barbershop) {
+    this.barbershopId = barbershop.id;
+    this.name = barbershop.name;
+    this.subscribeIn = subscription.subscribeIn;
+  }
 }

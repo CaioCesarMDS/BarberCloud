@@ -1,8 +1,8 @@
 // src/barbershop/barbershop.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { BarbershopRepository } from './barbershop.repository';
-import { BarbershopRequestDto } from './dtos/barbershop.request.dto';
 import { BarbershopResponseDto } from './dtos/barbershop.response.dto';
+import { BarbershopRequestDto } from './dtos/barbeshop.request.dto';
 
 @Injectable()
 export class BarbershopService {

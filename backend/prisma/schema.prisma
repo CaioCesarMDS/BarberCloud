@@ -97,7 +97,7 @@ model Scheduling {
   clientId     String                 @unique
   employeeId   String                 @unique
   dateTime     DateTime
-  priceTotal   Decimal    @db.Money
+  priceTotal   Decimal                @db.Money
   services     ServicesOnScheduling[]
 
   client   Client   @relation(fields: [clientId], references: [id])

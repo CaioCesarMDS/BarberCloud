@@ -13,8 +13,19 @@ export class EmailValidator implements ValidatorConstraintInterface {
   constructor(private readonly prisma: PrismaService) {}
 
   async validate(email: string): Promise<boolean> {
-    const user = await this.prisma.user.findUnique({ where: { email } });
-    return !user;
+    const employee = await this.prisma.employee.findUnique({
+      where: { email },
+    });
+    const client = await this.prisma.client.findUnique({ where: { email } });
+    if (email == employee?.email || email === client?.email) {
+      return true;
+    } else {
+      if (employee) {
+        return !employee;
+      } else {
+        return !client;
+      }
+    }
   }
 
   defaultMessage(): string {
@@ -22,7 +33,7 @@ export class EmailValidator implements ValidatorConstraintInterface {
   }
 }
 
-export const EmailIsUnique = (validatorOptions: ValidationOptions) => {
+export const EmailIsUnique = (validatorOptions?: ValidationOptions) => {
   return (object: object, property: string) => {
     registerDecorator({
       target: object.constructor,

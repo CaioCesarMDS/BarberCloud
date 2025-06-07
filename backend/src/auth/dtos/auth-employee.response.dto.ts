@@ -1,6 +1,6 @@
 import { Role } from '@prisma/client';
 
-export class AuthResponseDTO {
+export class AuthEmployeeResponseDTO {
   id!: string;
   name!: string;
   email!: string;
