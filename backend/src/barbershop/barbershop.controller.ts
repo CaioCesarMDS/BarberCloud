@@ -19,7 +19,6 @@ import { BarbershopRequestDto } from './dtos/barbershop.request.dto';
 export class BarbershopController {
   constructor(private BarbershopService: BarbershopService) {}
 
-  @Roles('ADMIN')
   @Post('/create')
   createbBarbershop(@Body() body: BarbershopRequestDto) {
     return this.BarbershopService.create(body);
@@ -30,16 +29,16 @@ export class BarbershopController {
   getUserById(@Param('id') id: string) {
     return this.BarbershopService.getById(id);
   }
-
+  
   @Roles('ADMIN')
-  @UseGuards(AuthGuard)
+  @UseGuards(RolesGuard)
   @Put('update/:id')
   updateUserById(@Param('id') id: string, @Body() data: BarbershopRequestDto) {
     return this.BarbershopService.updateById(id, data);
   }
 
   @Roles('ADMIN')
-  @UseGuards(AuthGuard)
+  @UseGuards(RolesGuard)
   @Delete(':id')
   deleteUserById(@Param('id') id: string) {
     return this.BarbershopService.deleteById(id);

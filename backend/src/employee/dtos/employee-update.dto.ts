@@ -10,8 +10,8 @@ import {
   MinLength,
 } from 'class-validator';
 
-import { EmailIsUnique } from '../validators/email.validator';
-import { PhoneIsUnique } from '../validators/phone.validator';
+import { EmailIsUnique } from '../../auth/validators/email.validator';
+import { PhoneIsUnique } from '../../auth/validators/phone.validator';
 
 export class EmployeeUpdateDTO {
   @IsOptional()

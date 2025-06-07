@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Param,
+  Post,
   Put,
   Query,
   UseGuards,
@@ -15,18 +16,25 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { EmployeeUpdateDTO } from './dtos/employee-update.dto';
 import { EmployeeService } from './employee.service';
+import { CreateEmployeeDTO } from './dtos/create-employee.dto';
 
 @UseGuards(AuthGuard, RolesGuard)
-@Controller('/Employees')
+@Controller('/employee')
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
+  
+  @Roles('ADMIN')
+  @Post('create')
+  async createEmployee(@Body() data: CreateEmployeeDTO): Promise<Employee | null> {
+    return await this.employeeService.create(data)
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string): Promise<Employee | null> {
     return this.employeeService.findById(id);
   }
 
-  @Get('search')
+  @Get('search/all')
   @Roles('ADMIN')
   getAllEmployeesByName(@Query('name') name: string) {
     if (!name?.trim()) {

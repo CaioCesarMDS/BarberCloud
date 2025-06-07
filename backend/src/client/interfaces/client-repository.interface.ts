@@ -8,7 +8,9 @@ export interface IClientRepositoryInterface {
   update(id: string, ClientData: ClientUpdateDTO): Promise<Client | null>;
   findAllByName(name: string): Promise<ClientResponseDto[]>;
   findById(id: string): Promise<Client | null>;
-  findBarbershopsSubscribeById(id: string): Promise<ClientSubscribeBarbershop[] | null>;
+  findBarbershopsSubscribeById(
+    id: string,
+  ): Promise<ClientSubscribeBarbershop[] | null>;
   findBarbershopById(id: string): Promise<Barbershop | null>;
   findByEmail(email: string): Promise<Client | null>;
   findByPhone(phone: string): Promise<Client | null>;

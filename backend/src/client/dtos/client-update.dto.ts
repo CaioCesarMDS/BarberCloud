@@ -10,8 +10,8 @@ import {
   MinLength,
 } from 'class-validator';
 
-import { EmailIsUnique } from '../validators/email.validator';
-import { PhoneIsUnique } from '../validators/phone.validator';
+import { EmailIsUnique } from '../../auth/validators/email.validator';
+import { PhoneIsUnique } from '../../auth/validators/phone.validator';
 
 export class ClientUpdateDTO {
   @IsOptional()
@@ -29,10 +29,6 @@ export class ClientUpdateDTO {
   @IsOptional()
   @IsDate()
   birth?: Date;
-
-  @IsOptional()
-  @IsEnum(Role)
-  role?: Role;
 
   @IsOptional()
   @IsString()

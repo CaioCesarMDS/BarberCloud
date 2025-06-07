@@ -19,7 +19,10 @@ export class EmployeeService {
     return this.employeeRepository.remove(id);
   }
 
-  update(id: string, EmployeeData: EmployeeUpdateDTO): Promise<Employee | null> {
+  update(
+    id: string,
+    EmployeeData: EmployeeUpdateDTO,
+  ): Promise<Employee | null> {
     return this.employeeRepository.update(id, EmployeeData);
   }
 

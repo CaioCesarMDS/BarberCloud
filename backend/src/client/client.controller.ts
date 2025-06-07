@@ -11,20 +11,19 @@ import {
 } from '@nestjs/common';
 import { Client } from '@prisma/client';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { ClientUpdateDTO } from './dtos/client-update.dto';
 import { ClientService } from './client.service';
 import { ClientDetailsDto } from './dtos/client-details.dto';
 import { ClientResponseDto } from './dtos/client.response.dto';
 
-@UseGuards(AuthGuard, RolesGuard)
-@Controller('/Clients')
+@UseGuards(AuthGuard)
+@Controller('/client')
 export class ClientController {
   constructor(private readonly clientService: ClientService) {}
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<Client | null> {
+  findOne(@Param('id') id: string): Promise<ClientResponseDto | null> {
     return this.clientService.findById(id);
   }
 
@@ -33,12 +32,13 @@ export class ClientController {
     return this.clientService.findDetailsById(id);
   }
 
-  @Get('search')
-  getAllClientsByName(@Query('name') name: string) {
+  @Get('search/all')
+  async getAllClientsByName(@Query('name') name: string) {
     if (!name?.trim()) {
       return new BadRequestException('Name query parameter is required');
     }
-    return this.clientService.findAllByName(name);
+    console.log('chamouaqui')
+    return await this.clientService.findAllByName(name);
   }
 
   @Put(':id')

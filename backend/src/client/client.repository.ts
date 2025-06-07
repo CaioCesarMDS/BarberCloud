@@ -8,8 +8,8 @@ import { IClientRepositoryInterface } from './interfaces/client-repository.inter
 
 @Injectable()
 export class ClientRepository implements IClientRepositoryInterface {
-  constructor(private readonly prismaService: PrismaService) { }
-  
+  constructor(private readonly prismaService: PrismaService) {}
+
   async create(data: CreateClientDTO, hashedPassword: string): Promise<Client> {
     return await this.prismaService.client.create({
       data: {
@@ -17,15 +17,15 @@ export class ClientRepository implements IClientRepositoryInterface {
         phone: data.phone,
         birth: data.birth,
         email: data.email,
-        password: hashedPassword
+        password: hashedPassword,
       },
     });
   }
-  
+
   remove(id: string): Promise<Client> {
     return this.prismaService.client.delete({ where: { id: id } });
   }
-  
+
   update(id: string, data: ClientUpdateDTO): Promise<Client | null> {
     return this.prismaService.client.update({
       where: { id: id },
@@ -37,27 +37,33 @@ export class ClientRepository implements IClientRepositoryInterface {
       },
     });
   }
-  
+
   async findAllByName(name: string): Promise<ClientResponseDto[]> {
-    const Clients = await this.prismaService.client.findMany({
+    const clients = await this.prismaService.client.findMany({
       where: { name: { contains: name, mode: 'insensitive' } },
     });
-    
-    return Clients.map((Client) => new ClientResponseDto(Client));
+    console.log(clients)
+    return clients.map((Client) => new ClientResponseDto(Client));
   }
-  
+
   findById(id: string): Promise<Client | null> {
     return this.prismaService.client.findUnique({ where: { id: id } });
   }
-  
-  async findBarbershopsSubscribeById(id: string): Promise<ClientSubscribeBarbershop[] | null> {
-    return await this.prismaService.clientSubscribeBarbershop.findMany({ where: { clientId: id } });
+
+  async findBarbershopsSubscribeById(
+    id: string,
+  ): Promise<ClientSubscribeBarbershop[] | null> {
+    return await this.prismaService.clientSubscribeBarbershop.findMany({
+      where: { clientId: id },
+    });
   }
-  
-  findBarbershopById(id: string): Promise<Barbershop | null> {
-    return this.prismaService.barbershop.findUnique({ where: { id: id } });
+
+  async findBarbershopById(id: string): Promise<Barbershop | null> {
+    return await this.prismaService.barbershop.findUnique({
+      where: { id: id },
+    });
   }
-  
+
   findByEmail(email: string): Promise<Client | null> {
     return this.prismaService.client.findUnique({
       where: { email: email },

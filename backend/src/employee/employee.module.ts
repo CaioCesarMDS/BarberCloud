@@ -5,13 +5,18 @@ import { CommonModule } from 'src/common/common.module';
 import { EmployeeController } from './employee.controller';
 import { EmployeeRepository } from './employee.repository';
 import { EmployeeService } from './employee.service';
-import { EmailValidator } from './validators/email.validator';
-import { PhoneValidator } from './validators/phone.validator';
+import { EmailValidator } from '../auth/validators/email.validator';
+import { PhoneValidator } from '../auth/validators/phone.validator';
 
 @Module({
   imports: [PrismaModule, forwardRef(() => AuthModule), CommonModule],
   controllers: [EmployeeController],
-  providers: [EmployeeService, EmployeeRepository, EmailValidator, PhoneValidator],
+  providers: [
+    EmployeeService,
+    EmployeeRepository,
+    EmailValidator,
+    PhoneValidator,
+  ],
   exports: [EmployeeService],
 })
 export class EmployeeModule {}

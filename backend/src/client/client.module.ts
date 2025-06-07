@@ -5,8 +5,8 @@ import { CommonModule } from 'src/common/common.module';
 import { ClientController } from './client.controller';
 import { ClientRepository } from './client.repository';
 import { ClientService } from './client.service';
-import { EmailValidator } from './validators/email.validator';
-import { PhoneValidator } from './validators/phone.validator';
+import { EmailValidator } from '../auth/validators/email.validator';
+import { PhoneValidator } from '../auth/validators/phone.validator';
 
 @Module({
   imports: [PrismaModule, forwardRef(() => AuthModule), CommonModule],
