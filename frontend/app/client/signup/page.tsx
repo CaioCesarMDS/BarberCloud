@@ -3,11 +3,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import DatePickerField from "../_components/form/fields/DatePickerField";
-import InputField from "../_components/form/fields/InputField";
-import FormWrapper from "../_components/form/FormWrapper";
-import Header from "../_components/Header";
-import api from "../services/api";
+import DatePickerField from "../../_components/form/fields/DatePickerField";
+import InputField from "../../_components/form/fields/InputField";
+import FormWrapper from "../../_components/form/FormWrapper";
+import Header from "../../_components/header";
+import api from "../../services/api";
 
 const formSchema = z
   .object({
@@ -53,7 +53,7 @@ export default function SignUp() {
     try {
       const userData = { ...data, confirmPassword: undefined };
 
-      const response = await api.post("/auth/signup", userData);
+      const response = await api.post("/auth/client/signup", userData);
       if (response.status === 201) {
         console.log("User signed up successfully:", response.data);
       } else {

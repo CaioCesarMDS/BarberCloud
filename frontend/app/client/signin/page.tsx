@@ -4,10 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import InputField from "../_components/form/fields/InputField";
-import FormWrapper from "../_components/form/FormWrapper";
-import Header from "../_components/Header";
-import api from "../services/api";
+import InputField from "../../_components/form/fields/InputField";
+import FormWrapper from "../../_components/form/FormWrapper";
+import Header from "../../_components/header";
+import api from "../../services/api";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -29,7 +29,7 @@ export default function SignIn() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const response = await api.post("/auth/signin", data);
+      const response = await api.post("/auth/client/signin", data);
       localStorage.setItem("barber-token", response.data.token);
       console.log("login successfully:", response.data);
       router.push("/home");

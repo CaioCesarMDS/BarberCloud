@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./_components/shadcn/ui/button";
+import { Card, CardContent, CardHeader } from "./_components/shadcn/ui/card";
 
 export default function Home() {
   return (
@@ -17,14 +20,35 @@ export default function Home() {
         </div>
       </main>
       <div className="w-full flex flex-col items-center justify-center text-center px-6 text-black">
-        <div className="flex gap-4 mt-6">
-          <Link href="/signin">
-            <Button>Sign In</Button>
-          </Link>
-          <Link href="/signup">
-            <Button variant="outline">Sign Up</Button>
-          </Link>
-        </div>
+        <Card>
+          <CardHeader className="items-center justify center">
+            <div className="flex items-center">
+              <h3>Are you ?</h3>
+            </div>
+            <div className="flex flex-row gap-2">
+              <Button>Client</Button>
+              <Button variant="outline">Barbershop</Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-6">
+              <Link href="/client/signin">
+                <Button>Sign In</Button>
+              </Link>
+              <Link href="/client/signup">
+                <Button>Sing Up</Button>
+              </Link>
+            </div>
+            <div className="hidden flex-col gap-6">
+              <Link href="">
+                <Button>Sign In</Button>
+              </Link>
+              <Link href="">
+                <Button>Sing Up</Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

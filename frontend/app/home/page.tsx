@@ -13,16 +13,16 @@ export default function Home() {
     const token = localStorage.getItem("barber-token");
 
     if (!token) {
-      router.push("/signin");
+      router.push("/client/signin");
     }
 
     const validateToken = async () => {
       try {
-        await api.get("/auth/me");
+        await api.get("/auth/client/me");
       } catch (err) {
         console.error("Token inválido ou expirado:", err);
         localStorage.removeItem("barber-token");
-        router.push("/signin");
+        router.push("/client/signin");
       }
     };
 
@@ -43,7 +43,7 @@ export default function Home() {
           </CardContent>
         </div>
         <div>
-          <Image src="/barber.png" alt="Barber Logo" width={200} height={200} />
+          <Image src="/logo.png" alt="Barber Logo" width={200} height={200} />
         </div>
       </Card>
       <h1>Welcome to the Home Page</h1>

@@ -25,18 +25,18 @@ const ClientDashboard: React.FC = () => {
   useEffect(() => {
     const token = localStorage.getItem("barber-token");
     if (!token) {
-      router.push("/signin");
+      // router.push("/client/signin");
       return;
     }
 
     const fetchUser = async () => {
       try {
-        const { data: authData } = await api.get("/auth/me");
-        const { data: userData } = await api.get(`/users/${authData.id}`);
+        const { data: authData } = await api.get("/auth/client/me");
+        const { data: userData } = await api.get(`/client/${authData.id}`);
         setUser(userData);
       } catch (error) {
         console.error("Erro ao buscar informações do usuário:", error);
-        router.push("/signin");
+        // router.push("/client/signin");
       }
     };
 
