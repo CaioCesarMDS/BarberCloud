@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./shadcn/ui/button";
 import { Card, CardContent } from "./shadcn/ui/card";
-
+// comentando pra o windows ver que eu mudei essa merda
 export default function Header() {
   return (
     <Card>
