@@ -18,11 +18,11 @@ export default function Home() {
 
     const validateToken = async () => {
       try {
-        await api.get("/auth/client/me");
+        await api.get("/auth/me");
       } catch (err) {
         console.error("Token inválido ou expirado:", err);
         localStorage.removeItem("barber-token");
-        router.push("/client/signin");
+        router.push("/");
       }
     };
 

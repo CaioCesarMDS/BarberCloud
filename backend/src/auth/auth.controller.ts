@@ -32,14 +32,8 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard)
-  @Get('employee/me')
-  employeeGetProfile(@User() user: RoleJwtPayload) {
-    return user;
-  }
-
-  @UseGuards(AuthGuard)
-  @Get('client/me')
-  clientGetProfile(@User() user: JwtPayload) {
+  @Get('/me')
+  employeeGetProfile(@User() user: JwtPayload) {
     return user;
   }
 }
