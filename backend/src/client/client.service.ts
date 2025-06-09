@@ -1,4 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
+import { ClientProxy } from '@nestjs/microservices';
 import { Barbershop, Client, ClientSubscribeBarbershop } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { ClientRepository } from './client.repository';
@@ -9,11 +11,23 @@ import { ClientResponseDto } from './dtos/client.response.dto';
 
 @Injectable()
 export class ClientService {
-  constructor(private readonly clientRepository: ClientRepository) {}
+  constructor(
+    private readonly clientRepository: ClientRepository,
+    @Inject('REDIS_CLIENT') private client: ClientProxy,
+  ) {}
 
   async create(data: CreateClientDTO): Promise<Client> {
     const hashedPassword = await this.hashPassword(data.password);
-    return this.clientRepository.create(data, hashedPassword);
+
+    const newUser = await this.clientRepository.create(data, hashedPassword);
+
+    this.client.emit('email.send', {
+      to: newUser.email,
+      subject: 'Cadastro realizado',
+      body: `Seja bem-vindo,${newUser.name} !`,
+    });
+
+    return newUser;
   }
 
   async remove(id: string): Promise<ClientResponseDto> {

@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Client {
-  id       String   @id @unique @default(uuid())
+  id       String   @id @default(uuid())
   name     String
   birth    DateTime
   phone    String   @unique
@@ -30,7 +30,7 @@ model ClientSubscribeBarbershop {
 }
 
 model Barbershop {
-  id        String @id @unique @default(uuid())
+  id        String @id @default(uuid())
   name      String
   imageUrl  String
   timeOpen  String
@@ -45,7 +45,7 @@ model Barbershop {
 }
 
 model AddressBarbershop {
-  id           String      @id @unique @default(uuid())
+  id           String      @id @default(uuid())
   number       String
   street       String
   complement   String
@@ -58,7 +58,7 @@ model AddressBarbershop {
 }
 
 model Employee {
-  id           String   @id @unique @default(uuid())
+  id           String   @id @default(uuid())
   name         String
   birth        DateTime
   phone        String   @unique
@@ -92,10 +92,10 @@ model ServicesOnScheduling {
 }
 
 model Scheduling {
-  id           String                 @id @unique @default(uuid())
-  barbershopId String                 @unique
-  clientId     String                 @unique
-  employeeId   String                 @unique
+  id           String                 @id @default(uuid())
+  barbershopId String
+  clientId     String
+  employeeId   String
   dateTime     DateTime
   priceTotal   Decimal                @db.Money
   services     ServicesOnScheduling[]
