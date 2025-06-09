@@ -1,5 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
 import { PrismaExceptionFilter } from './common/filters/prisma-exceptions.filter';
@@ -14,6 +15,14 @@ async function bootstrap() {
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.REDIS,
+    options: {
+      host: 'localhost',
+      port: 6379,
+    },
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -23,6 +32,9 @@ async function bootstrap() {
   );
 
   app.useGlobalFilters(new PrismaExceptionFilter());
+  app.startAllMicroservices().catch((err) => {
+    console.error('Error starting microservices:', err);
+  });
 
   await app.listen(process.env.PORT ?? 3001);
 }
