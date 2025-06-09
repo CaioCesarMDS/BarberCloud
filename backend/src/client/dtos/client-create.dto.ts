@@ -19,8 +19,9 @@ export class CreateClientDTO {
   name!: string;
 
   @IsNotEmpty()
-  @IsDateString()
-  birth!: string;
+  @IsDate()
+  @Type(() => Date)
+  birth!: Date;
 
   @IsNotEmpty()
   @IsString()

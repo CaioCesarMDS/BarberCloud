@@ -13,7 +13,7 @@ const formSchema = z
   .object({
     name: z.string().min(4, { message: "Name must be at least 4 characters." })
       .max(100, { message: "name must have a maximum of 100 characters." }),
-    birthDate: z.date({ message: "Invalid date." }),
+    birth: z.date({ message: "Invalid date." }),
     phone: z.string().min(0, { message: "Phone must be at least 10 characters." })
       .max(15, { message: "phone must have a maximum of 10 characters." }),
     email: z.string().email({ message: "Invalid email address." }),
@@ -56,7 +56,7 @@ export default function SignUp() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      birthDate: undefined,
+      birth: undefined,
       phone: "",
       email: "",
       password: "",
@@ -78,7 +78,6 @@ export default function SignUp() {
   });
 
   const onSubmit = async (data: FormData) => {
-    console.log("rodo misera")
     try {
       const barbershopData = {
         name: data.barbershopName,
@@ -99,23 +98,25 @@ export default function SignUp() {
 
       const responseBarbershop = await api.post("/barbershop/create", barbershopData);
       if (responseBarbershop.status === 201) {
-        console.log("Barbershop Registred successfully:", responseBarbershop.data);
+       console.log("Barbershop Registred successfully:", responseBarbershop.data);
 
         const userData = {
         name: data.name,
-        birthDate: data.birthDate,
+        birth: data.birth.toISOString(),
         phone: data.phone,
         email: data.email,
         password: data.password,
         confirmPassword: undefined,
         role: "ADMIN",
-        barbershopId: responseBarbershop.data.id
+        barbershopId:"57f274b1-078e-472d-aece-368430044b04"
         };
+
         const responseUser = await api.post("/auth/employee/signup", userData);
         if(responseUser.status === 201) {
           console.log("User signed up successfully:", responseUser.data);
+        } else {
+          console.error("Error signing up:", responseUser.data);
         }
-        console.error("Error signing up:", responseUser.data);
       } else {
         console.error("Error to register Barbershop:", responseBarbershop.data);
       }
@@ -123,6 +124,9 @@ export default function SignUp() {
       console.error("Error during requests:", error);
     }
   };
+
+  //verificação do form
+  //console.log(form.formState.errors);
 
   return (
     <main>
@@ -134,7 +138,7 @@ export default function SignUp() {
         <InputField control={form.control} name="phone" label="Phone" type="tel" />
         <InputField control={form.control} name="email" label="Email" type="email" />
 
-        <DatePickerField control={form.control} name="birthDate" label="Date Of Birth" />
+        <DatePickerField control={form.control} name="birth" label="Date Of Birth" />
 
         <InputField control={form.control} name="password" label="Password" type="password" />
         <InputField control={form.control} name="confirmPassword" label="Confirm Password" type="password" />
@@ -154,6 +158,7 @@ export default function SignUp() {
         <InputField control={form.control} name="neighborhood" label="Neighborhood" type="text" />
         <InputField control={form.control} name="city" label="City" type="text" />
         <InputField control={form.control} name="state" label="State" type="text" />
+        <InputField control={form.control} name="country" label="Country" type="text" />
         <InputField control={form.control} name="zipcode" label="Zip-Code" type="zipcode" />
       </FormWrapper>
     </main>

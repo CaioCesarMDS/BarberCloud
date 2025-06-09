@@ -1,3 +1,5 @@
+"use client";
+
 import { FieldValues, UseFormReturn } from "react-hook-form";
 import { Button } from "../shadcn/ui/button";
 import { Form } from "../shadcn/ui/form";
