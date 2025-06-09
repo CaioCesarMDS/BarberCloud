@@ -14,8 +14,8 @@ const formSchema = z
     name: z.string().min(4, { message: "Name must be at least 4 characters." })
       .max(100, { message: "name must have a maximum of 100 characters." }),
     birthDate: z.date({ message: "Invalid date." }),
-    phone: z.string().min(10, { message: "Phone must be at least 10 characters." })
-      .max(10, { message: "phone must have a maximum of 10 characters." }),
+    phone: z.string().min(0, { message: "Phone must be at least 10 characters." })
+      .max(15, { message: "phone must have a maximum of 10 characters." }),
     email: z.string().email({ message: "Invalid email address." }),
     password: z
       .string()
@@ -35,14 +35,14 @@ const formSchema = z
     photoBarbershop: z.string(),
     timeOpen: z.string().regex(/^\d{2}:\d{2}$/),
     timeClose: z.string().regex(/^\d{2}:\d{2}$/),
-    numberAddress: z.string(),
-    street: z.string(),
-    complement: z.string(),
-    neighborhood: z.string(),
-    city: z.string(),
-    state: z.string(),
-    country: z.string(),
-    zipcode: z.string(),
+    numberAddress: z.string().nonempty(),
+    street: z.string().nonempty(),
+    complement: z.string().nonempty(),
+    neighborhood: z.string().nonempty(),
+    city: z.string().nonempty(),
+    state: z.string().nonempty(),
+    country: z.string().nonempty(),
+    zipcode: z.string().nonempty(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -78,18 +78,49 @@ export default function SignUp() {
   });
 
   const onSubmit = async (data: FormData) => {
+    console.log("rodo misera")
     try {
-      const userData = { ...data, confirmPassword: undefined };
-      // arrumar aqui pra cadastrar primeiro o barbershop dps o proprio admin
+      const barbershopData = {
+        name: data.barbershopName,
+        imageUrl: "x",
+        timeOpen: data.timeOpen,
+        timeClose: data.timeClose,
+        number: data.numberAddress,
+        street: data.street,
+        complement: data.complement,
+        neighborhood: data.neighborhood,
+        city: data.city,
+        state: data.state,
+        country: data.country,
+        zipCode: data.zipcode
+      }
+
       // colocar logica para pegar arquivo do input aceitar apenas png jpeg e colocar no buckets3
-      const response = await api.post("/auth/employee/signup", userData);
-      if (response.status === 201) {
-        console.log("User signed up successfully:", response.data);
+
+      const responseBarbershop = await api.post("/barbershop/create", barbershopData);
+      if (responseBarbershop.status === 201) {
+        console.log("Barbershop Registred successfully:", responseBarbershop.data);
+
+        const userData = {
+        name: data.name,
+        birthDate: data.birthDate,
+        phone: data.phone,
+        email: data.email,
+        password: data.password,
+        confirmPassword: undefined,
+        role: "ADMIN",
+        barbershopId: responseBarbershop.data.id
+        };
+        const responseUser = await api.post("/auth/employee/signup", userData);
+        if(responseUser.status === 201) {
+          console.log("User signed up successfully:", responseUser.data);
+        }
+        console.error("Error signing up:", responseUser.data);
       } else {
-        console.error("Error signing up:", response.data);
+        console.error("Error to register Barbershop:", responseBarbershop.data);
       }
     } catch (error) {
-      console.error("Error during sign up:", error);
+      console.error("Error during requests:", error);
     }
   };
 

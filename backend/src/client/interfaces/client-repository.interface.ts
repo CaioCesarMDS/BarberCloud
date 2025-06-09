@@ -1,9 +1,10 @@
 import { Barbershop, Client, ClientSubscribeBarbershop } from '@prisma/client';
 import { ClientUpdateDTO } from '../dtos/client-update.dto';
 import { ClientResponseDto } from '../dtos/client.response.dto';
+import { CreateClientDTO } from '../dtos/client-create.dto';
 
 export interface IClientRepositoryInterface {
-  create(data: ClientUpdateDTO, hashedPassword: string): Promise<Client>;
+  create(data: CreateClientDTO, hashedPassword: string): Promise<Client>;
   remove(id: string): Promise<Client>;
   update(id: string, ClientData: ClientUpdateDTO): Promise<Client | null>;
   findAllByName(name: string): Promise<ClientResponseDto[]>;
