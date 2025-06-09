@@ -25,8 +25,7 @@ const formSchema = z
         message: "Contain at least one special character.",
       })
       .trim(),
-    confirmPassword: z.string().min(8, { message: "Confirm Password must be at least 8 characters." }),
-    role: z.enum(["CLIENT"]),
+    confirmPassword: z.string().min(8, { message: "Confirm Password must be at least 8 characters." })
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -51,7 +50,7 @@ export default function SignUp() {
   const onSubmit = async (data: FormData) => {
     try {
       console.log("birthDate: ", data.birth.toISOString())
-      const userData = { ...data, birth: data.birth.toISOString(),  confirmPassword: undefined };
+      const userData = { ...data, confirmPassword: undefined };
 
       const response = await api.post("/auth/client/signup", userData);
       if (response.status === 201) {
