@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import {
   IsDate,
+  IsDateString,
   IsEmail,
   IsNotEmpty,
   IsPhoneNumber,
@@ -18,9 +19,8 @@ export class CreateClientDTO {
   name!: string;
 
   @IsNotEmpty()
-  @IsDate()
-  @Type(() => Date)
-  birth!: Date;
+  @IsDateString()
+  birth!: string;
 
   @IsNotEmpty()
   @IsString()

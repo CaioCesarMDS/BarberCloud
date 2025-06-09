@@ -15,7 +15,7 @@ export class ClientRepository implements IClientRepositoryInterface {
       data: {
         name: data.name,
         phone: data.phone,
-        birth: data.birth,
+        birth: new Date(data.birth),
         email: data.email,
         password: hashedPassword,
       },
