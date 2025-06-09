@@ -22,7 +22,7 @@ export class ClientService {
     const newUser = await this.clientRepository.create(data, hashedPassword);
 
     this.client.emit('email.send', {
-      to: CreateClientDTO.prototype.email,
+      to: newUser.email,
       subject: 'Cadastro realizado',
       body: `Seja bem-vindo,${newUser.name} !`,
     });

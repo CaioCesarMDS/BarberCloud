@@ -23,6 +23,10 @@ async function bootstrap() {
     },
   });
 
+  app.startAllMicroservices().catch((err) => {
+    console.error('Error starting microservices:', err);
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -32,9 +36,6 @@ async function bootstrap() {
   );
 
   app.useGlobalFilters(new PrismaExceptionFilter());
-  app.startAllMicroservices().catch((err) => {
-    console.error('Error starting microservices:', err);
-  });
 
   await app.listen(process.env.PORT ?? 3001);
 }
