@@ -34,12 +34,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, sidebar, ti
 
     const fetchUser = async () => {
       try {
-        const { data: authData } = await api.get("/auth/client/me");
-        const { data: userData } = await api.get(`/client/${authData.id}`);
-        setUser(userData);
+        const response = await api.get("/auth/me");
+        if(response.data.role) {
+          const { data: userData } = await api.get(`/employee/${response.data.id}`);
+          setUser(userData)
+        } else {
+          const { data: userData } = await api.get(`/client/${response.data.id}`);
+          setUser(userData)
+        }
       } catch (error) {
         console.error("Erro ao buscar informações do usuário:", error);
-        router.push("/client/signin");
+        router.push("/");
       }
     };
 
