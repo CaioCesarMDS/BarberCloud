@@ -10,9 +10,8 @@ export class EmailService {
     try {
       await this.mailerService.sendMail({
         to: data.to,
-        from: data.from,
         subject: data.subject,
-        text: JSON.stringify(data.text, null, 2),
+        text: data.text,
       });
       console.log(`Email sent to ${data.to} successfully.`);
     } catch (error) {

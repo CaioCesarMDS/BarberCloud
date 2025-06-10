@@ -24,7 +24,7 @@ export class ClientService {
     this.client.emit('email.send', {
       to: newUser.email,
       subject: 'Cadastro realizado',
-      body: `Seja bem-vindo,${newUser.name} !`,
+      text: `Seja bem-vindo, ${newUser.name}!`,
     });
 
     return newUser;
