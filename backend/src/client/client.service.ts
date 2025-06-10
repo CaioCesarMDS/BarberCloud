@@ -1,14 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
-import { ClientProxy } from '@nestjs/microservices';
 import { Barbershop, Client, ClientSubscribeBarbershop } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { RedisTransportService } from 'src/redis/redis-transport.service';
 import { ClientRepository } from './client.repository';
 import { CreateClientDTO } from './dtos/client-create.dto';
 import { ClientDetailsDto } from './dtos/client-details.dto';
 import { ClientUpdateDTO } from './dtos/client-update.dto';
 import { ClientResponseDto } from './dtos/client.response.dto';
-import { RedisTransportService } from 'src/redis/redis-transport.service';
 
 @Injectable()
 export class ClientService {
@@ -21,6 +19,11 @@ export class ClientService {
     const hashedPassword = await this.hashPassword(data.password);
 
     const newUser = await this.clientRepository.create(data, hashedPassword);
+
+    if (!newUser) {
+      throw new BadRequestException('Error creating client');
+    }
+
     const client = this.redisTransportService.getClient();
 
     client.emit('email.send', {

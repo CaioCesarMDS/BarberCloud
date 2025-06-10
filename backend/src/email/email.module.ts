@@ -1,9 +1,9 @@
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RedisModule } from 'src/redis/redis.module';
 import { EmailController } from './email.controller';
 import { EmailService } from './email.service';
-import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
   imports: [

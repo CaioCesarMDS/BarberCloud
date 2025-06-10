@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common/exceptions/bad-request.exception';
 import { Employee } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { RedisTransportService } from 'src/redis/redis-transport.service';
 import { CreateEmployeeDTO } from './dtos/create-employee.dto';
 import { EmployeeUpdateDTO } from './dtos/employee-update.dto';
 import { EmployeeResponseDto } from './dtos/employee.request.dto';
@@ -8,11 +10,32 @@ import { EmployeeRepository } from './employee.repository';
 
 @Injectable()
 export class EmployeeService {
-  constructor(private readonly employeeRepository: EmployeeRepository) {}
+  constructor(
+    private readonly employeeRepository: EmployeeRepository,
+    private redisTransportService: RedisTransportService,
+  ) {}
 
   async create(data: CreateEmployeeDTO): Promise<Employee> {
     const hashedPassword = await this.hashPassword(data.password);
-    return this.employeeRepository.create(data, hashedPassword);
+
+    const newEmployee = await this.employeeRepository.create(
+      data,
+      hashedPassword,
+    );
+
+    if (!newEmployee) {
+      throw new BadRequestException('Error creating employee');
+    }
+
+    const client = this.redisTransportService.getClient();
+
+    client.emit('email.send', {
+      to: newEmployee.email,
+      subject: 'Cadastro realizado',
+      text: `Seja bem-vindo, ${newEmployee.name}!`,
+    });
+
+    return newEmployee;
   }
 
   remove(id: string): Promise<Employee> {

@@ -1,14 +1,13 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PrismaModule } from 'prisma/prisma.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { CommonModule } from 'src/common/common.module';
+import { RedisModule } from 'src/redis/redis.module';
 import { EmailValidator } from '../auth/validators/email.validator';
 import { PhoneValidator } from '../auth/validators/phone.validator';
 import { ClientController } from './client.controller';
 import { ClientRepository } from './client.repository';
 import { ClientService } from './client.service';
-import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
   imports: [
