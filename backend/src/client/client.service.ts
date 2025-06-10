@@ -21,6 +21,10 @@ export class ClientService {
 
     const newUser = await this.clientRepository.create(data, hashedPassword);
 
+    if (!newUser) {
+      throw new BadRequestException('Error creating client');
+    }
+
     this.client.emit('email.send', {
       to: newUser.email,
       subject: 'Cadastro realizado',

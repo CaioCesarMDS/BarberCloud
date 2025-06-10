@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
+import { ClientProxy } from '@nestjs/microservices';
 import { Employee } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { CreateEmployeeDTO } from './dtos/create-employee.dto';
@@ -8,11 +10,30 @@ import { EmployeeRepository } from './employee.repository';
 
 @Injectable()
 export class EmployeeService {
-  constructor(private readonly employeeRepository: EmployeeRepository) {}
+  constructor(
+    private readonly employeeRepository: EmployeeRepository,
+    @Inject('REDIS_CLIENT') private client: ClientProxy,
+  ) {}
 
   async create(data: CreateEmployeeDTO): Promise<Employee> {
     const hashedPassword = await this.hashPassword(data.password);
-    return this.employeeRepository.create(data, hashedPassword);
+
+    const newEmployee = await this.employeeRepository.create(
+      data,
+      hashedPassword,
+    );
+
+    if (!newEmployee) {
+      throw new Error('Error creating employee');
+    }
+
+    this.client.emit('email.send', {
+      to: newEmployee.email,
+      subject: 'Cadastro realizado',
+      text: `Seja bem-vindo, ${newEmployee.name}!`,
+    });
+
+    return newEmployee;
   }
 
   remove(id: string): Promise<Employee> {
