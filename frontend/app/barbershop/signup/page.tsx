@@ -1,5 +1,6 @@
 "use client";
 
+import { InputFieldMask } from "@/app/_components/form/fields/InputFieldMask";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -11,10 +12,14 @@ import api from "../../services/api";
 
 const formSchema = z
   .object({
-    name: z.string().min(4, { message: "Name must be at least 4 characters." })
+    name: z
+      .string()
+      .min(4, { message: "Name must be at least 4 characters." })
       .max(100, { message: "name must have a maximum of 100 characters." }),
     birth: z.date({ message: "Invalid date." }),
-    phone: z.string().min(0, { message: "Phone must be at least 10 characters." })
+    phone: z
+      .string()
+      .min(0, { message: "Phone must be at least 10 characters." })
       .max(15, { message: "phone must have a maximum of 10 characters." }),
     email: z.string().email({ message: "Invalid email address." }),
     password: z
@@ -26,11 +31,16 @@ const formSchema = z
       .regex(/[^a-zA-Z0-9]/, {
         message: "Contain at least one special character.",
       })
-      .trim().max(64, { message: "password must have a maximum of 64 characters." }),
-    confirmPassword: z.string().min(8, { message: "Confirm Password must be at least 8 characters." })
+      .trim()
+      .max(64, { message: "password must have a maximum of 64 characters." }),
+    confirmPassword: z
+      .string()
+      .min(8, { message: "Confirm Password must be at least 8 characters." })
       .max(64, { message: "confirm password must have a maximum of 64 characters." }),
     role: z.enum(["ADMIN"]),
-    barbershopName: z.string().min(4, { message: "Barbershop Name must be at least 4 characters." })
+    barbershopName: z
+      .string()
+      .min(4, { message: "Barbershop Name must be at least 4 characters." })
       .max(100, { message: "Barbershop name must have a maximum of 100 characters." }),
     photoBarbershop: z.string(),
     timeOpen: z.string().regex(/^\d{2}:\d{2}$/),
@@ -91,28 +101,28 @@ export default function SignUp() {
         city: data.city,
         state: data.state,
         country: data.country,
-        zipCode: data.zipcode
-      }
+        zipCode: data.zipcode,
+      };
 
       // colocar logica para pegar arquivo do input aceitar apenas png jpeg e colocar no buckets3
 
       const responseBarbershop = await api.post("/barbershop/create", barbershopData);
       if (responseBarbershop.status === 201) {
-       console.log("Barbershop Registred successfully:", responseBarbershop.data);
+        console.log("Barbershop Registred successfully:", responseBarbershop.data);
 
         const userData = {
-        name: data.name,
-        birth: data.birth.toISOString(),
-        phone: data.phone,
-        email: data.email,
-        password: data.password,
-        confirmPassword: undefined,
-        role: "ADMIN",
-        barbershopId:"57f274b1-078e-472d-aece-368430044b04"
+          name: data.name,
+          birth: data.birth.toISOString(),
+          phone: data.phone,
+          email: data.email,
+          password: data.password,
+          confirmPassword: undefined,
+          role: "ADMIN",
+          barbershopId: "57f274b1-078e-472d-aece-368430044b04",
         };
 
         const responseUser = await api.post("/auth/employee/signup", userData);
-        if(responseUser.status === 201) {
+        if (responseUser.status === 201) {
           console.log("User signed up successfully:", responseUser.data);
         } else {
           console.error("Error signing up:", responseUser.data);
@@ -135,7 +145,8 @@ export default function SignUp() {
         <h3 className="p-6">Sign Up</h3>
 
         <InputField control={form.control} name="name" label="Name" type="text" />
-        <InputField control={form.control} name="phone" label="Phone" type="tel" />
+        <InputFieldMask control={form.control} name="phone" label="phone" type="tel" mask="+55 (99) 99999-9999" />
+        {/* <InputField control={form.control} name="phone" label="Phone" type="tel" /> */}
         <InputField control={form.control} name="email" label="Email" type="email" />
 
         <DatePickerField control={form.control} name="birth" label="Date Of Birth" />
