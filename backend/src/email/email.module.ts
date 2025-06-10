@@ -3,11 +3,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmailController } from './email.controller';
 import { EmailService } from './email.service';
+import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
   imports: [
     MailerModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [ConfigModule, RedisModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         transport: {
