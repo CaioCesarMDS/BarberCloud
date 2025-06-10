@@ -6,8 +6,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../../_components/form/fields/InputField";
 import FormWrapper from "../../_components/form/FormWrapper";
-import Header from "../../_components/Header";
+import Header from "../../_components/header";
 import api from "../../services/api";
+import Link from "next/link";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -32,7 +33,7 @@ export default function SignIn() {
       const response = await api.post("/auth/employee/signin", data);
       localStorage.setItem("barber-token", response.data.token);
       console.log("login successfully:", response.data);
-      router.push("/home");
+      router.push("/barbershop/dashboard");
     } catch (error) {
       console.error("Error during registration:", error);
     }
@@ -44,6 +45,7 @@ export default function SignIn() {
       <FormWrapper form={form} onSubmit={onSubmit} submitLabel="Sign In">
         <InputField control={form.control} name="email" label="Email" type="email" />
         <InputField control={form.control} name="password" label="Password" type="password" />
+        <Link href="/barbershop/forgot-password"><p className="text-blue-500 underline mt-1">Esqueci minha senha?</p></Link>
       </FormWrapper>
     </main>
   );

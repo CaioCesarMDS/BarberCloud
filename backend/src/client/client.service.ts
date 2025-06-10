@@ -8,20 +8,22 @@ import { CreateClientDTO } from './dtos/client-create.dto';
 import { ClientDetailsDto } from './dtos/client-details.dto';
 import { ClientUpdateDTO } from './dtos/client-update.dto';
 import { ClientResponseDto } from './dtos/client.response.dto';
+import { RedisTransportService } from 'src/redis/redis-transport.service';
 
 @Injectable()
 export class ClientService {
   constructor(
     private readonly clientRepository: ClientRepository,
-    @Inject('REDIS_CLIENT') private client: ClientProxy,
+    private redisTransportService: RedisTransportService,
   ) {}
 
   async create(data: CreateClientDTO): Promise<Client> {
     const hashedPassword = await this.hashPassword(data.password);
 
     const newUser = await this.clientRepository.create(data, hashedPassword);
+    const client = this.redisTransportService.getClient();
 
-    this.client.emit('email.send', {
+    client.emit('email.send', {
       to: newUser.email,
       subject: 'Cadastro realizado',
       text: `Seja bem-vindo, ${newUser.name}!`,

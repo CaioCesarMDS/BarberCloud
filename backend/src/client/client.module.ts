@@ -8,19 +8,11 @@ import { PhoneValidator } from '../auth/validators/phone.validator';
 import { ClientController } from './client.controller';
 import { ClientRepository } from './client.repository';
 import { ClientService } from './client.service';
+import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
   imports: [
-    ClientsModule.register([
-      {
-        name: 'REDIS_CLIENT',
-        transport: Transport.REDIS,
-        options: {
-          host: 'localhost',
-          port: 6379,
-        },
-      },
-    ]),
+    RedisModule,
     PrismaModule,
     forwardRef(() => AuthModule),
     CommonModule,
