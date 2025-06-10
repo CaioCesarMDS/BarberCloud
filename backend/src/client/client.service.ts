@@ -19,6 +19,11 @@ export class ClientService {
     const hashedPassword = await this.hashPassword(data.password);
 
     const newUser = await this.clientRepository.create(data, hashedPassword);
+
+    if (!newUser) {
+      throw new BadRequestException('Error creating client');
+    }
+
     const client = this.redisTransportService.getClient();
 
     client.emit('email.send', {

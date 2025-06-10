@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
-import { ClientProxy } from '@nestjs/microservices';
+import { BadRequestException } from '@nestjs/common/exceptions/bad-request.exception';
 import { Employee } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { RedisTransportService } from 'src/redis/redis-transport.service';
 import { CreateEmployeeDTO } from './dtos/create-employee.dto';
 import { EmployeeUpdateDTO } from './dtos/employee-update.dto';
 import { EmployeeResponseDto } from './dtos/employee.request.dto';
@@ -12,7 +12,7 @@ import { EmployeeRepository } from './employee.repository';
 export class EmployeeService {
   constructor(
     private readonly employeeRepository: EmployeeRepository,
-    @Inject('REDIS_CLIENT') private client: ClientProxy,
+    private redisTransportService: RedisTransportService,
   ) {}
 
   async create(data: CreateEmployeeDTO): Promise<Employee> {
@@ -24,10 +24,12 @@ export class EmployeeService {
     );
 
     if (!newEmployee) {
-      throw new Error('Error creating employee');
+      throw new BadRequestException('Error creating employee');
     }
 
-    this.client.emit('email.send', {
+    const client = this.redisTransportService.getClient();
+
+    client.emit('email.send', {
       to: newEmployee.email,
       subject: 'Cadastro realizado',
       text: `Seja bem-vindo, ${newEmployee.name}!`,
