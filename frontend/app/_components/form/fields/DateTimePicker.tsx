@@ -1,33 +1,19 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { useState } from "react";
 import { cn } from "../../../_lib/utils";
 import { Button } from "../../shadcn/ui/button";
 import { Calendar } from "../../shadcn/ui/calendar";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../../shadcn/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../../shadcn/ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "../../shadcn/ui/popover";
-import { useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../shadcn/ui/select";
 import { ScrollArea } from "../../shadcn/ui/scroll-area";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../shadcn/ui/select";
 
 const FormSchema = z.object({
   datetime: z.date({
@@ -46,7 +32,7 @@ export function DateTimePickerV2() {
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form} className="space-y-8">
+        <form onSubmit={form.handleSubmit(() => {})} className="space-y-8">
           <div className="flex w-full gap-4">
             <FormField
               control={form.control}
@@ -59,16 +45,9 @@ export function DateTimePickerV2() {
                       <FormControl>
                         <Button
                           variant={"outline"}
-                          className={cn(
-                            "w-full font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
+                          className={cn("w-full font-normal", !field.value && "text-muted-foreground")}
                         >
-                          {field.value ? (
-                            `${format(field.value, "PPP")}, ${time}`
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
+                          {field.value ? `${format(field.value, "PPP")}, ${time}` : <span>Pick a date</span>}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
@@ -80,10 +59,7 @@ export function DateTimePickerV2() {
                         selected={date || field.value}
                         onSelect={(selectedDate) => {
                           const [hours, minutes] = time.split(":")!;
-                          selectedDate?.setHours(
-                            parseInt(hours),
-                            parseInt(minutes)
-                          );
+                          selectedDate?.setHours(parseInt(hours), parseInt(minutes));
                           setDate(selectedDate!);
                           field.onChange(selectedDate);
                         }}
@@ -132,9 +108,7 @@ export function DateTimePickerV2() {
                             const hour = Math.floor(i / 4)
                               .toString()
                               .padStart(2, "0");
-                            const minute = ((i % 4) * 15)
-                              .toString()
-                              .padStart(2, "0");
+                            const minute = ((i % 4) * 15).toString().padStart(2, "0");
                             return (
                               <SelectItem key={i} value={`${hour}:${minute}`}>
                                 {hour}:{minute}
