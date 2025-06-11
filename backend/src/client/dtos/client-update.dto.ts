@@ -10,6 +10,7 @@ import {
 
 import { EmailIsUnique } from '../../auth/validators/email.validator';
 import { PhoneIsUnique } from '../../auth/validators/phone.validator';
+import { Type } from 'class-transformer';
 
 export class ClientUpdateDTO {
   @IsOptional()
@@ -27,6 +28,7 @@ export class ClientUpdateDTO {
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   birth?: Date;
 
   @IsOptional()

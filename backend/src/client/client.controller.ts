@@ -14,8 +14,8 @@ import { ClientService } from './client.service';
 import { ClientDetailsDto } from './dtos/client-details.dto';
 import { ClientUpdateDTO } from './dtos/client-update.dto';
 import { ClientResponseDto } from './dtos/client.response.dto';
+import { Client } from '@prisma/client';
 
-@UseGuards(AuthGuard)
 @Controller('/client')
 export class ClientController {
   constructor(private readonly clientService: ClientService) {}
@@ -25,6 +25,18 @@ export class ClientController {
     return this.clientService.findById(id);
   }
 
+  @Get('')
+  async findOneByEmail(@Query('email') email: string): Promise<ClientResponseDto | null> {
+    const client: Client = await this.clientService.findByEmail(email);
+    return {
+      id: client.id,
+      name: client.name,
+      phone: client.phone,
+      email: client.email
+    }
+  }
+
+  @UseGuards(AuthGuard)
   @Get('details/:id')
   getClientDetails(@Param('id') id: string): Promise<ClientDetailsDto | null> {
     return this.clientService.findDetailsById(id);
@@ -39,6 +51,7 @@ export class ClientController {
     return await this.clientService.findAllByName(name);
   }
 
+  @UseGuards(AuthGuard)
   @Put(':id')
   update(
     @Param('id') id: string,
@@ -47,6 +60,7 @@ export class ClientController {
     return this.clientService.update(id, data);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string): Promise<ClientResponseDto> {
     return this.clientService.remove(id);

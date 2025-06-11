@@ -9,6 +9,8 @@ import FormWrapper from "../../_components/form/FormWrapper";
 import Header from "../../_components/Header";
 import api from "../../services/api";
 import Link from "next/link";
+import { AxiosError } from "axios";
+import { Toaster, toast } from "sonner";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -35,13 +37,19 @@ export default function SignIn() {
       console.log("login successfully:", response.data);
       router.push("/client/dashboard");
     } catch (error) {
-      console.error("Error during registration:", error);
+      if(error instanceof AxiosError) {
+        console.log("Error during registration:", error);
+        if(error.status === 401) {
+          toast('Senha incorreta!');
+        }
+      }
     }
   };
 
   return (
     <main>
       <Header />
+      <Toaster />
       <FormWrapper form={form} onSubmit={onSubmit} submitLabel="Sign In">
         <InputField control={form.control} name="email" label="Email" type="email" />
         <InputField control={form.control} name="password" label="Password" type="password" />
