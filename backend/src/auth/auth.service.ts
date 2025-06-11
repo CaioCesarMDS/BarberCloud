@@ -21,7 +21,7 @@ export class AuthService {
     private readonly clientService: ClientService,
     private readonly redisTransportService: RedisTransportService,
     private readonly redisTokenService: RedisTokenService,
-  ) { }
+  ) {}
 
   async clientSignUp(data: ClientSignUpDTO): Promise<AuthClientResponseDTO> {
     const newUser = await this.clientService.create(data);
@@ -89,13 +89,16 @@ export class AuthService {
     };
   }
 
-  async verifyCode(email: string, code: string): Promise<ForgotPasswordResponseDTO> {
-    const can: boolean | null =  await this.verifyRedisToken(email, code);
-    console.log("codigo que veio: ", code)
+  async verifyCode(
+    email: string,
+    code: string,
+  ): Promise<ForgotPasswordResponseDTO> {
+    const can: boolean | null = await this.verifyRedisToken(email, code);
+    console.log('codigo que veio: ', code);
     return {
       email: email,
-      tokenIsTrue: can
-    }
+      tokenIsTrue: can,
+    };
   }
 
   async sendResetPasswordCode(email: string): Promise<void> {
@@ -148,10 +151,14 @@ export class AuthService {
     return await this.redisTokenService.generateResetCode(email);
   }
 
-  private async verifyRedisToken(email: string, code: string): Promise<boolean> {
-    const redisToken: string | null = await this.redisTokenService.getResetCode(email);
-    console.log("codigo real do redis: ", redisToken)
-    console.log("codigo que veio: ", code)
+  private async verifyRedisToken(
+    email: string,
+    code: string,
+  ): Promise<boolean> {
+    const redisToken: string | null =
+      await this.redisTokenService.getResetCode(email);
+    console.log('codigo real do redis: ', redisToken);
+    console.log('codigo que veio: ', code);
     return redisToken === code ? true : false;
   }
 }

@@ -1,12 +1,11 @@
 import { Type } from 'class-transformer';
 import {
   IsDate,
-  IsDateString,
   IsEmail,
   IsNotEmpty,
-  IsPhoneNumber,
   IsString,
   IsStrongPassword,
+  MaxLength,
   MinLength,
 } from 'class-validator';
 import { EmailIsUnique } from '../../auth/validators/email.validator';
@@ -26,7 +25,7 @@ export class CreateClientDTO {
   @IsNotEmpty()
   @IsString()
   @MinLength(9)
-  @IsPhoneNumber('BR')
+  @MaxLength(15)
   @PhoneIsUnique()
   phone!: string;
 

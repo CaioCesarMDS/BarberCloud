@@ -38,13 +38,18 @@ export class AuthController {
   }
 
   @Get('forgot-password/')
-  async sendTokenToChangePassword(@Query('email') email: string): Promise<void> {
+  async sendTokenToChangePassword(
+    @Query('email') email: string,
+  ): Promise<void> {
     return await this.authService.sendResetPasswordCode(email);
   }
 
   @Get('forgot-password/reset')
-  async verifyTokenToChangePassword(@Query('email') email: string, @Query('code') code: string, ): Promise<ForgotPasswordResponseDTO> {
-    console.log(code)
+  async verifyTokenToChangePassword(
+    @Query('email') email: string,
+    @Query('code') code: string,
+  ): Promise<ForgotPasswordResponseDTO> {
+    console.log(code);
     return await this.authService.verifyCode(email, code);
   }
 }

@@ -10,18 +10,20 @@ import FormWrapper from "../../_components/form/FormWrapper";
 import Header from "../../_components/Header";
 import api from "../../services/api";
 
+import { useRouter } from "next/navigation";
+
 const formSchema = z
   .object({
     name: z
       .string()
       .min(4, { message: "Name must be at least 4 characters." })
       .max(100, { message: "name must have a maximum of 100 characters." }),
-    birth: z.date({ message: "Invalid date." }),
     phone: z
       .string()
-      .min(0, { message: "Phone must be at least 10 characters." })
-      .max(15, { message: "phone must have a maximum of 10 characters." })
+      .min(10, { message: "Phone must be at least 10 characters." })
+      .max(17, { message: "phone must have a maximum of 17 characters." })
       .trim(),
+    birth: z.date({ message: "Invalid date." }),
     email: z.string().email({ message: "Invalid email address." }),
     password: z
       .string()
@@ -63,6 +65,8 @@ const formSchema = z
 type FormData = z.infer<typeof formSchema>;
 
 export default function SignUp() {
+  const router = useRouter();
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -113,18 +117,21 @@ export default function SignUp() {
 
         const userData = {
           name: data.name,
+          phone: "+" + data.phone.replace(/\D/g, ""),
           birth: data.birth.toISOString(),
-          phone: data.phone,
           email: data.email,
           password: data.password,
-          confirmPassword: undefined,
           role: "ADMIN",
-          barbershopId: "57f274b1-078e-472d-aece-368430044b04",
+          barbershopId: responseBarbershop.data.id,
         };
 
+        console.log("User Data:", userData.phone);
+
         const responseUser = await api.post("/auth/employee/signup", userData);
+
         if (responseUser.status === 201) {
           console.log("User signed up successfully:", responseUser.data);
+          router.push("/barbershop/signin");
         } else {
           console.error("Error signing up:", responseUser.data);
         }
@@ -148,7 +155,7 @@ export default function SignUp() {
         <InputField control={form.control} name="name" label="Name" type="text" />
         <MaskedInputField control={form.control} name="phone" label="Phone" mask="+55 00 00000-0000" />
         <InputField control={form.control} name="email" label="Email" type="email" />
-        <DatePickerField control={form.control} name="birth" label="Birth Date"/>
+        <DatePickerField control={form.control} name="birth" label="Birth Date" />
         <InputField control={form.control} name="password" label="Password" type="password" />
         <InputField control={form.control} name="confirmPassword" label="Confirm Password" type="password" />
 
@@ -168,7 +175,7 @@ export default function SignUp() {
         <InputField control={form.control} name="city" label="City" type="text" />
         <InputField control={form.control} name="state" label="State" type="text" />
         <InputField control={form.control} name="country" label="Country" type="text" />
-        <InputField control={form.control} name="zipcode" label="Zip-Code" type="zipcode" />
+        <InputField control={form.control} name="zipcode" label="Zip-Code" />
       </FormWrapper>
     </main>
   );
