@@ -1,13 +1,16 @@
 "use client";
 
-import api from "@/app/services/api";
 import { useRouter } from "next/navigation";
+import api from "../../services/api";
+import Link from "next/link";
+import { AxiosError } from "axios";
+import { toast, Toaster } from "sonner";
 import { useEffect, useState } from "react";
-import BarberSidebar from "../../_components/BarberSideBar";
-import DashboardLayout from "../../_components/DashboardLayout";
-import AdminSidebar from "../../_components/AdminSideBar";
+import AdminSidebar from "@/app/_components/AdminSideBar";
+import DashboardLayout from "@/app/_components/DashboardLayout";
 
-const BarberDashboard: React.FC = () => {
+export default function Settings() {
+
   const router = useRouter();
 
   interface User {
@@ -35,7 +38,7 @@ const BarberDashboard: React.FC = () => {
         if (userData.role === 'ADMIN') {
           setIsAdmin(true)
         } else if (userData.role === 'EMPLOYEE') {
-          setIsBarber(true)
+          router.push('/barbershop/dashboard')
         }
       } catch (error) {
         console.log("Erro ao buscar informações do usuário:", error);
@@ -47,28 +50,13 @@ const BarberDashboard: React.FC = () => {
   }, [router]);
 
   return (
-    <main>
-      {isAdmin && (
         <DashboardLayout sidebar={<AdminSidebar />} title="Dashboard do Admin">
           <div className="space-y-6">
             <div className="bg-gradient-to-r from-barber-blue to-barber-blue-light rounded-xl p-6 text-white">
-              <h1 className="text-2xl font-bold mb-2">Olá, {user?.name}! ✂️</h1>
+              <h1 className="text-2xl font-bold mb-2">Configurações</h1>
             </div>
           </div>
         </DashboardLayout>
-      )}
-
-      {isBarber && (
-        <DashboardLayout sidebar={<BarberSidebar />} title="Dashboard do Barbeiro">
-          <div className="space-y-6">
-            <div className="bg-gradient-to-r from-barber-blue to-barber-blue-light rounded-xl p-6 text-white">
-              <h1 className="text-2xl font-bold mb-2">Olá, {user?.name}! ✂️</h1>
-            </div>
-          </div>
-        </DashboardLayout>
-      )}
-    </main>
   );
-};
+}
 
-export default BarberDashboard;

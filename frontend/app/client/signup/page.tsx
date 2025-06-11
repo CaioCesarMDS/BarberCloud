@@ -10,6 +10,8 @@ import InputField from "../../_components/form/fields/InputField";
 import FormWrapper from "../../_components/form/FormWrapper";
 import Header from "../../_components/Header";
 import api from "../../services/api";
+import { AxiosError } from "axios";
+import { toast, Toaster } from "sonner";
 
 const formSchema = z
   .object({
@@ -74,13 +76,19 @@ export default function SignUp() {
         console.error("Error signing up:", response.data);
       }
     } catch (error) {
-      console.error("Error during sign up:", error);
+      if (error instanceof AxiosError) {
+        console.log("Error during registration:", error);
+        if (error.status === 400) {
+          toast('Erro ao criar conta!');
+        }
+      }
     }
   };
 
   return (
     <main>
       <Header />
+      <Toaster />
       <FormWrapper form={form} onSubmit={onSubmit} submitLabel="Sign Up">
         <InputField control={form.control} name="name" label="Name" type="text" />
         <MaskedInputField control={form.control} name="phone" label="Phone" mask="+55 00 00000-0000" />

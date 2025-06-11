@@ -17,6 +17,7 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { CreateEmployeeDTO } from './dtos/create-employee.dto';
 import { EmployeeUpdateDTO } from './dtos/employee-update.dto';
 import { EmployeeService } from './employee.service';
+import { EmployeeResponseDto } from './dtos/employee.request.dto';
 
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('/employee')
@@ -30,10 +31,15 @@ export class EmployeeController {
   ): Promise<Employee | null> {
     return await this.employeeService.create(data);
   }
-
+ 
   @Get(':id')
   findOne(@Param('id') id: string): Promise<Employee | null> {
     return this.employeeService.findById(id);
+  }
+  
+  @Get('')
+  async findOneByEmail(@Query('email') email: string): Promise<EmployeeResponseDto> {
+    return new EmployeeResponseDto(await this.employeeService.findByEmail(email));
   }
 
   @Get('search/all')
@@ -50,7 +56,7 @@ export class EmployeeController {
   update(
     @Param('id') id: string,
     @Body() data: EmployeeUpdateDTO,
-  ): Promise<Employee | null> {
+  ): Promise<EmployeeResponseDto | null> {
     return this.employeeService.update(id, data);
   }
 

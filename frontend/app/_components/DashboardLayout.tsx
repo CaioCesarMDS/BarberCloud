@@ -20,7 +20,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, sidebar, ti
   interface User {
     id: string;
     name: string;
-    role: "admin" | "barber" | "client";
+    role: "ADMIN" | "EMPLOYEE";
   }
 
   const [user, setUser] = useState<User | null>(null);
@@ -68,14 +68,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, sidebar, ti
 
   const getRoleLabel = () => {
     switch (user?.role) {
-      case "admin":
+      case "ADMIN":
         return "Administrador";
-      case "barber":
+      case "EMPLOYEE":
         return "Barbeiro";
-      case "client":
-        return "Cliente";
       default:
-        return "Usuário";
+        return "Cliente";
     }
   };
 
