@@ -21,7 +21,7 @@ export class AuthService {
     private readonly clientService: ClientService,
     private readonly redisTransportService: RedisTransportService,
     private readonly redisTokenService: RedisTokenService,
-  ) { }
+  ) {}
 
   async clientSignUp(data: ClientSignUpDTO): Promise<AuthClientResponseDTO> {
     const newUser = await this.clientService.create(data);

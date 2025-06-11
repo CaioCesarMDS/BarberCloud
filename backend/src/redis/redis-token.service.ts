@@ -9,7 +9,7 @@ export class RedisTokenService implements OnModuleInit {
   constructor(private readonly redisService: RedisService) {}
 
   onModuleInit() {
-    this.client = this.redisService.getClient()
+    this.client = this.redisService.getClient();
   }
 
   async generateResetCode(email: string): Promise<string> {

@@ -1,11 +1,11 @@
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { CalendarIcon } from "lucide-react";
+import { Popover } from "@headlessui/react";
+import { Calendar } from "lucide-react";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
 import { Control, FieldValues, Path } from "react-hook-form";
+import { cn } from "../../../_lib/utils";
 import { Button } from "../../shadcn/ui/button";
-import { Calendar } from "../../shadcn/ui/calendar";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../shadcn/ui/form";
-import { Popover, PopoverContent, PopoverTrigger } from "../../shadcn/ui/popover";
 
 interface DatePickerFieldProps<T extends FieldValues> {
   control: Control<T>;
@@ -19,26 +19,29 @@ export default function DatePickerField<T extends FieldValues>({ control, name, 
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-col w-full">
+        <FormItem className="flex flex-col">
           <FormLabel>{label}</FormLabel>
-          <Popover>
-            <PopoverTrigger asChild>
-              <FormControl>
-                <Button variant={"outline"} className={"pl-3 text-left font-normal"}>
-                  {field.value ? format(field.value, "dd 'de' MMM 'de' yyyy", { locale: ptBR }) : <span></span>}
-                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                </Button>
-              </FormControl>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
+          <Popover className="relative">
+            <FormControl>
+              <Popover.Button
+                as={Button}
+                variant="outline"
+                className={cn("w-full justify-between text-left font-normal", !field.value && "text-muted-foreground")}
+              >
+                {field.value ? new Date(field.value).toLocaleDateString("pt-BR") : "Selecione uma data"}
+                <Calendar className="ml-2 h-4 w-4 opacity-50" />
+              </Popover.Button>
+            </FormControl>
+            <Popover.Panel className="absolute z-10 mt-2 w-[320px] bg-white border border-gray-300 rounded-md shadow-md">
+              <DayPicker
                 mode="single"
-                selected={field.value}
+                selected={field.value ? new Date(field.value) : undefined}
                 onSelect={field.onChange}
-                disabled={(date: Date) => date > new Date() || date < new Date("1900-01-01")}
-                initialFocus
+                captionLayout="dropdown"
+                fromYear={1950}
+                toYear={2050}
               />
-            </PopoverContent>
+            </Popover.Panel>
           </Popover>
           <FormMessage />
         </FormItem>

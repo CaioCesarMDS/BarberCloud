@@ -23,7 +23,7 @@ import { RedisModule } from 'src/redis/redis.module';
     }),
     EmployeeModule,
     ClientModule,
-    RedisModule
+    RedisModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, AuthGuard],

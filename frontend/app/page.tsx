@@ -3,9 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./_components/shadcn/ui/button";
-import { Input } from "./_components/shadcn/ui/input";
-import { Tabs, TabsContent, TabsTrigger, TabsList } from "./_components/shadcn/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./_components/shadcn/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./_components/shadcn/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./_components/shadcn/ui/tabs";
 
 export default function Home() {
   return (
@@ -25,9 +24,7 @@ export default function Home() {
         <Card className="bg-white/95 backdrop-blur-sm shadow-2xl border-0">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl text-barber-blue">Acesso ao BarberCloud</CardTitle>
-            <CardDescription>
-              Faça login para acessar o sistema!
-            </CardDescription>
+            <CardDescription>Faça login para acessar o sistema!</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="client" className="w-full">
@@ -37,8 +34,10 @@ export default function Home() {
               </TabsList>
 
               <TabsContent value="client" className="space-y-4">
-                <div className="flex flex-row items-center justify-center gap-6
-                p-12 bg-[url(/client-bg.gif)] bg-no-repeat bg-cover bg-center">
+                <div
+                  className="flex flex-row items-center justify-center gap-6
+                p-12 bg-[url(/client-bg.gif)] bg-no-repeat bg-cover bg-center"
+                >
                   <Link href="client/signin">
                     <Button>SignIn</Button>
                   </Link>
@@ -49,8 +48,10 @@ export default function Home() {
               </TabsContent>
 
               <TabsContent value="barbershop" className="space-y-4">
-                <div className="flex flex-row items-center justify-center gap-6
-                p-12 bg-[url(/barber-bg.gif)] bg-no-repeat bg-cover bg-center">
+                <div
+                  className="flex flex-row items-center justify-center gap-6
+                p-12 bg-[url(/barber-bg.gif)] bg-no-repeat bg-cover bg-center"
+                >
                   <Link href="barbershop/signin">
                     <Button>SignIn</Button>
                   </Link>

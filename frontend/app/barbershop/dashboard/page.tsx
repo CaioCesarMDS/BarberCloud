@@ -1,111 +1,108 @@
 "use client";
 
-import DashboardLayout from '../../_components/DashboardLayout';
-import BarberSidebar from '../../_components/BarberSideBar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../_components/shadcn/ui/card';
-import { Button } from '../../_components/shadcn/ui/button';
-import { Badge } from '../../_components/shadcn/ui/badge';
-import { Avatar, AvatarFallback } from '../../_components/shadcn/ui/avatar';
-import { Calendar, Clock, Users, Scissors, Star, DollarSign } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import api from '@/app/services/api';
+import api from "@/app/services/api";
+import { Calendar, DollarSign, Scissors, Star, Users } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import BarberSidebar from "../../_components/BarberSideBar";
+import DashboardLayout from "../../_components/DashboardLayout";
+import { Avatar, AvatarFallback } from "../../_components/shadcn/ui/avatar";
+import { Badge } from "../../_components/shadcn/ui/badge";
+import { Button } from "../../_components/shadcn/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../_components/shadcn/ui/card";
 
 const BarberDashboard: React.FC = () => {
   const router = useRouter();
-  
-    interface User {
-      id: string;
-      name: string;
-      role: "admin" | "barber" | "client";
+
+  interface User {
+    id: string;
+    name: string;
+    role: "admin" | "barber" | "client";
+  }
+
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("barber-token");
+    if (!token) {
+      router.push("/barbershop/signin");
+      return;
     }
-  
-    const [user, setUser] = useState<User | null>(null);
-  
-    useEffect(() => {
-      const token = localStorage.getItem("barber-token");
-      if (!token) {
+
+    const fetchUser = async () => {
+      try {
+        const { data: authData } = await api.get("/auth/me");
+        const { data: userData } = await api.get(`/employee/${authData.id}`);
+        setUser(userData);
+      } catch (error) {
+        console.error("Erro ao buscar informações do usuário:", error);
         router.push("/barbershop/signin");
-        return;
       }
-  
-      const fetchUser = async () => {
-        try {
-          const { data: authData } = await api.get("/auth/me");
-          const { data: userData } = await api.get(`/employee/${authData.id}`);
-          setUser(userData);
-        } catch (error) {
-          console.error("Erro ao buscar informações do usuário:", error);
-          router.push("/barbershop/signin");
-        }
-      };
-  
-      fetchUser();
-    }, [router]);
+    };
+
+    fetchUser();
+  }, [router]);
 
   const todayAppointments = [
     {
       id: 1,
-      clientName: 'João Silva',
-      service: 'Corte + Barba',
-      time: '09:00',
+      clientName: "João Silva",
+      service: "Corte + Barba",
+      time: "09:00",
       duration: 50,
       price: 40,
-      status: 'Confirmado'
+      status: "Confirmado",
     },
     {
       id: 2,
-      clientName: 'Pedro Santos',
-      service: 'Corte Masculino',
-      time: '10:30',
+      clientName: "Pedro Santos",
+      service: "Corte Masculino",
+      time: "10:30",
       duration: 30,
       price: 25,
-      status: 'Confirmado'
+      status: "Confirmado",
     },
     {
       id: 3,
-      clientName: 'Carlos Lima',
-      service: 'Barba',
-      time: '14:00',
+      clientName: "Carlos Lima",
+      service: "Barba",
+      time: "14:00",
       duration: 25,
       price: 20,
-      status: 'Pendente'
+      status: "Pendente",
     },
     {
       id: 4,
-      clientName: 'Rafael Costa',
-      service: 'Corte Masculino',
-      time: '16:00',
+      clientName: "Rafael Costa",
+      service: "Corte Masculino",
+      time: "16:00",
       duration: 30,
       price: 25,
-      status: 'Confirmado'
-    }
+      status: "Confirmado",
+    },
   ];
 
   const recentClients = [
-    { name: 'João Silva', lastVisit: '2024-01-15', totalVisits: 12 },
-    { name: 'Pedro Santos', lastVisit: '2024-01-14', totalVisits: 8 },
-    { name: 'Carlos Lima', lastVisit: '2024-01-12', totalVisits: 5 }
+    { name: "João Silva", lastVisit: "2024-01-15", totalVisits: 12 },
+    { name: "Pedro Santos", lastVisit: "2024-01-14", totalVisits: 8 },
+    { name: "Carlos Lima", lastVisit: "2024-01-12", totalVisits: 5 },
   ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Confirmado':
-        return 'bg-green-100 text-green-800';
-      case 'Pendente':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'Concluído':
-        return 'bg-blue-100 text-blue-800';
+      case "Confirmado":
+        return "bg-green-100 text-green-800";
+      case "Pendente":
+        return "bg-yellow-100 text-yellow-800";
+      case "Concluído":
+        return "bg-blue-100 text-blue-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   return (
-    <DashboardLayout
-      sidebar={<BarberSidebar />}
-      title="Dashboard do Barbeiro"
-    >
+    <DashboardLayout sidebar={<BarberSidebar />} title="Dashboard do Barbeiro">
       <div className="space-y-6">
         {/* Welcome Section */}
         <div className="bg-gradient-to-r from-barber-blue to-barber-blue-light rounded-xl p-6 text-white">
@@ -125,7 +122,7 @@ const BarberDashboard: React.FC = () => {
               <p className="text-xs text-barber-gray">agendamentos</p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Esta Semana</CardTitle>
@@ -136,7 +133,7 @@ const BarberDashboard: React.FC = () => {
               <p className="text-xs text-barber-gray">serviços realizados</p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Avaliação</CardTitle>
@@ -147,7 +144,7 @@ const BarberDashboard: React.FC = () => {
               <p className="text-xs text-barber-gray">média de 156 avaliações</p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Faturamento</CardTitle>
@@ -173,18 +170,21 @@ const BarberDashboard: React.FC = () => {
                   </Button>
                 </div>
                 <CardDescription>
-                  {new Date().toLocaleDateString('pt-BR', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
+                  {new Date().toLocaleDateString("pt-BR", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
                   })}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {todayAppointments.map((appointment) => (
-                    <div key={appointment.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-barber-gray-light transition-colors">
+                    <div
+                      key={appointment.id}
+                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-barber-gray-light transition-colors"
+                    >
                       <div className="flex items-center space-x-4">
                         <div className="text-center">
                           <div className="text-lg font-bold text-barber-blue">{appointment.time}</div>
@@ -192,7 +192,11 @@ const BarberDashboard: React.FC = () => {
                         </div>
                         <Avatar>
                           <AvatarFallback className="bg-barber-blue text-white">
-                            {appointment.clientName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                            {appointment.clientName
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
+                              .toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                         <div>
@@ -201,12 +205,8 @@ const BarberDashboard: React.FC = () => {
                         </div>
                       </div>
                       <div className="text-right">
-                        <Badge className={getStatusColor(appointment.status)}>
-                          {appointment.status}
-                        </Badge>
-                        <div className="text-sm font-semibold text-green-600 mt-1">
-                          R$ {appointment.price}
-                        </div>
+                        <Badge className={getStatusColor(appointment.status)}>{appointment.status}</Badge>
+                        <div className="text-sm font-semibold text-green-600 mt-1">R$ {appointment.price}</div>
                       </div>
                     </div>
                   ))}
@@ -228,13 +228,17 @@ const BarberDashboard: React.FC = () => {
                     <div key={index} className="flex items-center space-x-3">
                       <Avatar>
                         <AvatarFallback className="bg-barber-blue text-white">
-                          {client.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                          {client.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                            .toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
                         <div className="font-medium text-barber-blue">{client.name}</div>
                         <div className="text-sm text-barber-gray">
-                          {new Date(client.lastVisit).toLocaleDateString('pt-BR')}
+                          {new Date(client.lastVisit).toLocaleDateString("pt-BR")}
                         </div>
                       </div>
                       <Badge variant="secondary" className="text-xs">

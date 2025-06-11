@@ -2,9 +2,9 @@ import {
   IsDate,
   IsEmail,
   IsOptional,
-  IsPhoneNumber,
   IsString,
   IsStrongPassword,
+  MaxLength,
   MinLength,
 } from 'class-validator';
 
@@ -21,7 +21,8 @@ export class ClientUpdateDTO {
   @IsOptional()
   @IsString()
   @MinLength(9)
-  @IsPhoneNumber('BR')
+  @MaxLength(15)
+  s;
   @PhoneIsUnique()
   phone?: string;
 

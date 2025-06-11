@@ -4,9 +4,9 @@ import {
   IsEmail,
   IsEnum,
   IsOptional,
-  IsPhoneNumber,
   IsString,
   IsStrongPassword,
+  MaxLength,
   MinLength,
 } from 'class-validator';
 
@@ -22,7 +22,7 @@ export class EmployeeUpdateDTO {
   @IsOptional()
   @IsString()
   @MinLength(9)
-  @IsPhoneNumber('BR')
+  @MaxLength(15)
   @PhoneIsUnique()
   phone?: string;
 
