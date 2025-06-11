@@ -9,7 +9,6 @@ import InputField from "../../_components/form/fields/InputField";
 import FormWrapper from "../../_components/form/FormWrapper";
 import Header from "../../_components/Header";
 import api from "../../services/api";
-import Link from "next/link";
 import {
     InputOTP,
     InputOTPGroup,

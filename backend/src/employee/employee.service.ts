@@ -7,13 +7,14 @@ import { CreateEmployeeDTO } from './dtos/create-employee.dto';
 import { EmployeeUpdateDTO } from './dtos/employee-update.dto';
 import { EmployeeResponseDto } from './dtos/employee.request.dto';
 import { EmployeeRepository } from './employee.repository';
+import { throwError } from 'rxjs';
 
 @Injectable()
 export class EmployeeService {
   constructor(
     private readonly employeeRepository: EmployeeRepository,
     private redisTransportService: RedisTransportService,
-  ) {}
+  ) { }
 
   async create(data: CreateEmployeeDTO): Promise<Employee> {
     const hashedPassword = await this.hashPassword(data.password);
@@ -42,11 +43,25 @@ export class EmployeeService {
     return this.employeeRepository.remove(id);
   }
 
-  update(
+  async update(
     id: string,
-    EmployeeData: EmployeeUpdateDTO,
-  ): Promise<Employee | null> {
-    return this.employeeRepository.update(id, EmployeeData);
+    EmployeeData: EmployeeUpdateDTO
+  ): Promise<EmployeeResponseDto | null> {
+    if (EmployeeData.password) {
+      const hashedPassword: string = await this.hashPassword(EmployeeData.password);
+      const employeeUpdated: Employee | null = await this.employeeRepository.update(
+        id,
+        EmployeeData,
+        hashedPassword
+      );
+      return employeeUpdated ? new EmployeeResponseDto(employeeUpdated) : null;
+    } else {
+      const employeeUpdated: Employee | null = await this.employeeRepository.update(
+        id,
+        EmployeeData
+      );
+      return employeeUpdated ? new EmployeeResponseDto(employeeUpdated) : null;
+    }
   }
 
   findAllByName(name: string): Promise<EmployeeResponseDto[]> {
@@ -57,8 +72,13 @@ export class EmployeeService {
     return this.employeeRepository.findById(id);
   }
 
-  findByEmail(email: string): Promise<Employee | null> {
-    return this.employeeRepository.findByEmail(email);
+  async findByEmail(email: string): Promise<Employee> {
+    const employee: Employee | null = await this.employeeRepository.findByEmail(email);
+    if(employee) {
+      return employee;
+    } else {
+      throw new BadRequestException('User Not Found')
+    }
   }
 
   hashPassword(password: string): Promise<string> {

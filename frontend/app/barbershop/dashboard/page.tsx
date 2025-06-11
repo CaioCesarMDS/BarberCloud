@@ -17,7 +17,7 @@ const BarberDashboard: React.FC = () => {
   interface User {
     id: string;
     name: string;
-    role: "admin" | "barber" | "client";
+    role: "ADMIN" | "EMPLOYEE";
   }
 
   const [user, setUser] = useState<User | null>(null);
@@ -35,7 +35,7 @@ const BarberDashboard: React.FC = () => {
         const { data: userData } = await api.get(`/employee/${authData.id}`);
         setUser(userData);
       } catch (error) {
-        console.error("Erro ao buscar informações do usuário:", error);
+        console.log("Erro ao buscar informações do usuário:", error);
         router.push("/barbershop/signin");
       }
     };
@@ -102,6 +102,7 @@ const BarberDashboard: React.FC = () => {
   };
 
   return (
+    
     <DashboardLayout sidebar={<BarberSidebar />} title="Dashboard do Barbeiro">
       <div className="space-y-6">
         {/* Welcome Section */}
