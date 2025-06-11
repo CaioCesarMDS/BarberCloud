@@ -1,11 +1,11 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { RoleJwtPayload } from '../common/interfaces/jwt.payload';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { User } from './decorators/auth.decorator';
 import { SignInDTO } from './dtos/sign-in.dto';
 import { ClientSignUpDTO, EmployeeSignUpDTO } from './dtos/sign-up.dto';
 import { JwtPayload } from './interfaces/jwt.payload';
+import { ForgotPasswordResponseDTO } from './dtos/forgot-password.response.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -33,7 +33,18 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('/me')
-  employeeGetProfile(@User() user: JwtPayload) {
+  getProfile(@User() user: JwtPayload) {
     return user;
+  }
+
+  @Get('forgot-password/')
+  async sendTokenToChangePassword(@Query('email') email: string): Promise<void> {
+    return await this.authService.sendResetPasswordCode(email);
+  }
+
+  @Get('forgot-password/reset')
+  async verifyTokenToChangePassword(@Query('email') email: string, @Query('code') code: string, ): Promise<ForgotPasswordResponseDTO> {
+    console.log(code)
+    return await this.authService.verifyCode(email, code);
   }
 }

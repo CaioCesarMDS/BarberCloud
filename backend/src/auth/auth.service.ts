@@ -9,6 +9,9 @@ import { AuthEmployeeResponseDTO } from './dtos/auth-employee.response.dto';
 import { SignInDTO } from './dtos/sign-in.dto';
 import { ClientSignUpDTO, EmployeeSignUpDTO } from './dtos/sign-up.dto';
 import { JwtPayload } from './interfaces/jwt.payload';
+import { RedisTransportService } from 'src/redis/redis-transport.service';
+import { RedisTokenService } from 'src/redis/redis-token.service';
+import { ForgotPasswordResponseDTO } from './dtos/forgot-password.response.dto';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +19,9 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly employeeService: EmployeeService,
     private readonly clientService: ClientService,
-  ) {}
+    private readonly redisTransportService: RedisTransportService,
+    private readonly redisTokenService: RedisTokenService,
+  ) { }
 
   async clientSignUp(data: ClientSignUpDTO): Promise<AuthClientResponseDTO> {
     const newUser = await this.clientService.create(data);
@@ -84,6 +89,40 @@ export class AuthService {
     };
   }
 
+  async verifyCode(email: string, code: string): Promise<ForgotPasswordResponseDTO> {
+    const can: boolean | null =  await this.verifyRedisToken(email, code);
+    console.log("codigo que veio: ", code)
+    return {
+      email: email,
+      tokenIsTrue: can
+    }
+  }
+
+  async sendResetPasswordCode(email: string): Promise<void> {
+    const token = await this.generateRedisToken(email);
+    const client = this.redisTransportService.getClient();
+
+    const user = await this.employeeService.findByEmail(email);
+    if (!user) {
+      const user = await this.clientService.findByEmail(email);
+      client.emit('email.send', {
+        to: email,
+        subject: 'Recuperação de Senha - BarberCloud',
+        text: `
+        Olá, ${user?.name}!\n
+        Aqui está o código de recuperação de sua senha: ${token}`,
+      });
+    } else {
+      client.emit('email.send', {
+        to: email,
+        subject: 'Recuperação de Senha - BarberCloud',
+        text: `
+        Olá, ${user.name}!\n
+        Aqui está o código de recuperação de sua senha: ${token}`,
+      });
+    }
+  }
+
   private async generateEmployeeToken(user: Employee): Promise<string> {
     const payload: RoleJwtPayload = {
       id: user.id,
@@ -103,5 +142,16 @@ export class AuthService {
     };
 
     return await this.jwtService.signAsync(payload);
+  }
+
+  private async generateRedisToken(email: string): Promise<string> {
+    return await this.redisTokenService.generateResetCode(email);
+  }
+
+  private async verifyRedisToken(email: string, code: string): Promise<boolean> {
+    const redisToken: string | null = await this.redisTokenService.getResetCode(email);
+    console.log("codigo real do redis: ", redisToken)
+    console.log("codigo que veio: ", code)
+    return redisToken === code ? true : false;
   }
 }

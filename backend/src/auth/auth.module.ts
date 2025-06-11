@@ -7,6 +7,7 @@ import { EmployeeModule } from 'src/employee/employee.module';
 import { AuthController } from './auth.controller';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
+import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AuthService } from './auth.service';
     }),
     EmployeeModule,
     ClientModule,
+    RedisModule
   ],
   controllers: [AuthController],
   providers: [AuthService, AuthGuard],
