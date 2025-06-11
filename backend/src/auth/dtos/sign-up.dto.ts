@@ -1,46 +1,5 @@
-import { Role } from '@prisma/client';
-import {
-  IsDateString,
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsString,
-  IsStrongPassword,
-  IsUUID,
-  MinLength,
-} from 'class-validator';
-import { EmailIsUnique } from '../validators/email.validator';
- import { PhoneIsUnique } from '../validators/phone.validator';
+import { CreateClientDTO } from 'src/client/dtos/client-create.dto';
+import { CreateEmployeeDTO } from 'src/employee/dtos/create-employee.dto';
 
-export class SignUpDTO {
-  @IsNotEmpty()
-  @IsString()
-  name!: string;
-
-  @IsNotEmpty()
-  @MinLength(9)
-  @PhoneIsUnique({ message: 'phone provided has already been registered' })
-  phone!: string;
-
-  @IsDateString()
-  birth!: string;
-
-  @IsNotEmpty()
-  @IsUUID()
-  barbershopId!: string;
-
-  @IsEmail()
-  @EmailIsUnique({ message: 'email provided has already been registered!' })
-  email!: string;
-
-  @IsNotEmpty()
-  @IsStrongPassword()
-  password!: string;
-
-  @IsNotEmpty()
-  @IsStrongPassword()
-  confirmPassword!: string;
-
-  @IsEnum(Role)
-  role!: Role;
-}
+export class EmployeeSignUpDTO extends CreateEmployeeDTO {}
+export class ClientSignUpDTO extends CreateClientDTO {}

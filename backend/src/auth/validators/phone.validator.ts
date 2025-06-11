@@ -13,10 +13,15 @@ export class PhoneValidator implements ValidatorConstraintInterface {
   constructor(private readonly prisma: PrismaService) {}
 
   async validate(phone: string): Promise<boolean> {
-    const [result] = await this.prisma.$queryRaw<
-            { exists: boolean }[]
-        >`SELECT EXISTS(SELECT 1 FROM "User" WHERE phone = ${phone}) AS "exists"`;
-        return !result.exists;
+    const employee = await this.prisma.employee.findUnique({
+      where: { phone },
+    });
+    const client = await this.prisma.client.findUnique({ where: { phone } });
+    if (employee) {
+      return !employee;
+    } else {
+      return !client;
+    }
   }
 
   defaultMessage(): string {
