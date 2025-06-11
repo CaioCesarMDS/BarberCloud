@@ -4,29 +4,29 @@ import {
   LayoutDashboard, 
   Users, 
   Scissors, 
-  Settings,
+  Settings, 
+  BarChart3, 
   Calendar,
-  History,
+  User
 } from 'lucide-react';
 import Link from 'next/link';
 
-const BarberSidebar: React.FC = () => {
+const AdminSidebar: React.FC = () => { 
 
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/barbershop/dashboard' },
-    { icon: Calendar, label: 'Agenda', path: '/barbershop/schedule' },
     { icon: Users, label: 'Clientes', path: '/barbershop/clients' },
-    { icon: History, label: 'Histórico', path: '/barbershop/history' },
+    { icon: User, label: 'Barbeiros', path: '/barbershop/barbers' },
+    { icon: Scissors, label: 'Serviços', path: '/barbershop/services' },
+    { icon: BarChart3, label: 'Relatórios', path: '/barbershop/reports' },
+    { icon: Settings, label: 'Configurações', path: '/barbershop/settings'}
   ];
 
   return (
     <nav className="h-full pt-6">
       <div className="px-4 mb-8">
-        <div className="flex items-center space-x-2 mb-2">
-          <Scissors className="w-6 h-6 text-white" />
-          <h2 className="text-lg font-semibold text-white">Barbeiro</h2>
-        </div>
-        <p className="text-sm text-barber-cream opacity-75">Área do Profissional</p>
+        <h2 className="text-lg font-semibold text-white mb-2">Administração</h2>
+        <p className="text-sm text-barber-cream opacity-75">Painel do Proprietário</p>
       </div>
       
       <ul className="space-y-2 px-3">
@@ -55,4 +55,4 @@ const BarberSidebar: React.FC = () => {
   );
 };
 
-export default BarberSidebar;
+export default AdminSidebar;

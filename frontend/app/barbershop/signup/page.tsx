@@ -11,6 +11,8 @@ import Header from "../../_components/Header";
 import api from "../../services/api";
 
 import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
+import { toast, Toaster } from "sonner";
 
 const formSchema = z
   .object({
@@ -125,8 +127,6 @@ export default function SignUp() {
           barbershopId: responseBarbershop.data.id,
         };
 
-        console.log("User Data:", userData.phone);
-
         const responseUser = await api.post("/auth/employee/signup", userData);
 
         if (responseUser.status === 201) {
@@ -136,10 +136,15 @@ export default function SignUp() {
           console.error("Error signing up:", responseUser.data);
         }
       } else {
-        console.error("Error to register Barbershop:", responseBarbershop.data);
+        console.log("Error to register Barbershop:", responseBarbershop.data);
       }
     } catch (error) {
-      console.error("Error during requests:", error);
+      if(error instanceof AxiosError) {
+        console.log("Error during registration:", error);
+        if(error.status === 400) {
+          toast('Erro ao criar conta!');
+        }
+      }
     }
   };
 
@@ -149,6 +154,7 @@ export default function SignUp() {
   return (
     <main>
       <Header />
+      <Toaster />
       <FormWrapper form={form} onSubmit={onSubmit} submitLabel="Sign Up">
         <h3 className="p-6">Sign Up</h3>
 

@@ -14,7 +14,6 @@ const ClientDashboard: React.FC = () => {
   interface User {
     id: string;
     name: string;
-    role: "admin" | "barber" | "client";
   }
 
   const [user, setUser] = useState<User | null>(null);
@@ -50,7 +49,10 @@ const ClientDashboard: React.FC = () => {
       <Toaster/>
       <div className="space-y-6">
         <div className="bg-gradient-to-r from-barber-blue to-barber-blue-light rounded-xl p-6 text-white">
-          <h1 className="text-2xl font-bold mb-2">{`Bem vindo, ${user?.name}`} ✨</h1>
+          <h1 className="text-2xl font-bold mb-2">{`Perfil`}</h1>
+        </div>
+        <div className="bg-gradient-to-r from-barber-blue to-barber-blue-light rounded-xl p-6 text-white">
+          <h1 className="text-2xl font-bold mb-2">{`Configurações da conta`}</h1>
         </div>
       </div>
     </DashboardLayout>

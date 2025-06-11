@@ -37,10 +37,10 @@ export default function SignIn() {
       console.log("login successfully:", response.data);
       router.push("/barbershop/dashboard");
     } catch (error) {
-      if(error instanceof AxiosError) {
+      if (error instanceof AxiosError) {
         console.log("Error during registration:", error);
-        if(error.status === 401) {
-          toast('Senha incorreta!');
+        if (error.status === 401 || error.status === 400) {
+          toast('Usuário e/ou senha Incorretos!');
         }
       }
     }
