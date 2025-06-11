@@ -43,11 +43,21 @@ export class ClientService {
     id: string,
     clientData: ClientUpdateDTO,
   ): Promise<ClientResponseDto | null> {
-    const clientUpdated: Client | null = await this.clientRepository.update(
-      id,
-      clientData,
-    );
-    return clientUpdated ? new ClientResponseDto(clientUpdated) : null;
+    if(clientData.password) {
+      const hashedPassword: string = await this.hashPassword(clientData.password);
+      const clientUpdated: Client | null = await this.clientRepository.update(
+        id,
+        clientData,
+        hashedPassword
+      );
+      return clientUpdated ? new ClientResponseDto(clientUpdated) : null;
+    } else {
+      const clientUpdated: Client | null = await this.clientRepository.update(
+        id,
+        clientData
+      );
+      return clientUpdated ? new ClientResponseDto(clientUpdated) : null;
+    }
   }
 
   async findAllByName(name: string): Promise<ClientResponseDto[]> {
@@ -86,8 +96,13 @@ export class ClientService {
     }
   }
 
-  findByEmail(email: string): Promise<Client | null> {
-    return this.clientRepository.findByEmail(email);
+  async findByEmail(email: string): Promise<Client> {
+    const client: Client | null = await this.clientRepository.findByEmail(email);
+    if(client) {
+      return client;
+    } else {
+      throw new BadRequestException('User not Found!')
+    }
   }
 
   hashPassword(password: string): Promise<string> {
