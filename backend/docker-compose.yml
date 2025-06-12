@@ -45,16 +45,16 @@ services:
       - EMAIL_USERNAME=${EMAIL_USERNAME}
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
 
-  # frontend:
-  #   build:
-  #     context: ../frontend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - backend
-  #   environment:
-  #     - NEXT_PUBLIC_API_URL=http://<IP-DA-EC2>:${PORT_BACKEND}
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:${PORT_BACKEND}
 
 volumes:
   devbarber_pgdata:

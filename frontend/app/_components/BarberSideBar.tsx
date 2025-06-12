@@ -3,8 +3,7 @@
 import { 
   LayoutDashboard, 
   Users, 
-  Scissors, 
-  Settings,
+  Scissors,
   Calendar,
   History,
 } from 'lucide-react';

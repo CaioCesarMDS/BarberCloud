@@ -5,8 +5,7 @@ import {
   Users, 
   Scissors, 
   Settings, 
-  BarChart3, 
-  Calendar,
+  BarChart3,
   User
 } from 'lucide-react';
 import Link from 'next/link';
