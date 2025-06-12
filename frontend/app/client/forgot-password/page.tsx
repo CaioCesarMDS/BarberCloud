@@ -87,7 +87,6 @@ export default function SignIn() {
                 setShowCodeForm(true);
                 setShowPasswordForm(false);
                 setClientEmail(data.email);
-                console.log(clientEmail)
                 toast('Verify the code in your email!')
             } else {
                 toast(
@@ -164,7 +163,6 @@ export default function SignIn() {
                     }
                 )
                 if (responseUpdate.status === 200) {
-                    console.log(responseUpdate)
                     toast('Password was changed!')
                     router.push('/client/signin')
                 }

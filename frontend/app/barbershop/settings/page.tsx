@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import api from "../../services/api";
-import Link from "next/link";
-import { AxiosError } from "axios";
-import { toast, Toaster } from "sonner";
+// import Link from "next/link";
+// import { AxiosError } from "axios";
+// import { toast, Toaster } from "sonner";
 import { useEffect, useState } from "react";
 import AdminSidebar from "@/app/_components/AdminSideBar";
 import DashboardLayout from "@/app/_components/DashboardLayout";
@@ -20,8 +20,8 @@ export default function Settings() {
   }
 
   const [user, setUser] = useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [isBarber, setIsBarber] = useState<boolean>(false);
+  // const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  // const [isBarber, setIsBarber] = useState<boolean>(false);
 
   useEffect(() => {
     const token = localStorage.getItem("barber-token");
@@ -36,7 +36,7 @@ export default function Settings() {
         const { data: userData } = await api.get(`/employee/${authData.id}`);
         setUser(userData);
         if (userData.role === 'ADMIN') {
-          setIsAdmin(true)
+          console.log(user)
         } else if (userData.role === 'EMPLOYEE') {
           router.push('/barbershop/dashboard')
         }
@@ -47,7 +47,7 @@ export default function Settings() {
     };
 
     fetchUser();
-  }, [router]);
+  }, [router, user]);
 
   return (
         <DashboardLayout sidebar={<AdminSidebar />} title="Dashboard do Admin">

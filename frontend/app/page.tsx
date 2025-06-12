@@ -36,7 +36,7 @@ export default function Home() {
               <TabsContent value="client" className="space-y-4">
                 <div
                   className="flex flex-row items-center justify-center gap-6
-                p-12 bg-[url(/client-bg.gif)] bg-no-repeat bg-cover bg-center"
+                p-12 bg-no-repeat bg-cover bg-center"
                 >
                   <Link href="client/signin">
                     <Button>SignIn</Button>

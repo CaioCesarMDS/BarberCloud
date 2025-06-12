@@ -21,7 +21,7 @@ export class AuthService {
     private readonly clientService: ClientService,
     private readonly redisTransportService: RedisTransportService,
     private readonly redisTokenService: RedisTokenService,
-  ) {}
+  ) { }
 
   async clientSignUp(data: ClientSignUpDTO): Promise<AuthClientResponseDTO> {
     const newUser = await this.clientService.create(data);
@@ -90,8 +90,8 @@ export class AuthService {
   }
 
   async verifyCode(email: string, code: string): Promise<ForgotPasswordResponseDTO> {
-    const can: boolean | null =  await this.verifyRedisToken(email, code);
-    if(can) {
+    const can: boolean | null = await this.verifyRedisToken(email, code);
+    if (can) {
       return {
         email: email,
         tokenIsTrue: can
@@ -105,27 +105,33 @@ export class AuthService {
     const token = await this.generateRedisToken(email);
     const client = this.redisTransportService.getClient();
 
-    const user = await this.employeeService.findByEmail(email);
-    if (user) {
-      client.emit('email.send', {
-        to: email,
-        subject: 'Recuperação de Senha - BarberCloud',
-        text: `
-        Olá, ${user.name}!\n
-        Aqui está o código de recuperação de sua senha: ${token}`,
-      });
-    } else {
-      const user = await this.clientService.findByEmail(email);
-      if(user) {
+    try {
+      const user = await this.employeeService.findByEmail(email);
+      if (user) {
         client.emit('email.send', {
           to: email,
           subject: 'Recuperação de Senha - BarberCloud',
           text: `
-          Olá, ${user?.name}!\n
+          Olá, ${user.name}!\n
           Aqui está o código de recuperação de sua senha: ${token}`,
         });
+      }
+    } catch (error) {
+      if(error instanceof BadRequestException) {
+        const user = await this.clientService.findByEmail(email);
+        if (user) {
+          client.emit('email.send', {
+            to: email,
+            subject: 'Recuperação de Senha - BarberCloud',
+            text: `
+            Olá, ${user?.name}!\n
+            Aqui está o código de recuperação de sua senha: ${token}`,
+          });
+        } else {
+          throw new BadRequestException('Email sent is invalid!');
+        }
       } else {
-        throw new BadRequestException('Email sent is invalid!');
+        throw error;
       }
     }
   }

@@ -1,4 +1,4 @@
-import { Role } from '@prisma/client';
+import { RoleEnum } from '../enums/role.enum';
 import { Type } from 'class-transformer';
 import {
   IsDate,
@@ -38,8 +38,8 @@ export class CreateEmployeeDTO {
   email!: string;
 
   @IsNotEmpty()
-  @IsEnum(Role)
-  role!: Role;
+  @IsEnum(RoleEnum)
+  role!: RoleEnum;
 
   @IsNotEmpty()
   @IsString()
