@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Employee } from '@prisma/client';
+import { Employee, Role } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateEmployeeDTO } from './dtos/create-employee.dto';
 import { EmployeeUpdateDTO } from './dtos/employee-update.dto';
@@ -18,7 +18,7 @@ export class EmployeeRepository implements IEmployeeRepositoryInterface {
         birth: data.birth,
         email: data.email,
         password: hashedPassword,
-        role: data.role,
+        role: data.role as unknown as Role,
         barbershopId: data.barbershopId,
       },
     });
@@ -36,7 +36,7 @@ export class EmployeeRepository implements IEmployeeRepositoryInterface {
         phone: data.phone,
         birth: data.birth,
         email: data.email,
-        role: data.role,
+        role: data.role as unknown as Role,
         password: hashedPassword
       },
     });

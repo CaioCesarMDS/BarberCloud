@@ -1,4 +1,4 @@
-import { Role } from '@prisma/client';
+import { RoleEnum } from '../enums/role.enum';
 import {
   IsDate,
   IsEmail,
@@ -31,8 +31,8 @@ export class EmployeeUpdateDTO {
   birth?: Date;
 
   @IsOptional()
-  @IsEnum(Role)
-  role?: Role;
+  @IsEnum(RoleEnum)
+  role?: RoleEnum;
 
   @IsOptional()
   @IsString()
