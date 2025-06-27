@@ -1,14 +1,15 @@
 import axios from "axios";
-import * as https from "https";
+// import * as https from "https";
 
-const API_URL = "http://localhost:3001";
-const api = axios.create({
+const API_URL = process.env.JWT_PASSWORD;
+export const api = axios.create({
   baseURL: API_URL,
   headers: {
     "Content-Type": "application/json",
   },
   withCredentials: true,
 });
+
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("barber-token");
@@ -18,4 +19,15 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export default api;
+export const updatePassword = axios.create({
+  baseURL: API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true,
+});
+
+updatePassword.interceptors.request.use((config) => {
+  config.headers.Authorization = `Bearer ${process.env.JWT_PASSWORD}`;
+  return config;
+});

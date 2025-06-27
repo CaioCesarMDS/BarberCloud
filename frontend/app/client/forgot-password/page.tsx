@@ -8,7 +8,7 @@ import { z } from "zod";
 import InputField from "../../_components/form/fields/InputField";
 import FormWrapper from "../../_components/form/FormWrapper";
 import Header from "../../_components/Header";
-import api from "../../services/api";
+import { api, updatePassword } from "../../services/api";
 import {
     InputOTP,
     InputOTPGroup,
@@ -54,8 +54,6 @@ export default function SignIn() {
     const [showEmailForm, setShowEmailForm] = useState(true);
     const [showPasswordForm, setShowPasswordForm] = useState(false);
     const [clientEmail, setClientEmail] = useState<string>('');
-
-    const token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBiMmY3OWI1LTVlNGYtNDE4My1hMjQ3LWFlZDg3YTZhZTU1ZiIsImVtYWlsIjoidGVzdGUyQGdtYWlsLmNvbSIsImlhdCI6MTc0OTMwNzc2MywiZXhwIjoxNzQ5MzE4NTYzfQ.HNJtgdjNhfKwKxMXbuSPOWj64aCKg-46ar__FrQFeDs';
 
     const formEmail = useForm<FormEmailData>({
         resolver: zodResolver(formEmailSchema),
@@ -152,14 +150,9 @@ export default function SignIn() {
         try {
             const responseGet = await api.get(`/client?email=${clientEmail}`);
             if (responseGet.status === 200) {
-                const responseUpdate = await api.put(`/client/${responseGet.data.id}`,
+                const responseUpdate = await updatePassword.put(`/client/${responseGet.data.id}`,
                     {
                         password: data.password
-                    },
-                    {
-                        headers: {
-                            authorization: `Bearer ${token}`
-                        }
                     }
                 )
                 if (responseUpdate.status === 200) {
