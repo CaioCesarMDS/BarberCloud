@@ -1,3 +1,7 @@
+# COMANDS
+# Clean Containers and volumes: docker system prune -af, docker volume prune -f
+# Clean Logs in cloud9: sudo journalctl --vacuum-time=1d
+
 services:
   db:
     image: postgres
@@ -44,6 +48,7 @@ services:
       - EMAIL_PORT=${EMAIL_PORT}
       - EMAIL_USERNAME=${EMAIL_USERNAME}
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+    command: sh -c "npx prisma migrate deploy && node dist/src/main"
 
   frontend:
     build:
@@ -55,6 +60,8 @@ services:
       - backend
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:${PORT_BACKEND}
+      - API_URL=${API_URL}
+      - JWT_PASSWORD=${JWT_PASSWORD}
 
 volumes:
   devbarber_pgdata:
