@@ -3,7 +3,7 @@ import { IMaskInput } from "react-imask";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "./shadcn/ui/form";
 
 type MaskedInputFieldProps<T extends FieldValues> = {
-  control: Control<T>;
+  control?: Control<T>;
   name: Path<T>;
   label: string;
   mask: string;

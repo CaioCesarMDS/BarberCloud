@@ -9,7 +9,7 @@ import DatePickerField from "../../_components/form/fields/DatePickerField";
 import InputField from "../../_components/form/fields/InputField";
 import FormWrapper from "../../_components/form/FormWrapper";
 import Header from "../../_components/Header";
-import api from "../../services/api";
+import { api } from "../../services/api";
 import { AxiosError } from "axios";
 import { toast, Toaster } from "sonner";
 

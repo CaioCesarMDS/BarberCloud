@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import api from "../../services/api";
+import { api } from "../../services/api";
 // import Link from "next/link";
 // import { AxiosError } from "axios";
 // import { toast, Toaster } from "sonner";

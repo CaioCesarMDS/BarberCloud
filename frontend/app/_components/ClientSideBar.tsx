@@ -3,6 +3,7 @@
 import { Calendar, History, LayoutDashboard, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SheetTitle } from "./shadcn/ui/sheet";
 
 export default function ClientSideBar() {
   const pathnName = usePathname();

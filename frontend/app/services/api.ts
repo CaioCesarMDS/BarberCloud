@@ -1,15 +1,12 @@
 import axios from "axios";
-// import * as https from "https";
 
-const API_URL = process.env.JWT_PASSWORD;
 export const api = axios.create({
-  baseURL: API_URL,
+  baseURL: process.env.NEXT_PUBLIC_URL_API,
   headers: {
     "Content-Type": "application/json",
   },
   withCredentials: true,
 });
-
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("barber-token");
@@ -20,7 +17,7 @@ api.interceptors.request.use((config) => {
 });
 
 export const updatePassword = axios.create({
-  baseURL: API_URL,
+  baseURL: process.env.NEXT_PUBLIC_URL_API,
   headers: {
     "Content-Type": "application/json",
   },
@@ -28,6 +25,7 @@ export const updatePassword = axios.create({
 });
 
 updatePassword.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${process.env.JWT_PASSWORD}`;
+  // esse set continua não estando seguro depois ajustar aqui
+  config.headers.Authorization = `Bearer ${process.env.NEXT_PUBLIC_JWT_PASSWORD}`;
   return config;
 });

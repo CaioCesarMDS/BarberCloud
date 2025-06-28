@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback } from "../_components/shadcn/ui/avatar";
 import { Button } from "../_components/shadcn/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "../_components/shadcn/ui/sheet";
-import api from "../services/api";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../_components/shadcn/ui/sheet";
+import { api } from "../services/api";
+import mitt from "mitt";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -16,7 +17,8 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, sidebar, title }) => {
   const router = useRouter();
-  
+  const eventBus = mitt<{ profileUpdated: void }>()
+
   interface User {
     id: string;
     name: string;
@@ -25,6 +27,22 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, sidebar, ti
 
   const [user, setUser] = useState<User | null>(null);
 
+  const fetchUser = async () => {
+    try {
+      const response = await api.get("/auth/me");
+      if (response.data.role) {
+        const { data: userData } = await api.get(`/employee/${response.data.id}`);
+        setUser(userData)
+      } else {
+        const { data: userData } = await api.get(`/client/${response.data.id}`);
+        setUser(userData)
+      }
+    } catch (error) {
+      console.error("Erro ao buscar informações do usuário:", error);
+      router.push("/");
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("barber-token");
     if (!token) {
@@ -32,21 +50,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, sidebar, ti
       return;
     }
 
-    const fetchUser = async () => {
-      try {
-        const response = await api.get("/auth/me");
-        if(response.data.role) {
-          const { data: userData } = await api.get(`/employee/${response.data.id}`);
-          setUser(userData)
-        } else {
-          const { data: userData } = await api.get(`/client/${response.data.id}`);
-          setUser(userData)
-        }
-      } catch (error) {
-        console.error("Erro ao buscar informações do usuário:", error);
-        router.push("/");
-      }
-    };
+    eventBus.on('profileUpdated', fetchUser)
 
     fetchUser();
   }, [router]);
@@ -93,6 +97,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, sidebar, ti
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-64 p-0 bg-barber-blue">
+                <SheetTitle className="sr-only">Menu</SheetTitle>
                 {sidebar}
               </SheetContent>
             </Sheet>

@@ -38,11 +38,10 @@ const formPasswordSchema = z.object({
         })
         .trim(),
     confirmPassword: z.string().min(8, { message: "Confirm Password must be at least 8 characters." })
-})
-    .refine((data) => data.password === data.confirmPassword, {
-        message: "Passwords do not match",
-        path: ["confirmPassword"],
-    });
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+});
 
 type FormEmailData = z.infer<typeof formEmailSchema>;
 type FormCodeData = z.infer<typeof formCodeSchema>;

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import ClientSidebar from "../../_components/ClientSideBar";
 import DashboardLayout from "../../_components/DashboardLayout";
-import api from "../../services/api";
+import { api } from "../../services/api";
 import { AxiosError } from "axios";
 import { toast, Toaster } from "sonner";
 
@@ -19,14 +19,7 @@ const ClientDashboard: React.FC = () => {
 
   const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem("barber-token");
-    if (!token) {
-      router.push("/client/signin");
-      return;
-    }
-
-    const fetchUser = async () => {
+  const fetchUser = async () => {
       try {
         const { data: authData } = await api.get("/auth/me");
         const { data: userData } = await api.get(`/client/${authData.id}`);
@@ -41,6 +34,13 @@ const ClientDashboard: React.FC = () => {
         router.push("/client/signin");
       }
     };
+
+  useEffect(() => {
+    const token = localStorage.getItem("barber-token");
+    if (!token) {
+      router.push("/client/signin");
+      return;
+    }
 
     fetchUser();
   }, [router]);

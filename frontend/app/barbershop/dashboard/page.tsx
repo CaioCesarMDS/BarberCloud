@@ -1,6 +1,6 @@
 "use client";
 
-import api from "@/app/services/api";
+import { api } from "@/app/services/api";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import BarberSidebar from "../../_components/BarberSideBar";
