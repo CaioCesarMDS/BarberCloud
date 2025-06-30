@@ -7,10 +7,10 @@ import DashboardLayout from "../../_components/DashboardLayout";
 import { api, updatePassword } from "../../services/api";
 import { AxiosError } from "axios";
 import { toast, Toaster } from "sonner";
-import mitt from "mitt";
 import EditableField from "@/app/_components/InputEdit";
 import InputEditPassword from "@/app/_components/InputEditPassword";
 import { FormPasswordData } from "@/app/_components/InputEditPassword";
+import eventBus from "@/app/_lib/eventBus";
 
 const ClientDashboard: React.FC = () => {
   const router = useRouter();
@@ -24,7 +24,6 @@ const ClientDashboard: React.FC = () => {
   }
 
   const [user, setUser] = useState<User | null>(null);
-  const eventBus = mitt<{ profileUpdated: void }>();
 
   const fetchUser = async () => {
     try {

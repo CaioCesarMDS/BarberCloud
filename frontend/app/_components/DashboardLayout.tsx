@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback } from "../_components/shadcn/ui/avatar";
 import { Button } from "../_components/shadcn/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../_components/shadcn/ui/sheet";
 import { api } from "../services/api";
-import mitt from "mitt";
+import eventBus from "../_lib/eventBus";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -17,7 +17,6 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, sidebar, title }) => {
   const router = useRouter();
-  const eventBus = mitt<{ profileUpdated: void }>()
 
   interface User {
     id: string;

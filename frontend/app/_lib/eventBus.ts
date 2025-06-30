@@ -1,7 +1,7 @@
-import mitt from 'mitt'
+import mitt from 'mitt';
 
 type Events = {
-  profileUpdated: void
+  profileUpdated: void;
 }
 
-export const eventBus = mitt<Events>()
+export default mitt<Events>();
