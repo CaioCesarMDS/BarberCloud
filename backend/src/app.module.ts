@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { EmailModule } from './email/email.module';
 import { EmployeeModule } from './employee/employee.module';
+import { ServicesModule } from './services/services.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { EmployeeModule } from './employee/employee.module';
     AuthModule,
     EmployeeModule,
     EmailModule,
+    ServicesModule
   ],
   controllers: [],
   providers: [],
