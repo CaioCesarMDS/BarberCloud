@@ -14,7 +14,9 @@ async function bootstrap() {
     // Ip fixo EC2
     // Alrykemes: 3.214.122.174
     // Caio: ?
-    origin: ['http://3.214.122.174:3000/', 'http://localhost:3000/'],
+    origin: ['http://3.214.122.174:3000', 'http://localhost:3000'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   });
 
