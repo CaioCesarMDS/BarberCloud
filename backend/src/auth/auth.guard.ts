@@ -33,9 +33,10 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      if(token === 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBiMmY3OWI1LTVlNGYtNDE4My1hMjQ3LWFlZDg3YTZhZTU1ZiIsImVtYWlsIjoidGVzdGUyQGdtYWlsLmNvbSIsImlhdCI6MTc0OTMwNzc2MywiZXhwIjoxNzQ5MzE4NTYzfQ.HNJtgdjNhfKwKxMXbuSPOWj64aCKg-46ar__FrQFeDs') {
+      if(token === this.configService.get<string>('JWT_PASSWORD')) {
         return true
       }
+      
       const payload: JwtPayload = await this.jwtService.verifyAsync(token, {
         secret: this.configService.get<string>('JWT_SECRET'),
       });
