@@ -60,8 +60,7 @@ services:
     depends_on:
       - backend
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:${PORT_BACKEND}
-      - API_URL=${API_URL}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
       - JWT_PASSWORD=${JWT_PASSWORD}
 
 volumes:
