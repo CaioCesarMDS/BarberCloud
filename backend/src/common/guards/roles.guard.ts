@@ -44,8 +44,8 @@ export class RolesGuard implements CanActivate {
       throw new UnauthorizedException('Access token is missing or malformed.');
     }
 
-    if(token === this.configService.get<string>('JWT_PASSWORD')) {
-        return true
+    if (token === this.configService.get<string>('JWT_PASSWORD')) {
+      return true;
     }
 
     const payload: RoleJwtPayload = await this.jwtService.verifyAsync(token, {

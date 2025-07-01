@@ -14,7 +14,7 @@ export class EmployeeService {
   constructor(
     private readonly employeeRepository: EmployeeRepository,
     private redisTransportService: RedisTransportService,
-  ) { }
+  ) {}
 
   async create(data: CreateEmployeeDTO): Promise<Employee> {
     const hashedPassword = await this.hashPassword(data.password);
@@ -45,21 +45,18 @@ export class EmployeeService {
 
   async update(
     id: string,
-    EmployeeData: EmployeeUpdateDTO
+    EmployeeData: EmployeeUpdateDTO,
   ): Promise<EmployeeResponseDto | null> {
     if (EmployeeData.password) {
-      const hashedPassword: string = await this.hashPassword(EmployeeData.password);
-      const employeeUpdated: Employee | null = await this.employeeRepository.update(
-        id,
-        EmployeeData,
-        hashedPassword
+      const hashedPassword: string = await this.hashPassword(
+        EmployeeData.password,
       );
+      const employeeUpdated: Employee | null =
+        await this.employeeRepository.update(id, EmployeeData, hashedPassword);
       return employeeUpdated ? new EmployeeResponseDto(employeeUpdated) : null;
     } else {
-      const employeeUpdated: Employee | null = await this.employeeRepository.update(
-        id,
-        EmployeeData
-      );
+      const employeeUpdated: Employee | null =
+        await this.employeeRepository.update(id, EmployeeData);
       return employeeUpdated ? new EmployeeResponseDto(employeeUpdated) : null;
     }
   }
@@ -73,11 +70,12 @@ export class EmployeeService {
   }
 
   async findByEmail(email: string): Promise<Employee> {
-    const employee: Employee | null = await this.employeeRepository.findByEmail(email);
-    if(employee) {
+    const employee: Employee | null =
+      await this.employeeRepository.findByEmail(email);
+    if (employee) {
       return employee;
     } else {
-      throw new BadRequestException('User Not Found')
+      throw new BadRequestException('User Not Found');
     }
   }
 
