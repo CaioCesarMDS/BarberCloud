@@ -22,7 +22,6 @@ export class ClientUpdateDTO {
   @IsString()
   @MinLength(9)
   @MaxLength(15)
-  s;
   @PhoneIsUnique()
   phone?: string;
 

@@ -19,11 +19,11 @@ import { EmployeeUpdateDTO } from './dtos/employee-update.dto';
 import { EmployeeService } from './employee.service';
 import { EmployeeResponseDto } from './dtos/employee.request.dto';
 
-@UseGuards(AuthGuard, RolesGuard)
 @Controller('/employee')
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('ADMIN')
   @Post('create')
   async createEmployee(
@@ -31,17 +31,22 @@ export class EmployeeController {
   ): Promise<Employee | null> {
     return await this.employeeService.create(data);
   }
- 
+
   @Get(':id')
   findOne(@Param('id') id: string): Promise<Employee | null> {
     return this.employeeService.findById(id);
   }
-  
+
   @Get('')
-  async findOneByEmail(@Query('email') email: string): Promise<EmployeeResponseDto> {
-    return new EmployeeResponseDto(await this.employeeService.findByEmail(email));
+  async findOneByEmail(
+    @Query('email') email: string,
+  ): Promise<EmployeeResponseDto> {
+    return new EmployeeResponseDto(
+      await this.employeeService.findByEmail(email),
+    );
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
   @Get('search/all')
   @Roles('ADMIN')
   getAllEmployeesByName(@Query('name') name: string) {
@@ -51,6 +56,7 @@ export class EmployeeController {
     return this.employeeService.findAllByName(name);
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
   @Put(':id')
   @Roles('ADMIN')
   update(
@@ -60,6 +66,7 @@ export class EmployeeController {
     return this.employeeService.update(id, data);
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
   @Delete(':id')
   @Roles('ADMIN')
   remove(@Param('id') id: string): Promise<Employee> {

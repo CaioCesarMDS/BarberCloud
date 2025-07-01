@@ -6,7 +6,11 @@ import { CreateClientDTO } from '../dtos/client-create.dto';
 export interface IClientRepositoryInterface {
   create(data: CreateClientDTO, hashedPassword: string): Promise<Client>;
   remove(id: string): Promise<Client>;
-  update(id: string, ClientData: ClientUpdateDTO, hashedPassword?: string): Promise<Client | null>;
+  update(
+    id: string,
+    ClientData: ClientUpdateDTO,
+    hashedPassword?: string,
+  ): Promise<Client | null>;
   findAllByName(name: string): Promise<ClientResponseDto[]>;
   findById(id: string): Promise<Client | null>;
   findBarbershopsSubscribeById(

@@ -7,11 +7,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../../_components/form/fields/InputField";
 import FormWrapper from "../../_components/form/FormWrapper";
-import Header from "../../_components/Header";
-import api from "../../services/api";
+import Header from "../../_components/header";
+import { api } from "../../_services/api";
 
-import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
 import { toast, Toaster } from "sonner";
 
 const formSchema = z
@@ -139,10 +139,10 @@ export default function SignUp() {
         console.log("Error to register Barbershop:", responseBarbershop.data);
       }
     } catch (error) {
-      if(error instanceof AxiosError) {
+      if (error instanceof AxiosError) {
         console.log("Error during registration:", error);
-        if(error.status === 400) {
-          toast('Erro ao criar conta!');
+        if (error.status === 400) {
+          toast("Erro ao criar conta!");
         }
       }
     }

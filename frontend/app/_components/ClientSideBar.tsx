@@ -9,9 +9,9 @@ export default function ClientSideBar() {
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/client/dashboard" },
-    { icon: User, label: "Meu Perfil", path: "/client/profile" },
     { icon: Calendar, label: "Agendar", path: "/client/booking" },
     { icon: History, label: "Histórico", path: "/client/history" },
+    { icon: User, label: "Meu Perfil", path: "/client/profile" },
   ];
 
   return (

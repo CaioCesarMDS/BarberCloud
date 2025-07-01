@@ -26,7 +26,11 @@ export class ClientRepository implements IClientRepositoryInterface {
     return this.prismaService.client.delete({ where: { id: id } });
   }
 
-  update(id: string, data: ClientUpdateDTO, hashedPassword?: string): Promise<Client | null> {
+  update(
+    id: string,
+    data: ClientUpdateDTO,
+    hashedPassword?: string,
+  ): Promise<Client | null> {
     return this.prismaService.client.update({
       where: { id: id },
       data: {
@@ -34,7 +38,7 @@ export class ClientRepository implements IClientRepositoryInterface {
         phone: data.phone,
         birth: data.birth,
         email: data.email,
-        password: hashedPassword
+        password: hashedPassword,
       },
     });
   }

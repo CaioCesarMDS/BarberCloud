@@ -29,19 +29,20 @@ export class AuthGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
+      console.error('Eroor sem token cabra safado.');
       throw new UnauthorizedException('Access token is missing or malformed.');
     }
 
     try {
-      if(token === 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBiMmY3OWI1LTVlNGYtNDE4My1hMjQ3LWFlZDg3YTZhZTU1ZiIsImVtYWlsIjoidGVzdGUyQGdtYWlsLmNvbSIsImlhdCI6MTc0OTMwNzc2MywiZXhwIjoxNzQ5MzE4NTYzfQ.HNJtgdjNhfKwKxMXbuSPOWj64aCKg-46ar__FrQFeDs') {
-        return true
+      if (token === this.configService.get<string>('JWT_PASSWORD')) {
+        return true;
       }
+      
       const payload: JwtPayload = await this.jwtService.verifyAsync(token, {
         secret: this.configService.get<string>('JWT_SECRET'),
       });
 
       request.user = payload;
-
       return true;
     } catch {
       throw new UnauthorizedException('Invalid or expired access token.');

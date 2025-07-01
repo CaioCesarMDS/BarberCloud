@@ -14,6 +14,42 @@ CREATE TABLE "Client" (
 );
 
 -- CreateTable
+CREATE TABLE "ClientSubscribeBarbershop" (
+    "clientId" TEXT NOT NULL,
+    "barbershopId" TEXT NOT NULL,
+    "subscribeIn" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "ClientSubscribeBarbershop_pkey" PRIMARY KEY ("clientId","barbershopId")
+);
+
+-- CreateTable
+CREATE TABLE "Barbershop" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "imageUrl" TEXT NOT NULL,
+    "timeOpen" TEXT NOT NULL,
+    "timeClose" TEXT NOT NULL,
+    "addressId" TEXT NOT NULL,
+
+    CONSTRAINT "Barbershop_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "AddressBarbershop" (
+    "id" TEXT NOT NULL,
+    "number" TEXT NOT NULL,
+    "street" TEXT NOT NULL,
+    "complement" TEXT NOT NULL,
+    "neighborhood" TEXT NOT NULL,
+    "city" TEXT NOT NULL,
+    "state" TEXT NOT NULL,
+    "country" TEXT NOT NULL,
+    "zipCode" TEXT NOT NULL,
+
+    CONSTRAINT "AddressBarbershop_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Employee" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -25,18 +61,6 @@ CREATE TABLE "Employee" (
     "barbershopId" TEXT NOT NULL,
 
     CONSTRAINT "Employee_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Barbershop" (
-    "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "address" TEXT NOT NULL,
-    "imageUrl" TEXT NOT NULL,
-    "timeOpen" TEXT NOT NULL,
-    "timeClose" TEXT NOT NULL,
-
-    CONSTRAINT "Barbershop_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -54,7 +78,6 @@ CREATE TABLE "Services" (
 CREATE TABLE "ServicesOnScheduling" (
     "serviceId" TEXT NOT NULL,
     "schedulingId" TEXT NOT NULL,
-    "priceTotal" MONEY NOT NULL,
 
     CONSTRAINT "ServicesOnScheduling_pkey" PRIMARY KEY ("serviceId","schedulingId")
 );
@@ -66,12 +89,10 @@ CREATE TABLE "Scheduling" (
     "clientId" TEXT NOT NULL,
     "employeeId" TEXT NOT NULL,
     "dateTime" TIMESTAMP(3) NOT NULL,
+    "priceTotal" MONEY NOT NULL,
 
     CONSTRAINT "Scheduling_pkey" PRIMARY KEY ("id")
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "Client_id_key" ON "Client"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Client_phone_key" ON "Client"("phone");
@@ -80,7 +101,7 @@ CREATE UNIQUE INDEX "Client_phone_key" ON "Client"("phone");
 CREATE UNIQUE INDEX "Client_email_key" ON "Client"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Employee_id_key" ON "Employee"("id");
+CREATE UNIQUE INDEX "Barbershop_addressId_key" ON "Barbershop"("addressId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Employee_phone_key" ON "Employee"("phone");
@@ -89,22 +110,16 @@ CREATE UNIQUE INDEX "Employee_phone_key" ON "Employee"("phone");
 CREATE UNIQUE INDEX "Employee_email_key" ON "Employee"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Barbershop_id_key" ON "Barbershop"("id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Services_id_key" ON "Services"("id");
 
--- CreateIndex
-CREATE UNIQUE INDEX "Scheduling_id_key" ON "Scheduling"("id");
+-- AddForeignKey
+ALTER TABLE "ClientSubscribeBarbershop" ADD CONSTRAINT "ClientSubscribeBarbershop_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- CreateIndex
-CREATE UNIQUE INDEX "Scheduling_barbershopId_key" ON "Scheduling"("barbershopId");
+-- AddForeignKey
+ALTER TABLE "ClientSubscribeBarbershop" ADD CONSTRAINT "ClientSubscribeBarbershop_barbershopId_fkey" FOREIGN KEY ("barbershopId") REFERENCES "Barbershop"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- CreateIndex
-CREATE UNIQUE INDEX "Scheduling_clientId_key" ON "Scheduling"("clientId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Scheduling_employeeId_key" ON "Scheduling"("employeeId");
+-- AddForeignKey
+ALTER TABLE "Barbershop" ADD CONSTRAINT "Barbershop_addressId_fkey" FOREIGN KEY ("addressId") REFERENCES "AddressBarbershop"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Employee" ADD CONSTRAINT "Employee_barbershopId_fkey" FOREIGN KEY ("barbershopId") REFERENCES "Barbershop"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
