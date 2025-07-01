@@ -1,11 +1,11 @@
 "use client";
 
-import { api } from "@/app/services/api";
+import { api } from "@/app/_services/api";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import AdminSidebar from "../../_components/AdminSideBar";
 import BarberSidebar from "../../_components/BarberSideBar";
 import DashboardLayout from "../../_components/DashboardLayout";
-import AdminSidebar from "../../_components/AdminSideBar";
 
 const BarberDashboard: React.FC = () => {
   const router = useRouter();
@@ -32,10 +32,10 @@ const BarberDashboard: React.FC = () => {
         const { data: authData } = await api.get("/auth/me");
         const { data: userData } = await api.get(`/employee/${authData.id}`);
         setUser(userData);
-        if (userData.role === 'ADMIN') {
-          setIsAdmin(true)
-        } else if (userData.role === 'EMPLOYEE') {
-          setIsBarber(true)
+        if (userData.role === "ADMIN") {
+          setIsAdmin(true);
+        } else if (userData.role === "EMPLOYEE") {
+          setIsBarber(true);
         }
       } catch (error) {
         console.log("Erro ao buscar informações do usuário:", error);

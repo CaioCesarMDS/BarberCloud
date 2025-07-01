@@ -3,16 +3,15 @@
 import { Calendar, History, LayoutDashboard, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SheetTitle } from "./shadcn/ui/sheet";
 
 export default function ClientSideBar() {
   const pathnName = usePathname();
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/client/dashboard" },
-    { icon: User, label: "Meu Perfil", path: "/client/profile" },
     { icon: Calendar, label: "Agendar", path: "/client/booking" },
     { icon: History, label: "Histórico", path: "/client/history" },
+    { icon: User, label: "Meu Perfil", path: "/client/profile" },
   ];
 
   return (

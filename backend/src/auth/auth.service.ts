@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Client, Employee } from '@prisma/client';
 import { ClientService } from '../client/client.service';
@@ -21,7 +25,7 @@ export class AuthService {
     private readonly clientService: ClientService,
     private readonly redisTransportService: RedisTransportService,
     private readonly redisTokenService: RedisTokenService,
-  ) { }
+  ) {}
 
   async clientSignUp(data: ClientSignUpDTO): Promise<AuthClientResponseDTO> {
     const newUser = await this.clientService.create(data);
@@ -89,15 +93,18 @@ export class AuthService {
     };
   }
 
-  async verifyCode(email: string, code: string): Promise<ForgotPasswordResponseDTO> {
+  async verifyCode(
+    email: string,
+    code: string,
+  ): Promise<ForgotPasswordResponseDTO> {
     const can: boolean | null = await this.verifyRedisToken(email, code);
     if (can) {
       return {
         email: email,
-        tokenIsTrue: can
-      }
+        tokenIsTrue: can,
+      };
     } else {
-      throw new BadRequestException('Code is Invalid!')
+      throw new BadRequestException('Code is Invalid!');
     }
   }
 
@@ -117,7 +124,7 @@ export class AuthService {
         });
       }
     } catch (error) {
-      if(error instanceof BadRequestException) {
+      if (error instanceof BadRequestException) {
         const user = await this.clientService.findByEmail(email);
         if (user) {
           client.emit('email.send', {
@@ -160,8 +167,12 @@ export class AuthService {
     return await this.redisTokenService.generateResetCode(email);
   }
 
-  private async verifyRedisToken(email: string, code: string): Promise<boolean> {
-    const redisToken: string | null = await this.redisTokenService.getResetCode(email);
+  private async verifyRedisToken(
+    email: string,
+    code: string,
+  ): Promise<boolean> {
+    const redisToken: string | null =
+      await this.redisTokenService.getResetCode(email);
     return redisToken === code ? true : false;
   }
 }

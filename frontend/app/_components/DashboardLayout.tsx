@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback } from "../_components/shadcn/ui/avatar";
 import { Button } from "../_components/shadcn/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../_components/shadcn/ui/sheet";
-import { api } from "../services/api";
 import eventBus from "../_lib/eventBus";
+import { api } from "../_services/api";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -31,10 +31,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, sidebar, ti
       const response = await api.get("/auth/me");
       if (response.data.role) {
         const { data: userData } = await api.get(`/employee/${response.data.id}`);
-        setUser(userData)
+        setUser(userData);
       } else {
         const { data: userData } = await api.get(`/client/${response.data.id}`);
-        setUser(userData)
+        setUser(userData);
       }
     } catch (error) {
       console.error("Erro ao buscar informações do usuário:", error);
@@ -49,7 +49,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, sidebar, ti
       return;
     }
 
-    eventBus.on('profileUpdated', fetchUser)
+    eventBus.on("profileUpdated", fetchUser);
 
     fetchUser();
   }, [router]);

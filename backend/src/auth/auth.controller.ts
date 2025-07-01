@@ -41,7 +41,7 @@ export class AuthController {
   async sendTokenToChangePassword(@Query('email') email: string): Promise<any> {
     await this.authService.sendResetPasswordCode(email);
     return {
-      IsSent:  'email was sent successfully'
+      IsSent: 'email was sent successfully',
     };
   }
 

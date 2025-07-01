@@ -31,15 +31,19 @@ export class EmployeeController {
   ): Promise<Employee | null> {
     return await this.employeeService.create(data);
   }
-  
+
   @Get(':id')
   findOne(@Param('id') id: string): Promise<Employee | null> {
     return this.employeeService.findById(id);
   }
-  
+
   @Get('')
-  async findOneByEmail(@Query('email') email: string): Promise<EmployeeResponseDto> {
-    return new EmployeeResponseDto(await this.employeeService.findByEmail(email));
+  async findOneByEmail(
+    @Query('email') email: string,
+  ): Promise<EmployeeResponseDto> {
+    return new EmployeeResponseDto(
+      await this.employeeService.findByEmail(email),
+    );
   }
 
   @UseGuards(AuthGuard, RolesGuard)

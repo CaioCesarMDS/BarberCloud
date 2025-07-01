@@ -2,16 +2,16 @@
 
 import { MaskedInputField } from "@/app/_components/MaskedInputField";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast, Toaster } from "sonner";
 import { z } from "zod";
 import DatePickerField from "../../_components/form/fields/DatePickerField";
 import InputField from "../../_components/form/fields/InputField";
 import FormWrapper from "../../_components/form/FormWrapper";
-import Header from "../../_components/Header";
-import { api } from "../../services/api";
-import { AxiosError } from "axios";
-import { toast, Toaster } from "sonner";
+import Header from "../../_components/header";
+import { api } from "../../_services/api";
 
 const formSchema = z
   .object({
@@ -79,7 +79,7 @@ export default function SignUp() {
       if (error instanceof AxiosError) {
         console.log("Error during registration:", error);
         if (error.status === 400) {
-          toast('Erro ao criar conta!');
+          toast("Erro ao criar conta!");
         }
       }
     }

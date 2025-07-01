@@ -26,14 +26,16 @@ export class ClientController {
   }
 
   @Get('')
-  async findOneByEmail(@Query('email') email: string): Promise<ClientResponseDto | null> {
+  async findOneByEmail(
+    @Query('email') email: string,
+  ): Promise<ClientResponseDto | null> {
     const client: Client = await this.clientService.findByEmail(email);
     return {
       id: client.id,
       name: client.name,
       phone: client.phone,
-      email: client.email
-    }
+      email: client.email,
+    };
   }
 
   @UseGuards(AuthGuard)

@@ -28,7 +28,11 @@ export class EmployeeRepository implements IEmployeeRepositoryInterface {
     return this.prismaService.employee.delete({ where: { id: id } });
   }
 
-  async update(id: string, data: EmployeeUpdateDTO, hashedPassword?: string): Promise<Employee | null> {
+  async update(
+    id: string,
+    data: EmployeeUpdateDTO,
+    hashedPassword?: string,
+  ): Promise<Employee | null> {
     return this.prismaService.employee.update({
       where: { id: id },
       data: {
@@ -37,7 +41,7 @@ export class EmployeeRepository implements IEmployeeRepositoryInterface {
         birth: data.birth,
         email: data.email,
         role: data.role as unknown as Role,
-        password: hashedPassword
+        password: hashedPassword,
       },
     });
   }

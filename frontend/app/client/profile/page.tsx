@@ -1,16 +1,15 @@
 "use client";
 
+import EditableField from "@/app/_components/InputEdit";
+import InputEditPassword, { FormPasswordData } from "@/app/_components/InputEditPassword";
+import eventBus from "@/app/_lib/eventBus";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { toast, Toaster } from "sonner";
 import ClientSidebar from "../../_components/ClientSideBar";
 import DashboardLayout from "../../_components/DashboardLayout";
-import { api, updatePassword } from "../../services/api";
-import { AxiosError } from "axios";
-import { toast, Toaster } from "sonner";
-import EditableField from "@/app/_components/InputEdit";
-import InputEditPassword from "@/app/_components/InputEditPassword";
-import { FormPasswordData } from "@/app/_components/InputEditPassword";
-import eventBus from "@/app/_lib/eventBus";
+import { api, updatePassword } from "../../_services/api";
 
 const ClientDashboard: React.FC = () => {
   const router = useRouter();
@@ -34,7 +33,7 @@ const ClientDashboard: React.FC = () => {
       if (error instanceof AxiosError) {
         console.log("Error during get user:", error);
         if (error.status === 400) {
-          toast('Erro ao buscar informações do usuário!');
+          toast("Erro ao buscar informações do usuário!");
         }
       }
       router.push("/client/signin");
@@ -49,47 +48,40 @@ const ClientDashboard: React.FC = () => {
     }
 
     fetchUser();
-
   }, [router]);
 
-  const updateUser = (valueToUpdate: any) => {
+  const updateUser = (valueToUpdate: Partial<User>) => {
     api.put(`/client/${user?.id}`, valueToUpdate);
-  }
+  };
 
   const editPassword = async (data: FormPasswordData) => {
     try {
       const responseGet = await api.get(`/client?email=${user?.email}`);
       if (responseGet.status === 200) {
-        const responseUpdate = await updatePassword.put(`/client/${responseGet.data.id}`,
-          {
-            password: data.password
-          }
-        )
+        const responseUpdate = await updatePassword.put(`/client/${responseGet.data.id}`, {
+          password: data.password,
+        });
         if (responseUpdate.status === 200) {
-          toast('Password was changed!')
+          toast("Password was changed!");
         }
       } else {
-        toast(
-          'The email was sent is invalid!',
-          {
-            description: 'Send a valid email.',
-            action: {
-              label: 'Ok',
-              onClick: () => console.log('send a valid email.')
-            }
-          });
+        toast("The email was sent is invalid!", {
+          description: "Send a valid email.",
+          action: {
+            label: "Ok",
+            onClick: () => console.log("send a valid email."),
+          },
+        });
       }
     } catch (error) {
       if (error instanceof AxiosError) {
-        toast(
-          'error in update password!',
-          {
-            description: error?.message,
-            action: {
-              label: 'Ok',
-              onClick: () => console.log(error)
-            }
-          });
+        toast("error in update password!", {
+          description: error?.message,
+          action: {
+            label: "Ok",
+            onClick: () => console.log(error),
+          },
+        });
       }
     }
   };
@@ -105,18 +97,18 @@ const ClientDashboard: React.FC = () => {
           <div className="rounded-xl p-4 shadow-xs flex justify-center flex-wrap items-center gap-6">
             <EditableField
               label="Nome de usuário"
-              value={user?.name || ''}
+              value={user?.name || ""}
               phone={false}
               email={false}
               onSave={(newVal) => {
                 updateUser({ name: newVal });
-                eventBus.emit('profileUpdated');
+                eventBus.emit("profileUpdated");
               }}
             />
 
             <EditableField
               label="Email"
-              value={user?.email || ''}
+              value={user?.email || ""}
               phone={false}
               email={false}
               onSave={(newVal) => {
@@ -126,7 +118,7 @@ const ClientDashboard: React.FC = () => {
 
             <EditableField
               label="Telefone"
-              value={user?.phone || ''}
+              value={user?.phone || ""}
               phone={true}
               email={false}
               onSave={(newVal) => {
@@ -134,11 +126,7 @@ const ClientDashboard: React.FC = () => {
               }}
             />
 
-            <InputEditPassword
-              label="Senha"
-              onSubmitPassword={(data: FormPasswordData) => editPassword(data)}
-            />
-
+            <InputEditPassword label="Senha" onSubmitPassword={(data: FormPasswordData) => editPassword(data)} />
           </div>
           <div className="bg-gradient-to-r from-barber-blue to-barber-blue-light rounded-xl p-4 text-white">
             <h1 className="text-2xl font-bold mb-2">{`Configurações da conta`}</h1>
