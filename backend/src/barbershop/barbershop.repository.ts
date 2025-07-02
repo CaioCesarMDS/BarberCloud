@@ -89,4 +89,15 @@ export class BarbershopRepository {
       where: { id: barbershopId },
     });
   }
+
+  async findAllByName(name: string): Promise<Barbershop[]> {
+    return this.prisma.barbershop.findMany({
+      where: {
+        name: {
+          contains: name,
+          mode: 'insensitive',
+        },
+      },
+    });
+  }
 }

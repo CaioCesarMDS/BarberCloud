@@ -55,4 +55,23 @@ export class BarbershopService {
       message: 'Barbershop deleted successfully',
     };
   }
+
+  async findAllByName(name: string): Promise<BarbershopResponseDto[]> {
+    const barbershops = await this.barbershopRepository.findAllByName(name);
+    if (!barbershops || barbershops.length === 0) {
+      throw new NotFoundException('No barbershops found with that name');
+    }
+
+    const results: BarbershopResponseDto[] = [];
+
+    for (const barbershop of barbershops) {
+      const address = await this.barbershopRepository.findAddressById(
+        barbershop.addressId,
+      );
+      if (!address) throw new NotFoundException('Address not found');
+
+      results.push(new BarbershopResponseDto(barbershop, address));
+    }
+    return results;
+  }
 }

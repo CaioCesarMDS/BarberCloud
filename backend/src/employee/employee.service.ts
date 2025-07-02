@@ -7,7 +7,6 @@ import { CreateEmployeeDTO } from './dtos/create-employee.dto';
 import { EmployeeUpdateDTO } from './dtos/employee-update.dto';
 import { EmployeeResponseDto } from './dtos/employee.request.dto';
 import { EmployeeRepository } from './employee.repository';
-import { throwError } from 'rxjs';
 
 @Injectable()
 export class EmployeeService {

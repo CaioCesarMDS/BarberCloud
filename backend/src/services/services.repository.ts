@@ -7,45 +7,55 @@ import { Services } from '@prisma/client';
 
 @Injectable()
 export class ServicesRepository implements IServicesRepositoryInterface {
-    constructor(private readonly prismaService: PrismaService) { }
-    
-    async findById(id: number): Promise<Services | null> {
-        return await this.prismaService.services.findUnique({where: { id: id }});
-    }
+  constructor(private readonly prismaService: PrismaService) {}
 
-    async create(data: ServicesRequestDto): Promise<Services> {
-        return await this.prismaService.services.create({
-            data: {
-                barbershopId: data.barbershopId,
-                name: data.name,
-                description: data.description,
-                price: data.price
-            },
-        });
-    }
+  async findById(id: number): Promise<Services | null> {
+    return await this.prismaService.services.findUnique({ where: { id: id } });
+  }
 
-    async remove(id: number): Promise<void> {
-        await this.prismaService.services.delete({
-            where: { id: id },
-        });
-    }
+  async create(data: ServicesRequestDto): Promise<Services> {
+    return await this.prismaService.services.create({
+      data: {
+        barbershopId: data.barbershopId,
+        name: data.name,
+        description: data.description,
+        price: data.price,
+      },
+    });
+  }
 
-    async update(id: number, data: ServicesUpdateDto): Promise<Services> {
-        return await this.prismaService.services.update({
-            where: { id: id },
-            data: {
-                name: data.name,
-                description: data.description,
-                price: data.price
-            }
-        });
-    }
+  async remove(id: number): Promise<void> {
+    await this.prismaService.services.delete({
+      where: { id: id },
+    });
+  }
 
-    async findAllFromBarbershopByName(barbershopId: string, name: string): Promise<Services[]> {
-        return await this.prismaService.services.findMany({ where: { name: { contains: name, mode: 'insensitive' }, barbershopId: barbershopId } })
-    }
+  async update(id: number, data: ServicesUpdateDto): Promise<Services> {
+    return await this.prismaService.services.update({
+      where: { id: id },
+      data: {
+        name: data.name,
+        description: data.description,
+        price: data.price,
+      },
+    });
+  }
 
-    async getAllByBarbershop(barbershopId: string): Promise<Services[]> {
-        return await this.prismaService.services.findMany({ where: { barbershopId: barbershopId } })
-    }
+  async findAllFromBarbershopByName(
+    barbershopId: string,
+    name: string,
+  ): Promise<Services[]> {
+    return await this.prismaService.services.findMany({
+      where: {
+        name: { contains: name, mode: 'insensitive' },
+        barbershopId: barbershopId,
+      },
+    });
+  }
+
+  async getAllByBarbershop(barbershopId: string): Promise<Services[]> {
+    return await this.prismaService.services.findMany({
+      where: { barbershopId: barbershopId },
+    });
+  }
 }

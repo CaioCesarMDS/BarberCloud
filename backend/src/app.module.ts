@@ -11,7 +11,7 @@ import { ServicesModule } from './services/services.module';
     AuthModule,
     EmployeeModule,
     EmailModule,
-    ServicesModule
+    ServicesModule,
   ],
   controllers: [],
   providers: [],
