@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { Services } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
-import { IServicesRepositoryInterface } from './interfaces/services-repository.interface';
 import { ServicesRequestDto } from './dtos/services-request.dto';
 import { ServicesUpdateDto } from './dtos/services-update.dto';
-import { Services } from '@prisma/client';
+import { IServicesRepositoryInterface } from './interfaces/services-repository.interface';
 
 @Injectable()
 export class ServicesRepository implements IServicesRepositoryInterface {
   constructor(private readonly prismaService: PrismaService) {}
 
   async findById(id: number): Promise<Services | null> {
-    return await this.prismaService.services.findUnique({ where: { id: id } });
+    return await this.prismaService.services.findUnique({
+      where: { id: id.toString() },
+    });
   }
 
   async create(data: ServicesRequestDto): Promise<Services> {
@@ -26,13 +28,13 @@ export class ServicesRepository implements IServicesRepositoryInterface {
 
   async remove(id: number): Promise<void> {
     await this.prismaService.services.delete({
-      where: { id: id },
+      where: { id: id.toString() },
     });
   }
 
   async update(id: number, data: ServicesUpdateDto): Promise<Services> {
     return await this.prismaService.services.update({
-      where: { id: id },
+      where: { id: id.toString() },
       data: {
         name: data.name,
         description: data.description,
