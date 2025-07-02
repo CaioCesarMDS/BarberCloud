@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../../_components/form/fields/InputField";
 import FormWrapper from "../../_components/form/FormWrapper";
-import Header from "../../_components/Header";
+import Header from "../../_components/Headerr";
 import { api } from "../../_services/api";
 
 import { AxiosError } from "axios";
