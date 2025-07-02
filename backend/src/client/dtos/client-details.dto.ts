@@ -18,6 +18,8 @@ export class ClientDetailsDto {
     this.email = client.email;
     this.birth = client.birth?.toISOString();
     this.phone = client.phone;
+    this.subscribeIn = []; 
+    
     let count: number = 0;
     subscribes.map((subscription) => {
       this.subscribeIn?.push(

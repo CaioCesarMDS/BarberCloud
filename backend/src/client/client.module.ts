@@ -8,11 +8,13 @@ import { PhoneValidator } from '../auth/validators/phone.validator';
 import { ClientController } from './client.controller';
 import { ClientRepository } from './client.repository';
 import { ClientService } from './client.service';
+import { BarbershopModule } from 'src/barbershop/barbershop.module';
 
 @Module({
   imports: [
     RedisModule,
     PrismaModule,
+    BarbershopModule,
     forwardRef(() => AuthModule),
     CommonModule,
   ],

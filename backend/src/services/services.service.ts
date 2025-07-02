@@ -28,7 +28,7 @@ export class ServicesService {
             }
         } catch (error) {
             if(error instanceof BadRequestException) {
-                throw error
+                throw error;
             }
             throw new InternalServerErrorException(error, 'Error in create service');
         }
@@ -46,7 +46,7 @@ export class ServicesService {
             if(error instanceof BadRequestException) {
                 throw error
             }
-            throw new InternalServerErrorException(error, 'Error in create service');
+            throw new InternalServerErrorException(error, 'Error in find service by Id.');
         }
     }
 
@@ -63,7 +63,7 @@ export class ServicesService {
             if(error instanceof BadRequestException) {
                 throw error
             }
-            throw new InternalServerErrorException(error, 'Error in create service');
+            throw new InternalServerErrorException(error, 'Error in update service');
         }
     }
 
@@ -83,7 +83,7 @@ export class ServicesService {
             if(error instanceof BadRequestException) {
                 throw error
             }
-            throw new InternalServerErrorException(error, 'Error in create service');
+            throw new InternalServerErrorException(error, 'Error in delete service');
         }
     }
 
@@ -104,7 +104,7 @@ export class ServicesService {
             if(error instanceof BadRequestException) {
                 throw error
             }
-            throw new InternalServerErrorException(error, 'Error in create service');
+            throw new InternalServerErrorException(error, 'Error in find services by name from barbershop');
         }
     }
 
@@ -125,7 +125,7 @@ export class ServicesService {
             if(error instanceof BadRequestException) {
                 throw error
             }
-            throw new InternalServerErrorException(error, 'Error in create service');
+            throw new InternalServerErrorException(error, 'Error in find all by barbershop Id');
         }
     }
 }

@@ -3,12 +3,11 @@ import { Barbershop, Client, ClientSubscribeBarbershop } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateClientDTO } from './dtos/client-create.dto';
 import { ClientUpdateDTO } from './dtos/client-update.dto';
-import { ClientResponseDto } from './dtos/client.response.dto';
 import { IClientRepositoryInterface } from './interfaces/client-repository.interface';
 
 @Injectable()
 export class ClientRepository implements IClientRepositoryInterface {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) { }
 
   async create(data: CreateClientDTO, hashedPassword: string): Promise<Client> {
     return await this.prismaService.client.create({
@@ -43,12 +42,8 @@ export class ClientRepository implements IClientRepositoryInterface {
     });
   }
 
-  async findAllByName(name: string): Promise<ClientResponseDto[]> {
-    const clients = await this.prismaService.client.findMany({
-      where: { name: { contains: name, mode: 'insensitive' } },
-    });
-    console.log(clients);
-    return clients.map((Client) => new ClientResponseDto(Client));
+  async findAllByName(name: string): Promise<Client[]> {
+    return await this.prismaService.client.findMany({ where: { name: { contains: name, mode: 'insensitive' } } });
   }
 
   findById(id: string): Promise<Client | null> {
@@ -69,15 +64,27 @@ export class ClientRepository implements IClientRepositoryInterface {
     });
   }
 
-  findByEmail(email: string): Promise<Client | null> {
-    return this.prismaService.client.findUnique({
+  async findByEmail(email: string): Promise<Client | null> {
+    return await this.prismaService.client.findUnique({
       where: { email: email },
     });
   }
 
-  findByPhone(phone: string): Promise<Client | null> {
-    return this.prismaService.client.findUnique({
+  async findByPhone(phone: string): Promise<Client | null> {
+    return await this.prismaService.client.findUnique({
       where: { phone: phone },
     });
+  }
+
+  async findSubscription(clientId: string, barbershopId: string): Promise<ClientSubscribeBarbershop | null> {
+    return await this.prismaService.clientSubscribeBarbershop.findUnique({ where: { clientId_barbershopId: { clientId, barbershopId } } });
+  }
+
+  async subscribeInBarbershop(clientId: string, barbershopId: string): Promise<ClientSubscribeBarbershop> {
+    return await this.prismaService.clientSubscribeBarbershop.create({ data: { clientId: clientId, barbershopId: barbershopId } });
+  }
+
+  async unSubscribeInBarbershop(clientId: string, barbershopId: string): Promise<ClientSubscribeBarbershop> {
+    return await this.prismaService.clientSubscribeBarbershop.delete({ where: { clientId_barbershopId: { clientId, barbershopId } } });
   }
 }
