@@ -90,11 +90,11 @@ const ClientDashboard: React.FC = () => {
     return (
       <DashboardLayout sidebar={<ClientSidebar />} title="Minha Área">
         <Toaster />
-        <div className="space-y-6">
-          <div className="bg-gradient-to-r from-barber-blue to-barber-blue-light rounded-xl p-4 text-white">
-            <h1 className="text-2xl font-bold mb-2">{`Perfil`}</h1>
+        <div className="space-y-6 flex flex-col items-center">
+          <div className="w-[85vw] bg-gradient-to-r from-barber-blue to-barber-blue-light rounded-xl p-4 text-white">
+            <h1 className="text-2xl font-bold mb-2 w-fit">{`Perfil`}</h1>
           </div>
-          <div className="rounded-xl p-4 shadow-xs flex justify-center flex-wrap items-center gap-6">
+          <div className="w-[85vw] rounded-xl p-2 shadow-xs flex justify-center flex-wrap items-center gap-4">
             <EditableField
               label="Nome de usuário"
               value={user?.name || ""}
@@ -128,8 +128,8 @@ const ClientDashboard: React.FC = () => {
 
             <InputEditPassword label="Senha" onSubmitPassword={(data: FormPasswordData) => editPassword(data)} />
           </div>
-          <div className="bg-gradient-to-r from-barber-blue to-barber-blue-light rounded-xl p-4 text-white">
-            <h1 className="text-2xl font-bold mb-2">{`Configurações da conta`}</h1>
+          <div className="w-[85vw] bg-gradient-to-r from-barber-blue to-barber-blue-light rounded-xl p-4 text-white">
+            <h1 className="w-fit text-2xl font-bold mb-2">{`Configurações da conta`}</h1>
           </div>
         </div>
       </DashboardLayout>

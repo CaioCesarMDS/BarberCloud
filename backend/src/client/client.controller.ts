@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Param,
+  Post,
   Put,
   Query,
   UseGuards,
@@ -64,7 +65,38 @@ export class ClientController {
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<ClientResponseDto> {
-    return this.clientService.remove(id);
+  async remove(@Param('id') id: string): Promise<any> {
+    return {
+      sucess: true,
+      userDeleted: await this.clientService.remove(id),
+    };
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/subscribe/:clientId/on/:barbershopId')
+  async subscribe(
+    @Param('clientId') clientId: string,
+    @Param('barbershopId') barbershopId: string,
+  ): Promise<ClientDetailsDto> {
+    return await this.clientService.subscribeInBarbershop(
+      clientId,
+      barbershopId,
+    );
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete('/unsubscribe/:clientId/on/:barbershopId')
+  async unsubscribe(
+    @Param('clientId') clientId: string,
+    @Param('barbershopId') barbershopId: string,
+  ): Promise<any> {
+    return {
+      sucess: true,
+      unSubscribeOf: barbershopId,
+      clientDetails: await this.clientService.unSubscribeInBarbershop(
+        clientId,
+        barbershopId,
+      ),
+    };
   }
 }

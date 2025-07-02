@@ -4,7 +4,7 @@ import { ServicesUpdateDto } from '../dtos/services-update.dto';
 
 export interface IServicesRepositoryInterface {
   create(data: ServicesRequestDto): Promise<Services>;
-  remove(id: number): Promise<void>;
+  remove(id: number): Promise<Services>;
   update(id: number, data: ServicesUpdateDto): Promise<Services>;
   findAllFromBarbershopByName(
     barbershopId: string,

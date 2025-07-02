@@ -26,8 +26,8 @@ export class ServicesRepository implements IServicesRepositoryInterface {
     });
   }
 
-  async remove(id: number): Promise<void> {
-    await this.prismaService.services.delete({
+  async remove(id: number): Promise<Services> {
+    return await this.prismaService.services.delete({
       where: { id: id.toString() },
     });
   }

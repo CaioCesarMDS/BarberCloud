@@ -10,7 +10,7 @@ import { toast, Toaster } from "sonner";
 import { z } from "zod";
 import InputField from "../../_components/form/fields/InputField";
 import FormWrapper from "../../_components/form/FormWrapper";
-import Header from "../../_components/Header";
+import Header from "../../_components/Headerr";
 import { api, updatePassword } from "../../_services/api";
 
 const formEmailSchema = z.object({

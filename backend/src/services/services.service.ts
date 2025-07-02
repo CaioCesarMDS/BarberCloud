@@ -3,12 +3,12 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { ServicesRepository } from './services.repository';
-import { ServicesResponseDto } from './dtos/services-response.dto';
-import { ServicesRequestDto } from './dtos/services-request.dto';
 import { Barbershop, Services } from '@prisma/client';
 import { BarbershopRepository } from 'src/barbershop/barbershop.repository';
+import { ServicesRequestDto } from './dtos/services-request.dto';
+import { ServicesResponseDto } from './dtos/services-response.dto';
 import { ServicesUpdateDto } from './dtos/services-update.dto';
+import { ServicesRepository } from './services.repository';
 
 @Injectable()
 export class ServicesService {
@@ -53,7 +53,10 @@ export class ServicesService {
       if (error instanceof BadRequestException) {
         throw error;
       }
-      throw new InternalServerErrorException(error, 'Error in create service');
+      throw new InternalServerErrorException(
+        error,
+        'Error in find service by Id.',
+      );
     }
   }
 
@@ -75,20 +78,17 @@ export class ServicesService {
       if (error instanceof BadRequestException) {
         throw error;
       }
-      throw new InternalServerErrorException(error, 'Error in create service');
+      throw new InternalServerErrorException(error, 'Error in update service');
     }
   }
 
-  async removeService(id: number): Promise<any> {
+  async removeService(id: number): Promise<Services> {
     try {
       const service: Services | null =
         await this.servicesRepository.findById(id);
       if (service) {
-        this.servicesRepository.remove(id);
-        return {
-          sucess: true,
-          message: 'Service has been removed with successfully!',
-        };
+        const removeService = await this.servicesRepository.remove(id);
+        return removeService;
       } else {
         throw new BadRequestException('Service Id is invalid!');
       }
@@ -96,7 +96,7 @@ export class ServicesService {
       if (error instanceof BadRequestException) {
         throw error;
       }
-      throw new InternalServerErrorException(error, 'Error in create service');
+      throw new InternalServerErrorException(error, 'Error in delete service');
     }
   }
 
@@ -125,7 +125,10 @@ export class ServicesService {
       if (error instanceof BadRequestException) {
         throw error;
       }
-      throw new InternalServerErrorException(error, 'Error in create service');
+      throw new InternalServerErrorException(
+        error,
+        'Error in find services by name from barbershop',
+      );
     }
   }
 
@@ -150,7 +153,10 @@ export class ServicesService {
       if (error instanceof BadRequestException) {
         throw error;
       }
-      throw new InternalServerErrorException(error, 'Error in create service');
+      throw new InternalServerErrorException(
+        error,
+        'Error in find all by barbershop Id',
+      );
     }
   }
 }

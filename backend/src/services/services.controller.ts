@@ -8,13 +8,14 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ServicesResponseDto } from './dtos/services-response.dto';
-import { ServicesRequestDto } from './dtos/services-request.dto';
-import { ServicesService } from './services.service';
-import { ServicesUpdateDto } from './dtos/services-update.dto';
+import { Services } from '@prisma/client';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { ServicesRequestDto } from './dtos/services-request.dto';
+import { ServicesResponseDto } from './dtos/services-response.dto';
+import { ServicesUpdateDto } from './dtos/services-update.dto';
+import { ServicesService } from './services.service';
 
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('/services')
@@ -63,9 +64,7 @@ export class ServicesController {
 
   @Roles('ADMIN')
   @Delete('/:id')
-  async deleteServiceById(
-    @Param('id') id: number,
-  ): Promise<ServicesResponseDto[]> {
+  async deleteServiceById(@Param('id') id: number): Promise<Services> {
     return await this.servicesService.removeService(id);
   }
 }

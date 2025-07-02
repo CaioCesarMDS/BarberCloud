@@ -18,12 +18,12 @@ export class ClientDetailsDto {
     this.email = client.email;
     this.birth = client.birth?.toISOString();
     this.phone = client.phone;
-    let count: number = 0;
+    this.subscribeIn = [];
+
     subscribes.map((subscription) => {
       this.subscribeIn?.push(
         new BarbershopsSubscribe(subscription, barbershops[0]),
       );
-      count++;
     });
   }
 }
