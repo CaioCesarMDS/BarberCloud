@@ -11,7 +11,7 @@ export class ServicesRepository implements IServicesRepositoryInterface {
 
   async findById(id: number): Promise<Services | null> {
     return await this.prismaService.services.findUnique({
-      where: { id: id.toString() },
+      where: { id: id },
     });
   }
 
@@ -28,13 +28,13 @@ export class ServicesRepository implements IServicesRepositoryInterface {
 
   async remove(id: number): Promise<Services> {
     return await this.prismaService.services.delete({
-      where: { id: id.toString() },
+      where: { id: id },
     });
   }
 
   async update(id: number, data: ServicesUpdateDto): Promise<Services> {
     return await this.prismaService.services.update({
-      where: { id: id.toString() },
+      where: { id: id },
       data: {
         name: data.name,
         description: data.description,
