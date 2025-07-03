@@ -3,6 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { BarbershopRepository } from './barbershop.repository';
 import { BarbershopResponseDto } from './dtos/barbershop.response.dto';
 import { BarbershopRequestDto } from './dtos/barbeshop.request.dto';
+import { BarbershopUpdateDto } from './dtos/barbershop.update.dto';
 
 @Injectable()
 export class BarbershopService {
@@ -33,7 +34,7 @@ export class BarbershopService {
 
   async updateById(
     id: string,
-    data: BarbershopRequestDto,
+    data: BarbershopUpdateDto,
   ): Promise<BarbershopResponseDto> {
     const barbershop = await this.barbershopRepository.findById(id);
     if (!barbershop) throw new NotFoundException('Barbershop not found');

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { AddressBarbershop, Barbershop } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { BarbershopRequestDto } from './dtos/barbeshop.request.dto';
+import { BarbershopUpdateDto } from './dtos/barbershop.update.dto';
 
 @Injectable()
 export class BarbershopRepository {
@@ -52,7 +53,7 @@ export class BarbershopRepository {
 
   async updateAddress(
     addressId: string,
-    data: BarbershopRequestDto,
+    data: BarbershopUpdateDto,
   ): Promise<AddressBarbershop> {
     return this.prisma.addressBarbershop.update({
       where: { id: addressId },
@@ -71,7 +72,7 @@ export class BarbershopRepository {
 
   async updateBarbershop(
     barbershopId: string,
-    data: BarbershopRequestDto,
+    data: BarbershopUpdateDto,
   ): Promise<Barbershop> {
     return this.prisma.barbershop.update({
       where: { id: barbershopId },
