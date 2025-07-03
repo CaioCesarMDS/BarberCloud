@@ -7,7 +7,9 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    remotePatterns: [{ hostname: "utfs.io" }],
+    remotePatterns: [
+      { hostname: "utfs.io" }, 
+      { hostname: 'encrypted-tbn0.gstatic.com'}],
   },
 };
 
