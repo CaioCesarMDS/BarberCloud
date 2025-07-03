@@ -57,7 +57,7 @@ export default function BookingPage() {
 
       setBarbershops(mapped);
     } catch (error) {
-      console.error("Error fetching barbershops:", error);
+      console.log("Error fetching barbershops:", error);
       setBarbershops([]);
     } finally {
       setIsLoading(false);
