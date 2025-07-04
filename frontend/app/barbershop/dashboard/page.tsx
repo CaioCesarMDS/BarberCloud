@@ -32,8 +32,8 @@ const BarberDashboard: React.FC = () => {
     {
       title: 'Faturamento',
       value: 'R$ 18.450',
-      change: '+8%',
-      changeType: 'positive' as const,
+      change: '-8%',
+      changeType: 'negative' as const,
       icon: DollarSign,
       description: 'este mês'
     },
@@ -59,28 +59,29 @@ const BarberDashboard: React.FC = () => {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isBarber, setIsBarber] = useState<boolean>(false);
 
+  const fetchUser = async () => {
+    try {
+      const { data: authData } = await api.get("/auth/me");
+      const { data: userData } = await api.get(`/employee/${authData.id}`);
+      setUser(userData);
+      console.log(user)
+      if (userData.role === "ADMIN") {
+        setIsAdmin(true);
+      } else if (userData.role === "EMPLOYEE") {
+        setIsBarber(true);
+      }
+    } catch (error) {
+      console.log("Erro ao buscar informações do usuário:", error);
+      router.push("/barbershop/signin");
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("barber-token");
     if (!token) {
       router.push("/barbershop/signin");
       return;
     }
-
-    const fetchUser = async () => {
-      try {
-        const { data: authData } = await api.get("/auth/me");
-        const { data: userData } = await api.get(`/employee/${authData.id}`);
-        setUser(userData);
-        if (userData.role === "ADMIN") {
-          setIsAdmin(true);
-        } else if (userData.role === "EMPLOYEE") {
-          setIsBarber(true);
-        }
-      } catch (error) {
-        console.log("Erro ao buscar informações do usuário:", error);
-        router.push("/barbershop/signin");
-      }
-    };
 
     fetchUser();
   }, [router]);

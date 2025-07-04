@@ -100,6 +100,24 @@ export class ServicesService {
     }
   }
 
+  async getCountTotalServices(barbershopId: string): Promise<number> {
+    try {
+      const barbershop: Barbershop | null =
+      await this.barbershopRepository.findById(barbershopId);
+      if (barbershop) {
+        const totalServices: number | null = await this.servicesRepository.getQuantityOfServices(barbershopId);
+        return totalServices;
+      } else {
+        throw new BadRequestException('barbershopId is invalid!');
+      }
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(error, 'Error in count services');
+    }
+  }
+
   async findAllFromBarbershopByName(
     barbershopId: string,
     name: string,

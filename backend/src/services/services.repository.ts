@@ -7,7 +7,11 @@ import { IServicesRepositoryInterface } from './interfaces/services-repository.i
 
 @Injectable()
 export class ServicesRepository implements IServicesRepositoryInterface {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) { }
+
+  async getQuantityOfServices(barbershopId: string): Promise<number> {
+    return await this.prismaService.services.count({ where: { barbershopId: barbershopId } })
+  }
 
   async findById(id: number): Promise<Services | null> {
     return await this.prismaService.services.findUnique({

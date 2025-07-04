@@ -4,6 +4,7 @@ import { BarbershopRepository } from './barbershop.repository';
 import { BarbershopResponseDto } from './dtos/barbershop.response.dto';
 import { BarbershopRequestDto } from './dtos/barbeshop.request.dto';
 import { BarbershopUpdateDto } from './dtos/barbershop.update.dto';
+import { ServicesService } from 'src/services/services.service';
 
 @Injectable()
 export class BarbershopService {

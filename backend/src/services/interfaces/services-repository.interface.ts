@@ -12,4 +12,5 @@ export interface IServicesRepositoryInterface {
   ): Promise<Services[]>;
   getAllByBarbershop(barbershopId: string): Promise<Services[]>;
   findById(id: number): Promise<Services | null>;
+  getQuantityOfServices(barbershopId: string): Promise<number>;
 }

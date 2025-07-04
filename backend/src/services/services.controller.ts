@@ -67,4 +67,10 @@ export class ServicesController {
   async deleteServiceById(@Param('id') id: number): Promise<Services> {
     return await this.servicesService.removeService(id);
   }
+
+  @Roles('ADMIN')
+  @Get('/count/:barbershopId')
+  async countServices(@Param('barbershopId') barbershopId: string): Promise<number> {
+    return await this.servicesService.getCountTotalServices(barbershopId);
+  }
 }

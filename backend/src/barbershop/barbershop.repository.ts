@@ -7,10 +7,10 @@ import { BarbershopUpdateDto } from './dtos/barbershop.update.dto';
 
 @Injectable()
 export class BarbershopRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async createAddress(data: BarbershopRequestDto): Promise<AddressBarbershop> {
-    return this.prisma.addressBarbershop.create({
+    return await this.prisma.addressBarbershop.create({
       data: {
         number: data.number,
         street: data.street,
@@ -28,7 +28,7 @@ export class BarbershopRepository {
     data: BarbershopRequestDto,
     addressId: string,
   ): Promise<Barbershop> {
-    return this.prisma.barbershop.create({
+    return await this.prisma.barbershop.create({
       data: {
         name: data.name,
         imageUrl: data.imageUrl,
@@ -40,13 +40,13 @@ export class BarbershopRepository {
   }
 
   async findById(barbershopId: string): Promise<Barbershop | null> {
-    return this.prisma.barbershop.findUnique({
+    return await this.prisma.barbershop.findUnique({
       where: { id: barbershopId },
     });
   }
 
   async findAddressById(addressId: string): Promise<AddressBarbershop | null> {
-    return this.prisma.addressBarbershop.findUnique({
+    return await this.prisma.addressBarbershop.findUnique({
       where: { id: addressId },
     });
   }
@@ -55,7 +55,7 @@ export class BarbershopRepository {
     addressId: string,
     data: BarbershopUpdateDto,
   ): Promise<AddressBarbershop> {
-    return this.prisma.addressBarbershop.update({
+    return await this.prisma.addressBarbershop.update({
       where: { id: addressId },
       data: {
         number: data.number,
@@ -74,7 +74,7 @@ export class BarbershopRepository {
     barbershopId: string,
     data: BarbershopUpdateDto,
   ): Promise<Barbershop> {
-    return this.prisma.barbershop.update({
+    return await this.prisma.barbershop.update({
       where: { id: barbershopId },
       data: {
         name: data.name,
@@ -86,19 +86,45 @@ export class BarbershopRepository {
   }
 
   async deleteById(barbershopId: string): Promise<Barbershop> {
-    return this.prisma.barbershop.delete({
+    return await this.prisma.barbershop.delete({
       where: { id: barbershopId },
     });
   }
 
   async findAllByName(name: string): Promise<Barbershop[]> {
-    return this.prisma.barbershop.findMany({
+    return await this.prisma.barbershop.findMany({
       where: {
         name: {
           contains: name,
           mode: 'insensitive',
         },
       },
+    });
+  }
+
+  async getQuantityOfSubscribersById(id: string) {
+    return await this.prisma.clientSubscribeBarbershop.count({ where: { barbershopId: id } })
+  }
+
+  async getQuantityOfSubscribersByIdOfIntervalDate(id: string, from: Date, to: Date) {
+    return await this.prisma.clientSubscribeBarbershop.count({ where: { barbershopId: id, subscribeIn: { gte: from, lte: to } } });
+  }
+
+  async getQuantityOfServicesInSchedulesById(id: string) {
+    return await this.prisma.scheduling.findMany({
+      where: { barbershopId: id },
+      include: {
+        _count: { select: { services: true } }
+      }
+    });
+  }
+
+  async getQuantityOfServicesInSchedulesByIdOfIntervalDate(id: string, from: Date, to: Date) {
+    return await this.prisma.scheduling.findMany({
+      where: { barbershopId: id, dateTime: { gte: from, lte: to } },
+      include: {
+        _count: { select: { services: true } }
+      }
     });
   }
 }
