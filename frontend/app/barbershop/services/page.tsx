@@ -5,7 +5,6 @@ import { CurrencyInputMasked } from '@/app/_components/CurrencyInputMasked';
 import DashboardLayout from '@/app/_components/DashboardLayout';
 import InputField from '@/app/_components/form/fields/InputField';
 import FormWrapper from '@/app/_components/form/FormWrapper';
-import { Badge } from '@/app/_components/shadcn/ui/badge';
 import { Button } from '@/app/_components/shadcn/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/_components/shadcn/ui/card';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/app/_components/shadcn/ui/dialog';
@@ -369,7 +368,7 @@ const AdminServices = () => {
                                 Você deseja realmente deletar o serviço <span className='text-red-600 font-bold'>{deleteService?.name}</span>
                             </h3>
                         </div>
-                        <DialogClose>
+                        <DialogClose asChild>
                             <div className="flex flex-row gap-6 items center justify-center">
                                 <Button className='font-bold' onClick={() => { setDeleteService(null) }}>
                                     Cancelar
