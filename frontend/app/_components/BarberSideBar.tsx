@@ -9,11 +9,11 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-const BarberSidebar: React.FC = () => {
+const BarberSidebar = () => {
 
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/barbershop/dashboard' },
-    { icon: Calendar, label: 'Agenda', path: '/barbershop/schedule' },
+    { icon: Calendar, label: 'Agenda', path: '/barbershop/agenda' },
     { icon: Users, label: 'Clientes', path: '/barbershop/clients' },
     { icon: History, label: 'Histórico', path: '/barbershop/history' },
   ];

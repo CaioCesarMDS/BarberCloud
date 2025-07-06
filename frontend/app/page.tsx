@@ -16,8 +16,9 @@ export default function Home() {
       </header>
       <main>
         <div className="flex flex-col m-8">
-          <h1 className="text-4xl font-bold mb-4 text-primary">Welcome to Barber Cloud</h1>
-          <p className="text-lg  mb-6">A complete management system for your barber shop.</p>
+          <h1 className="lg:text-4xl text-xl font-bold mb-4 text-primary text-center">BarberCloud</h1>
+          <p className="lg:text-lg text-md  mb-6 mt-2 text-center">Um sistema de gerenciamento completo para a sua barbearia. <br/>
+          Tenha controle total do seu negocio.</p>
         </div>
       </main>
       <div className="w-full flex flex-col items-center justify-center text-center px-6 text-black">
