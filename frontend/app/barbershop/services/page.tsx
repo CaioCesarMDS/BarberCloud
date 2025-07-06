@@ -14,7 +14,7 @@ import Service from '@/app/_types/services';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, DollarSign, Scissors, Edit, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast, Toaster } from 'sonner';
 import z from 'zod';
@@ -48,6 +48,7 @@ const AdminServices = () => {
     const [services, setServices] = useState<Service[]>([]);
     const [totalServices, setTotalServices] = useState<number>(0);
     const [admin, setAdmin] = useState<Admin | null>(null);
+    const isFirstRender = useRef(true)
 
     const formNewService = useForm<FormNewServiceData>({
         resolver: zodResolver(formNewServiceSchema),
@@ -77,7 +78,7 @@ const AdminServices = () => {
             console.log("Erro ao criar o serviço!:", error);
         }
     }
-    
+
     const updateService = async (data: FormNewServiceData) => {
         try {
             const response = await api.put(`/services/${editService?.id}`,
@@ -86,7 +87,7 @@ const AdminServices = () => {
                     price: data.price.toString(),
                 }
             );
-            
+
             if (response.status === 200) {
                 toast.info('Serviço Atualizado com sucesso!')
                 fetchServices();
@@ -102,7 +103,7 @@ const AdminServices = () => {
     const execDeleteService = async (id: number) => {
         try {
             const response = await api.delete(`/services/${editService?.id}`);
-            
+
             if (response.status === 200) {
                 toast.info('Serviço Deletado com sucesso!')
                 fetchServices();
@@ -156,6 +157,11 @@ const AdminServices = () => {
     }, [router]);
 
     useEffect(() => {
+        if(isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
         fetchServices();
     }, [admin]);
 
