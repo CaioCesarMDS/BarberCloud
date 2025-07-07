@@ -1,4 +1,4 @@
-import { Client, Employee, PrismaClient, Role } from '@prisma/client';
+import { Client, Employee, PrismaClient, Role, ScheduleStatus } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -233,6 +233,8 @@ async function seedDatabase() {
       for (let j = 0; j < NUM_SCHEDULINGS_PER_SHOP; j++) {
         const cliente = rand(clients);
         const funcionario = rand(employees);
+        const statusValues = Object.values(ScheduleStatus) as ScheduleStatus[];
+        const status = rand(statusValues);
         const shuffled = services.sort(() => 0.5 - Math.random());
         const servicosEscolhidos = shuffled.slice(0, 2);
         const total = servicosEscolhidos.reduce(
@@ -240,11 +242,13 @@ async function seedDatabase() {
           0,
         );
 
+
         const agendamento = await prisma.scheduling.create({
           data: {
             barbershopId: barbershop.id,
             clientId: cliente.id,
             employeeId: funcionario.id,
+            status: status,
             dateTime: randDateFuture(),
             priceTotal: total,
           },
