@@ -20,10 +20,16 @@ export class ClientDetailsDto {
     this.phone = client.phone;
     this.subscribeIn = [];
 
-    subscribes.map((subscription) => {
-      this.subscribeIn?.push(
-        new BarbershopsSubscribe(subscription, barbershops[0]),
+    subscribes.forEach((subscription) => {
+      const matchedBarbershop = barbershops.find(
+        (barbershop) => barbershop.id === subscription.barbershopId,
       );
+
+      if (matchedBarbershop) {
+        this.subscribeIn!.push(
+          new BarbershopsSubscribe(subscription, matchedBarbershop),
+        );
+      }
     });
   }
 }
@@ -31,11 +37,17 @@ export class ClientDetailsDto {
 class BarbershopsSubscribe {
   readonly barbershopId!: string;
   readonly name!: string;
+  readonly imageUrl!: string;
+  readonly timeOpen?: string;
+  readonly timeClose?: string;
   readonly subscribeIn!: Date;
 
   constructor(subscription: ClientSubscribeBarbershop, barbershop: Barbershop) {
     this.barbershopId = barbershop.id;
     this.name = barbershop.name;
+    this.imageUrl = barbershop.imageUrl;
+    this.timeOpen = barbershop.timeOpen;
+    this.timeClose = barbershop.timeClose;
     this.subscribeIn = subscription.subscribeIn;
   }
 }

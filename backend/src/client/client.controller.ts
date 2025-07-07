@@ -10,12 +10,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { Client } from '@prisma/client';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ClientService } from './client.service';
 import { ClientDetailsDto } from './dtos/client-details.dto';
 import { ClientUpdateDTO } from './dtos/client-update.dto';
 import { ClientResponseDto } from './dtos/client.response.dto';
-import { Client } from '@prisma/client';
 
 @Controller('/client')
 export class ClientController {
@@ -82,6 +82,12 @@ export class ClientController {
       clientId,
       barbershopId,
     );
+  }
+
+  @UseGuards(AuthGuard)
+  @Get(':id/subscriptions')
+  async getClientSubscriptions(@Param('id') id: string) {
+    return (await this.clientService.findDetailsById(id)).subscribeIn;
   }
 
   @UseGuards(AuthGuard)
