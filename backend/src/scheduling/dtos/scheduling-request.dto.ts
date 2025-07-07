@@ -1,11 +1,30 @@
-import { Role, Employee, Services } from '@prisma/client';
-import Decimal from 'decimal.js';
+import { Type } from 'class-transformer';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsDate,
+  IsNumber,
+  IsUUID,
+} from 'class-validator';
 
 export class SchedulingRequestDto {
-    readonly clientId!: string;
-    readonly employeeId!: string;
-    readonly barbershopId!: string;
-    readonly dateTime!: Date;
-    readonly totalPrice!: Decimal;
-    readonly servicesIds!: number[];
+  @IsUUID()
+  readonly clientId!: string;
+
+  @IsUUID()
+  readonly employeeId!: string;
+
+  @IsUUID()
+  readonly barbershopId!: string;
+
+  @IsDate()
+  @Type(() => Date)
+  readonly dateTime!: Date;
+
+  @IsNumber()
+  readonly totalPrice!: number;
+
+  @IsArray()
+  @ArrayNotEmpty()
+  readonly servicesIds!: number[];
 }

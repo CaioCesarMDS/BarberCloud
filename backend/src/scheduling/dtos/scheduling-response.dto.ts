@@ -1,8 +1,7 @@
-import { Role, Employee, Scheduling, Services, ServicesOnScheduling } from '@prisma/client';
+import { Scheduling, Services } from '@prisma/client';
 import Decimal from 'decimal.js';
 
 export class SchedulingResponseDto {
-  
   readonly id!: string;
   readonly clientId!: string;
   readonly employeeId!: string;
