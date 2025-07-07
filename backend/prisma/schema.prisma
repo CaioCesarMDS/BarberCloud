@@ -97,6 +97,7 @@ model Scheduling {
   clientId     String
   employeeId   String
   dateTime     DateTime
+  status       ScheduleStatus
   priceTotal   Decimal                @db.Money
   services     ServicesOnScheduling[]
 
@@ -107,4 +108,10 @@ model Scheduling {
 enum Role {
   ADMIN
   EMPLOYEE
+}
+
+enum ScheduleStatus {
+  CANCEL
+  PENDING
+  DONE
 }
