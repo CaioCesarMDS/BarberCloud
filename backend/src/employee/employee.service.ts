@@ -60,6 +60,10 @@ export class EmployeeService {
     }
   }
 
+  findAllByBarbershopId(barbershopId: string): Promise<EmployeeResponseDto[]> {
+    return this.employeeRepository.findAllById(barbershopId);
+  }
+
   findAllByName(name: string): Promise<EmployeeResponseDto[]> {
     return this.employeeRepository.findAllByName(name);
   }

@@ -10,6 +10,13 @@ import { IEmployeeRepositoryInterface } from './interfaces/employee-repository.i
 export class EmployeeRepository implements IEmployeeRepositoryInterface {
   constructor(private readonly prismaService: PrismaService) {}
 
+  async findAllById(id: string): Promise<EmployeeResponseDto[]> {
+    const employees = await this.prismaService.employee.findMany({
+      where: { barbershopId: id },
+    });
+    return employees.map((employee) => new EmployeeResponseDto(employee));
+  }
+
   create(data: CreateEmployeeDTO, hashedPassword: string): Promise<Employee> {
     return this.prismaService.employee.create({
       data: {
