@@ -103,9 +103,10 @@ export class ServicesService {
   async getCountTotalServices(barbershopId: string): Promise<number> {
     try {
       const barbershop: Barbershop | null =
-      await this.barbershopRepository.findById(barbershopId);
+        await this.barbershopRepository.findById(barbershopId);
       if (barbershop) {
-        const totalServices: number | null = await this.servicesRepository.getQuantityOfServices(barbershopId);
+        const totalServices: number | null =
+          await this.servicesRepository.getQuantityOfServices(barbershopId);
         return totalServices;
       } else {
         throw new BadRequestException('barbershopId is invalid!');

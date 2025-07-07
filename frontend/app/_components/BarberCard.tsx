@@ -1,4 +1,4 @@
-import { Barbershop } from "@/app/_types/barbeshop";
+import { Barbershop } from "@/app/_types/barbershop";
 import { AxiosError } from "axios";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";

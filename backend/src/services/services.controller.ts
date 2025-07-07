@@ -35,7 +35,7 @@ export class ServicesController {
     return await this.servicesService.getServiceById(id);
   }
 
-  @Get('all/:barbershopId')
+  @Get('search/all/:barbershopId')
   async getAllServicesByBarbershopId(
     @Param('barbershopId') barbershopId: string,
   ): Promise<ServicesResponseDto[]> {
@@ -70,7 +70,9 @@ export class ServicesController {
 
   @Roles('ADMIN')
   @Get('/count/:barbershopId')
-  async countServices(@Param('barbershopId') barbershopId: string): Promise<number> {
+  async countServices(
+    @Param('barbershopId') barbershopId: string,
+  ): Promise<number> {
     return await this.servicesService.getCountTotalServices(barbershopId);
   }
 }
