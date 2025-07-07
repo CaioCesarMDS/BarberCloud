@@ -47,8 +47,8 @@ export class SchedulingRepository implements ISchedulingRepositoryInterface {
         })
 
         if (data.servicesIds) {
-            const relations: { serviceId: number; schedulingId: string; }[] = (await this.prismaService.servicesOnScheduling
-                .findMany({ where: { schedulingId: updateScheduling.id } }));
+            const relations: { serviceId: number; schedulingId: string; }[] = await this.prismaService.servicesOnScheduling
+                .findMany({ where: { schedulingId: updateScheduling.id } });
 
             const createRelations: { serviceId: number; schedulingId: string; }[] = relations;
 
