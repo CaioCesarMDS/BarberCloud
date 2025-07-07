@@ -247,6 +247,7 @@ async function seedDatabase() {
             employeeId: funcionario.id,
             dateTime: randDateFuture(),
             priceTotal: total,
+            status: 'PENDING',
           },
         });
 
