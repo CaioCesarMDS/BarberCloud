@@ -1,108 +1,225 @@
 import { Injectable } from '@nestjs/common';
-import { Services } from '@prisma/client';
+import { ScheduleStatus, Scheduling, Services } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { SchedulingRequestDto } from './dtos/scheduling-request.dto';
-import { SchedulingResponseDto } from './dtos/scheduling-response.dto';
 import { ISchedulingRepositoryInterface } from './interfaces/scheduling-repository.interface';
+import { SchedulingUpdateDto } from './dtos/scheduling-update.dto';
+import { SchedulingWithAll } from './types/scheduling-with-all.type';
 
 @Injectable()
 export class SchedulingRepository implements ISchedulingRepositoryInterface {
-  constructor(private readonly prismaService: PrismaService) {}
+    constructor(private readonly prismaService: PrismaService) { }
 
-  async create(data: SchedulingRequestDto): Promise<SchedulingResponseDto> {
-    const newScheduling = await this.prismaService.scheduling.create({
-      data: {
-        clientId: data.clientId,
-        employeeId: data.employeeId,
-        barbershopId: data.barbershopId,
-        dateTime: data.dateTime,
-        priceTotal: data.totalPrice,
-        status: 'PENDING',
-      },
-    });
+    async create(data: SchedulingRequestDto): Promise<Scheduling> {
+        const newScheduling = await this.prismaService.scheduling.create({
+            data: {
+                clientId: data.clientId,
+                employeeId: data.employeeId,
+                barbershopId: data.barbershopId,
+                dateTime: data.dateTime,
+                priceTotal: data.totalPrice,
+                status: data.status as unknown as ScheduleStatus
+            }
+        })
 
-    await this.prismaService.servicesOnScheduling.createMany({
-      data: data.servicesIds.map((serviceId) => ({
-        schedulingId: newScheduling.id,
-        serviceId,
-      })),
-    });
+        data.servicesIds.map(async (serviceId) => {
+            await this.prismaService.servicesOnScheduling.create({
+                data: {
+                    schedulingId: newScheduling.id,
+                    serviceId: serviceId
+                }
+            });
+        })
 
-    const services = await this.prismaService.services.findMany({
-      where: { id: { in: data.servicesIds } },
-    });
+        return newScheduling;
+    }
 
-    return new SchedulingResponseDto(newScheduling, services);
-  }
+    async remove(id: string): Promise<Scheduling> {
+        const deletedScheduling = await this.prismaService.scheduling.delete({
+            where: { id },
+            include: {
+                services: {
+                    include: { service: true },
+                },
+            },
+        });
 
-  async remove(id: string): Promise<SchedulingResponseDto> {
-    const deletedScheduling = await this.prismaService.scheduling.delete({
-      where: { id },
-      include: {
-        services: {
-          include: { service: true },
-        },
-      },
-    });
+        return deletedScheduling;
+    }
 
-    const services = deletedScheduling.services.map((s) => s.service);
-    return new SchedulingResponseDto(deletedScheduling, services);
-  }
+    async update(id: string, data: SchedulingUpdateDto): Promise<Scheduling> {
+        const updateScheduling = await this.prismaService.scheduling.update({
+            where: { id: id }, data: {
+                dateTime: data.dateTime,
+                status: data.status as unknown as ScheduleStatus
+            }
+        })
 
-  async update(
-    id: string,
-    data: SchedulingRequestDto,
-  ): Promise<SchedulingResponseDto | null> {
-    await this.prismaService.servicesOnScheduling.deleteMany({
-      where: { schedulingId: id },
-    });
+        if (data.servicesIds) {
+            const relations: { serviceId: number; schedulingId: string; }[] = await this.prismaService.servicesOnScheduling
+                .findMany({ where: { schedulingId: updateScheduling.id } });
 
-    const updatedScheduling = await this.prismaService.scheduling.update({
-      where: { id },
-      data: {
-        clientId: data.clientId,
-        employeeId: data.employeeId,
-        barbershopId: data.barbershopId,
-        dateTime: data.dateTime,
-        priceTotal: data.totalPrice,
-      },
-    });
+            const removeRelations = relations.filter((relation) => !data.servicesIds?.includes(relation.serviceId));
 
-    await this.prismaService.servicesOnScheduling.createMany({
-      data: data.servicesIds.map((serviceId) => ({
-        schedulingId: updatedScheduling.id,
-        serviceId,
-      })),
-    });
+            const createRelations = data.servicesIds.filter((id) => !relations.some((relation) => id === relation.serviceId));
 
-    const services = await this.prismaService.services.findMany({
-      where: { id: { in: data.servicesIds } },
-    });
+            await Promise.all(removeRelations.map(async (removeRelation) => { await this.prismaService.servicesOnScheduling.delete({ where: { serviceId_schedulingId: { serviceId: removeRelation.serviceId, schedulingId: id } } }) }))
 
-    return new SchedulingResponseDto(updatedScheduling, services);
-  }
+            await Promise.all(createRelations.map(async (createRelationId) => { await this.prismaService.servicesOnScheduling.create({ data: { schedulingId: id, serviceId: createRelationId } }) }))
+        }
 
-  async findByClientId(clientId: string): Promise<SchedulingResponseDto[]> {
-    const schedulings = await this.prismaService.scheduling.findMany({
-      where: { clientId },
-      include: {
-        services: {
-          include: {
-            service: true,
-          },
-        },
-        employee: true,
-        barbershop: true,
-      },
-      orderBy: {
-        dateTime: 'desc',
-      },
-    });
+        return updateScheduling;
+    }
 
-    return schedulings.map((scheduling) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-      const services: Services[] = scheduling.services.map((s) => s.service);
-      return new SchedulingResponseDto(scheduling, services);
-    });
-  }
+    async getAllServicesBySchedulingId(id: string): Promise<Services[]> {
+        const relations = await this.prismaService.servicesOnScheduling.findMany({ where: { schedulingId: id } });
+        const services: Services[] = [];
+        await Promise.all(relations.map(async (rel) => {
+            const service: Services | null = await this.prismaService.services.findUnique({ where: { id: rel.serviceId } });
+            if (service) {
+                services.push(service);
+            }
+        }));
+
+        return services;
+    }
+
+    async findSchedulingById(id: string): Promise<SchedulingWithAll | null> {
+        const scheduling = await this.prismaService.scheduling.findUnique({
+            where: { id },
+            include: {
+                services: {
+                    include: {
+                        service: true,
+                    },
+                },
+                employee: true,
+                barbershop: true,
+                client: true
+            }
+        });
+
+        return scheduling;
+    }
+
+    async findAllByClientId(clientId: string): Promise<SchedulingWithAll[]> {
+        const schedulings = await this.prismaService.scheduling.findMany({
+            where: { clientId },
+            include: {
+                services: {
+                    include: {
+                        service: true,
+                    },
+                },
+                employee: true,
+                barbershop: true,
+                client: true
+            },
+            orderBy: {
+                dateTime: 'desc',
+            },
+        });
+
+        return schedulings;
+    }
+
+    async findAllByClientName(name: string): Promise<SchedulingWithAll[]> {
+        const client = await this.prismaService.client.findFirst({ where: { name: name } })
+
+        const clientId = client?.id
+
+        const schedulings = await this.prismaService.scheduling.findMany({
+            where: { clientId },
+            include: {
+                services: {
+                    include: {
+                        service: true,
+                    },
+                },
+                employee: true,
+                barbershop: true,
+                client: true
+            },
+            orderBy: {
+                dateTime: 'desc',
+            },
+        });
+
+        return schedulings;
+    }
+
+    async findAllByEmployeeId(employeeId: string): Promise<SchedulingWithAll[]> {
+        const schedulings = await this.prismaService.scheduling.findMany({
+            where: { employeeId },
+            include: {
+                services: {
+                    include: {
+                        service: true,
+                    },
+                },
+                employee: true,
+                barbershop: true,
+                client: true
+            },
+            orderBy: {
+                dateTime: 'desc',
+            },
+        });
+
+        return schedulings;
+    }
+
+    async findAllByEmployeeName(name: string): Promise<SchedulingWithAll[]> {
+        const employee = await this.prismaService.client.findFirst({ where: { name: name } })
+
+        const employeeId = employee?.id
+
+        const schedulings = await this.prismaService.scheduling.findMany({
+            where: { employeeId },
+            include: {
+                services: {
+                    include: {
+                        service: true,
+                    },
+                },
+                employee: true,
+                barbershop: true,
+                client: true
+            },
+            orderBy: {
+                dateTime: 'desc',
+            },
+        });
+
+        return schedulings;
+    }
+
+    async findAllByBarbershopId(barbershopId: string): Promise<SchedulingWithAll[]> {
+        const schedulings = await this.prismaService.scheduling.findMany({
+            where: { barbershopId },
+            include: {
+                services: {
+                    include: {
+                        service: true,
+                    },
+                },
+                employee: true,
+                barbershop: true,
+                client: true
+            },
+            orderBy: {
+                dateTime: 'desc',
+            },
+        });
+
+        return schedulings;
+    }
+
+    findAllByBarbershopIdAndIntervalOfDate(barbershopId: string, from: Date, to: Date): Promise<SchedulingWithAll[]> {
+        throw new Error('Method not implemented.');
+    }
+
+    findAllByBarbershopIdAndDate(barbershopId: string, date: Date): Promise<SchedulingWithAll[]> {
+        throw new Error('Method not implemented.');
+    }
 }

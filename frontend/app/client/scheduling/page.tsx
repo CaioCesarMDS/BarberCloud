@@ -28,7 +28,7 @@ export default function SchedulingPage() {
       try {
         const clientId = await getClientId();
         if (clientId) {
-          const res = await api.get(`/scheduling/client/${clientId}`);
+          const res = await api.get(`/scheduling/all/client/`, { params: { clientId: clientId } });
           setSchedulings(res.data);
         }
       } catch (error) {
@@ -75,9 +75,9 @@ export default function SchedulingPage() {
                 minute: "2-digit",
               });
 
-              const employeeName = service.employee?.name ?? "Funcionário não informado";
+              const employeeName = service.employeeName ?? "Funcionário não informado";
               const employeeInitials =
-                service.employee?.name
+                service.employeeName
                   ?.split(" ")
                   .map((n) => n[0])
                   .join("")
@@ -104,7 +104,7 @@ export default function SchedulingPage() {
                     </div>
                     <div className="flex items-center space-x-4">
                       <div className="text-center">
-                        <div className="text-lg font-bold text-green-600">R$ {service.priceTotal}</div>
+                        <div className="text-lg font-bold text-green-600">R$ {service.totalPrice}</div>
                         <Badge className={getStatusColor(service.status)}>{service.status}</Badge>
                       </div>
                     </div>

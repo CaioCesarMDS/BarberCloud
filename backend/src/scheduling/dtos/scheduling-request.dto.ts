@@ -5,7 +5,9 @@ import {
   IsDate,
   IsNumber,
   IsUUID,
+  IsEnum,
 } from 'class-validator';
+import { StatusEnum } from '../enums/status.enum';
 
 export class SchedulingRequestDto {
   @IsUUID()
@@ -16,6 +18,9 @@ export class SchedulingRequestDto {
 
   @IsUUID()
   readonly barbershopId!: string;
+
+  @IsEnum(StatusEnum)
+  readonly status!: StatusEnum;
 
   @IsDate()
   @Type(() => Date)
