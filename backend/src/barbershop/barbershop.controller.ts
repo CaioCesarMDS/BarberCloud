@@ -6,13 +6,16 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common/exceptions/bad-request.exception';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { BarbershopService } from './barbershop.service';
 import { BarbershopRequestDto } from './dtos/barbeshop.request.dto';
+import { BarbershopUpdateDto } from './dtos/barbershop.update.dto';
 
 @UseGuards(RolesGuard)
 @Controller('/barbershop')
@@ -25,6 +28,15 @@ export class BarbershopController {
   }
 
   @UseGuards(AuthGuard)
+  @Get('search/all')
+  getAllBarbershopsByName(@Query('name') name: string) {
+    if (!name?.trim()) {
+      return new BadRequestException('Name query parameter is required');
+    }
+    return this.BarbershopService.findAllByName(name);
+  }
+
+  @UseGuards(AuthGuard)
   @Get(':id')
   getUserById(@Param('id') id: string) {
     return this.BarbershopService.getById(id);
@@ -33,7 +45,7 @@ export class BarbershopController {
   @Roles('ADMIN')
   @UseGuards(RolesGuard)
   @Put('update/:id')
-  updateUserById(@Param('id') id: string, @Body() data: BarbershopRequestDto) {
+  updateUserById(@Param('id') id: string, @Body() data: BarbershopUpdateDto) {
     return this.BarbershopService.updateById(id, data);
   }
 

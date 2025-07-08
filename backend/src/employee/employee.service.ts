@@ -7,7 +7,6 @@ import { CreateEmployeeDTO } from './dtos/create-employee.dto';
 import { EmployeeUpdateDTO } from './dtos/employee-update.dto';
 import { EmployeeResponseDto } from './dtos/employee.request.dto';
 import { EmployeeRepository } from './employee.repository';
-import { throwError } from 'rxjs';
 
 @Injectable()
 export class EmployeeService {
@@ -59,6 +58,10 @@ export class EmployeeService {
         await this.employeeRepository.update(id, EmployeeData);
       return employeeUpdated ? new EmployeeResponseDto(employeeUpdated) : null;
     }
+  }
+
+  findAllByBarbershopId(barbershopId: string): Promise<EmployeeResponseDto[]> {
+    return this.employeeRepository.findAllById(barbershopId);
   }
 
   findAllByName(name: string): Promise<EmployeeResponseDto[]> {

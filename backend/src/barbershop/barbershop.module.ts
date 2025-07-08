@@ -16,6 +16,6 @@ import { BarbershopService } from './barbershop.service';
   ],
   controllers: [BarbershopController],
   providers: [BarbershopService, BarbershopRepository],
-  exports: [BarbershopRepository]
+  exports: [BarbershopRepository],
 })
 export class BarbershopModule {}

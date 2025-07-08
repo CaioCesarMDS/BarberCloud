@@ -1,21 +1,12 @@
-import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
+import { MailerService } from 'src/mail/mail.service';
 import { MessageDTO } from './dto/message.dto';
 
 @Injectable()
 export class EmailService {
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(private readonly mailService: MailerService) {}
 
   async sendEmail(data: MessageDTO): Promise<void> {
-    try {
-      await this.mailerService.sendMail({
-        to: data.to,
-        subject: data.subject,
-        text: data.text,
-      });
-      console.log(`Email sent to ${data.to} successfully.`);
-    } catch (error) {
-      console.error(`Failed to send email to ${data.to}:`, error);
-    }
+    await this.mailService.sendMail(data.to, data.subject, data.text);
   }
 }

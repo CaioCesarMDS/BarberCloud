@@ -10,6 +10,7 @@ export interface IEmployeeRepositoryInterface {
     EmployeeData: EmployeeUpdateDTO,
     hashedPassword?: string,
   ): Promise<Employee | null>;
+  findAllById(id: string): Promise<EmployeeResponseDto[]>;
   findAllByName(name: string): Promise<EmployeeResponseDto[]>;
   findById(id: string): Promise<Employee | null>;
   findByEmail(email: string): Promise<Employee | null>;

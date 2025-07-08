@@ -3,6 +3,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { BarbershopRepository } from './barbershop.repository';
 import { BarbershopResponseDto } from './dtos/barbershop.response.dto';
 import { BarbershopRequestDto } from './dtos/barbeshop.request.dto';
+import { BarbershopUpdateDto } from './dtos/barbershop.update.dto';
+import { ServicesService } from 'src/services/services.service';
 
 @Injectable()
 export class BarbershopService {
@@ -33,7 +35,7 @@ export class BarbershopService {
 
   async updateById(
     id: string,
-    data: BarbershopRequestDto,
+    data: BarbershopUpdateDto,
   ): Promise<BarbershopResponseDto> {
     const barbershop = await this.barbershopRepository.findById(id);
     if (!barbershop) throw new NotFoundException('Barbershop not found');
@@ -54,5 +56,24 @@ export class BarbershopService {
       success: true,
       message: 'Barbershop deleted successfully',
     };
+  }
+
+  async findAllByName(name: string): Promise<BarbershopResponseDto[]> {
+    const barbershops = await this.barbershopRepository.findAllByName(name);
+    if (!barbershops || barbershops.length === 0) {
+      throw new NotFoundException('No barbershops found with that name');
+    }
+
+    const results: BarbershopResponseDto[] = [];
+
+    for (const barbershop of barbershops) {
+      const address = await this.barbershopRepository.findAddressById(
+        barbershop.addressId,
+      );
+      if (!address) throw new NotFoundException('Address not found');
+
+      results.push(new BarbershopResponseDto(barbershop, address));
+    }
+    return results;
   }
 }

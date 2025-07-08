@@ -41,7 +41,8 @@ model Barbershop {
   services                  Services[]
   User                      Employee[]
 
-  address AddressBarbershop @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  address    AddressBarbershop @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  Scheduling Scheduling[]
 }
 
 model AddressBarbershop {
@@ -72,7 +73,7 @@ model Employee {
 }
 
 model Services {
-  id           Int  @id @unique @default(autoincrement())
+  id           Int     @id @unique @default(autoincrement())
   name         String
   description  String
   price        Decimal @db.Money
@@ -97,14 +98,22 @@ model Scheduling {
   clientId     String
   employeeId   String
   dateTime     DateTime
+  status       ScheduleStatus
   priceTotal   Decimal                @db.Money
   services     ServicesOnScheduling[]
 
-  client   Client   @relation(fields: [clientId], references: [id])
-  employee Employee @relation(fields: [employeeId], references: [id])
+  client     Client     @relation(fields: [clientId], references: [id])
+  employee   Employee   @relation(fields: [employeeId], references: [id])
+  barbershop Barbershop @relation(fields: [barbershopId], references: [id])
 }
 
 enum Role {
   ADMIN
   EMPLOYEE
+}
+
+enum ScheduleStatus {
+  CANCEL
+  PENDING
+  DONE
 }

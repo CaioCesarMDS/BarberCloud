@@ -65,7 +65,7 @@ CREATE TABLE "Employee" (
 
 -- CreateTable
 CREATE TABLE "Services" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "price" MONEY NOT NULL,
@@ -76,7 +76,7 @@ CREATE TABLE "Services" (
 
 -- CreateTable
 CREATE TABLE "ServicesOnScheduling" (
-    "serviceId" TEXT NOT NULL,
+    "serviceId" INTEGER NOT NULL,
     "schedulingId" TEXT NOT NULL,
 
     CONSTRAINT "ServicesOnScheduling_pkey" PRIMARY KEY ("serviceId","schedulingId")

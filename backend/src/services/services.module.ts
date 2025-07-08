@@ -9,9 +9,9 @@ import { CommonModule } from 'src/common/common.module';
 import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-    imports: [BarbershopModule, PrismaModule, CommonModule, AuthModule],
-    controllers: [ServicesController],
-    providers: [ServicesService, ServicesRequestDto, ServicesRepository],
-    exports: [],
+  imports: [BarbershopModule, PrismaModule, CommonModule, AuthModule],
+  controllers: [ServicesController],
+  providers: [ServicesService, ServicesRequestDto, ServicesRepository],
+  exports: [],
 })
-export class ServicesModule { }
+export class ServicesModule {}

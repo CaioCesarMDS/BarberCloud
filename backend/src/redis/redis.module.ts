@@ -1,7 +1,7 @@
-import { Module, Global } from '@nestjs/common';
-import { RedisService } from './redis.service';
-import { RedisTransportService } from './redis-transport.service';
+import { Global, Module } from '@nestjs/common';
 import { RedisTokenService } from './redis-token.service';
+import { RedisTransportService } from './redis-transport.service';
+import { RedisService } from './redis.service';
 
 @Global()
 @Module({

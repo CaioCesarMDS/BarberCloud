@@ -5,16 +5,17 @@ import {
   Delete,
   Get,
   Param,
+  Post,
   Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { Client } from '@prisma/client';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ClientService } from './client.service';
 import { ClientDetailsDto } from './dtos/client-details.dto';
 import { ClientUpdateDTO } from './dtos/client-update.dto';
 import { ClientResponseDto } from './dtos/client.response.dto';
-import { Client } from '@prisma/client';
 
 @Controller('/client')
 export class ClientController {
@@ -64,7 +65,44 @@ export class ClientController {
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<ClientResponseDto> {
-    return this.clientService.remove(id);
+  async remove(@Param('id') id: string): Promise<any> {
+    return {
+      sucess: true,
+      userDeleted: await this.clientService.remove(id),
+    };
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/subscribe/:clientId/on/:barbershopId')
+  async subscribe(
+    @Param('clientId') clientId: string,
+    @Param('barbershopId') barbershopId: string,
+  ): Promise<ClientDetailsDto> {
+    return await this.clientService.subscribeInBarbershop(
+      clientId,
+      barbershopId,
+    );
+  }
+
+  @UseGuards(AuthGuard)
+  @Get(':id/subscriptions')
+  async getClientSubscriptions(@Param('id') id: string) {
+    return (await this.clientService.findDetailsById(id)).subscribeIn;
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete('/unsubscribe/:clientId/on/:barbershopId')
+  async unsubscribe(
+    @Param('clientId') clientId: string,
+    @Param('barbershopId') barbershopId: string,
+  ): Promise<any> {
+    return {
+      sucess: true,
+      unSubscribeOf: barbershopId,
+      clientDetails: await this.clientService.unSubscribeInBarbershop(
+        clientId,
+        barbershopId,
+      ),
+    };
   }
 }
