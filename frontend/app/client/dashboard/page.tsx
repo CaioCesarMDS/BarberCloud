@@ -14,7 +14,6 @@ const ClientDashboard: React.FC = () => {
   interface User {
     id: string;
     name: string;
-    role: "admin" | "barber" | "client";
   }
 
   const [user, setUser] = useState<User | null>(null);

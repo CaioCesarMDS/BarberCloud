@@ -28,7 +28,7 @@ export default function SchedulingPage() {
       try {
         const clientId = await getClientId();
         if (clientId) {
-          const res = await api.get(`/scheduling/client/${clientId}`);
+          const res = await api.get(`/scheduling/all/client/`, { params: { clientId: clientId } });
           setSchedulings(res.data);
         }
       } catch (error) {
