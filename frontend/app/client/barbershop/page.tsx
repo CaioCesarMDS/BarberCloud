@@ -142,7 +142,12 @@ export default function BarbershopsPage() {
       {!isLoading && barbershops.length > 0 && (
         <div className="space-y-4">
           {barbershops.map((barbershop) => (
-            <BarberCard key={barbershop.id} barbershop={barbershop} client={client} />
+            <BarberCard
+              key={barbershop.id}
+              barbershop={barbershop}
+              client={client}
+              onSubscribeSuccess={() => fetchUserSubscriptions(client.id)}
+            />
           ))}
         </div>
       )}
