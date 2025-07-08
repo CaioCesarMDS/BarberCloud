@@ -14,6 +14,7 @@ import { api } from '@/app/_services/api';
 import { AxiosError } from 'axios';
 import { Toaster, toast } from 'sonner';
 import { Scheduling } from '@/app/_types/scheduling';
+import Decimal from 'decimal.js';
 
 const ClientHistory = () => {
     const router = useRouter();
@@ -26,6 +27,7 @@ const ClientHistory = () => {
     const [user, setUser] = useState<User | null>(null);
     const [filterPeriod, setFilterPeriod] = useState('all');
     const [schedulings, setSchedulings] = useState<Scheduling[]>([]);
+    const [totalSpent, setTotalSpent] = useState<Decimal>(new Decimal(0)); 
     const isFirstRender = useRef(true)
 
     const fetchAllSchedulings = async (clientId: string) => {
@@ -70,21 +72,30 @@ const ClientHistory = () => {
         }
     }, [user]);
 
-    const totalSpent = schedulings.reduce((acc, scheduling) => acc + parseFloat(scheduling.priceTotal), 0);
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
+        setTotalSpent(schedulings.reduce((acc, scheduling) => acc.plus(new Decimal(scheduling.totalPrice)), new Decimal(0)));
+        
+    }, [schedulings]);
+    
     // const averageRating = schedulings.reduce((acc, service) => acc + service.rating, 0) / schedulings.length;
     const favoriteBarber = 'João Santos'; // Poderia ser calculado baseado na frequência
-
+    
     const getStars = (rating: number) => {
         return '★'.repeat(rating) + '☆'.repeat(5 - rating);
     };
-
+    
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'Concluído':
                 return 'bg-green-100 text-green-800';
-            case 'Cancelado':
-                return 'bg-red-100 text-red-800';
-            default:
+                case 'Cancelado':
+                    return 'bg-red-100 text-red-800';
+                    default:
                 return 'bg-gray-100 text-gray-800';
         }
     };
@@ -93,7 +104,7 @@ const ClientHistory = () => {
         <DashboardLayout
             sidebar={<ClientSidebar />}
             title="Histórico de Atendimentos"
-        >
+            >
             <Toaster />
             <div className="space-y-6">
                 {/* Header */}
@@ -141,7 +152,7 @@ const ClientHistory = () => {
                             <DollarSign className="h-4 w-4 text-green-600" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-barber-blue">R$ {totalSpent}</div>
+                            <div className="text-2xl font-bold text-barber-blue">R$ {totalSpent.toFixed(2).toString()}</div>
                             <p className="text-xs text-barber-gray">valor total gasto</p>
                         </CardContent>
                     </Card>
@@ -187,13 +198,13 @@ const ClientHistory = () => {
                                         <div className="flex items-center space-x-4">
                                             <Avatar className="h-12 w-12 border-2 border-barber-blue">
                                                 <AvatarFallback className="bg-barber-blue text-white">
-                                                    {scheduling.employee?.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                                    {scheduling.employeeName.split(' ').map(n => n[0]).join('').toUpperCase()}
                                                 </AvatarFallback>
                                             </Avatar>
 
                                             <div className="flex-1">
-                                                <div className="font-semibold text-barber-blue">{scheduling.employee?.name}</div>
-                                                <div className="text-sm text-barber-gray">aqui seria o serviço talvez</div>
+                                                <div className="font-semibold text-barber-blue">{scheduling.barbershopName}</div>
+                                                <div className="text-sm text-barber-gray">{scheduling.employeeName}</div>
                                                 <div className="flex items-center space-x-2 text-sm text-barber-gray">
                                                     <Calendar className="h-3 w-3" />
                                                     <span>{new Date(scheduling.dateTime).toLocaleDateString('pt-BR')}</span>
@@ -205,7 +216,7 @@ const ClientHistory = () => {
                                         {/* Price and Status */}
                                         <div className="flex items-center space-x-4">
                                             <div className="text-center">
-                                                <div className="text-lg font-bold text-green-600">R$ {scheduling.priceTotal}</div>
+                                                <div className="text-lg font-bold text-green-600">R$ {parseFloat(scheduling.totalPrice).toFixed(2).toString()}</div>
                                                 <Badge className={getStatusColor(scheduling.status)}>
                                                     {scheduling.status}
                                                 </Badge>
