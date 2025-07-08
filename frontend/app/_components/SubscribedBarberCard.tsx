@@ -2,6 +2,7 @@ import { Barbershop } from "@/app/_types/barbershop";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Button } from "./shadcn/ui/button";
 import { Card, CardContent } from "./shadcn/ui/card";
 import {
   DropdownMenu,
@@ -20,11 +21,11 @@ interface Props {
 export default function SubscribedBarberCard({ barbershop, onUnsubscribe }: Props) {
   const router = useRouter();
 
-  const goToBarbershop = () => {
+  const goToBarbeshop = () => {
     router.push(`/client/barbershop/${barbershop.id}`);
   };
   return (
-    <Card className="w-full overflow-hidden mb-4 sm:max-w-md md:max-w-lg lg:max-w-xl" onClick={goToBarbershop}>
+    <Card className="w-full overflow-hidden mb-4 sm:max-w-md md:max-w-lg lg:max-w-xl">
       <CardContent className="flex items-center gap-6 p-4">
         <div className="w-32 h-32 relative flex-shrink-0">
           <Image
@@ -37,16 +38,24 @@ export default function SubscribedBarberCard({ barbershop, onUnsubscribe }: Prop
         </div>
         <div className="flex flex-col gap-6">
           <h2 className="text-lg font-semibold">{barbershop.name}</h2>
-          <DropdownMenu>
-            <DropdownMenuTrigger className="p-2 bg-primary text-primary-foreground shadow hover:bg-primary/90 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors">
-              Inscrito <ChevronDown />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>Inscrição</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onUnsubscribe(barbershop.id)}>Desinscrever-se</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-10">
+            <DropdownMenu>
+              <DropdownMenuTrigger className="p-2 bg-primary text-primary-foreground shadow hover:bg-primary/90 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors">
+                Inscrito <ChevronDown />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Inscrição</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => onUnsubscribe(barbershop.id)}>Desinscrever-se</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button
+              onClick={goToBarbeshop}
+              className="p-2 h-10  bg-primary text-primary-foreground shadow hover:bg-primary/90 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors"
+            >
+              Agendar Horário
+            </Button>
+          </div>
           <p className="text-sm text-muted-foreground">
             Horário: {barbershop.timeOpen} - {barbershop.timeClose}
           </p>
