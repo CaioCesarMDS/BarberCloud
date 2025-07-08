@@ -5,6 +5,7 @@ import {
   IsDate,
   IsNumber,
   IsUUID,
+  IsEnum,
 } from 'class-validator';
 
 export class SchedulingRequestDto {
@@ -16,6 +17,9 @@ export class SchedulingRequestDto {
 
   @IsUUID()
   readonly barbershopId!: string;
+
+  @IsEnum(StatusEnum)
+  readonly status!: StatusEnum;
 
   @IsDate()
   @Type(() => Date)

@@ -1,11 +1,13 @@
 import { Scheduling, Services } from '@prisma/client';
 import Decimal from 'decimal.js';
+import { StatusEnum } from '../enums/status.enum';
 
 export class SchedulingResponseDto {
   readonly id!: string;
   readonly clientId!: string;
   readonly employeeId!: string;
   readonly barbershopId!: string;
+  readonly status!: StatusEnum;
   readonly dateTime!: Date;
   readonly totalPrice!: Decimal;
   readonly services!: Services[];
@@ -15,6 +17,7 @@ export class SchedulingResponseDto {
     this.clientId = scheduling.clientId;
     this.employeeId = scheduling.employeeId;
     this.barbershopId = scheduling.barbershopId;
+    this.status = scheduling.status as unknown as StatusEnum;
     this.dateTime = new Date(scheduling.dateTime.toISOString());
     this.totalPrice = scheduling.priceTotal;
     this.services = services;

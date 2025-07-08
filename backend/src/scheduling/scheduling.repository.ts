@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Services } from '@prisma/client';
+import { ScheduleStatus, Scheduling, Services } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { SchedulingRequestDto } from './dtos/scheduling-request.dto';
 import { SchedulingResponseDto } from './dtos/scheduling-response.dto';
@@ -45,42 +45,42 @@ export class SchedulingRepository implements ISchedulingRepositoryInterface {
       },
     });
 
-    const services = deletedScheduling.services.map((s) => s.service);
-    return new SchedulingResponseDto(deletedScheduling, services);
-  }
+    async update(id: string, data: SchedulingUpdateDto): Promise<Scheduling> {
+        const updateScheduling = await this.prismaService.scheduling.update({
+            where: { id: id }, data: {
+                dateTime: data.dateTime,
+                status: data.status as unknown as ScheduleStatus
+            }
+        })
 
-  async update(
-    id: string,
-    data: SchedulingRequestDto,
-  ): Promise<SchedulingResponseDto | null> {
-    await this.prismaService.servicesOnScheduling.deleteMany({
-      where: { schedulingId: id },
-    });
+        if (data.servicesIds) {
+            const relations: { serviceId: number; schedulingId: string; }[] = await this.prismaService.servicesOnScheduling
+                .findMany({ where: { schedulingId: updateScheduling.id } });
 
-    const updatedScheduling = await this.prismaService.scheduling.update({
-      where: { id },
-      data: {
-        clientId: data.clientId,
-        employeeId: data.employeeId,
-        barbershopId: data.barbershopId,
-        dateTime: data.dateTime,
-        priceTotal: data.totalPrice,
-      },
-    });
+            const removeRelations = relations.filter((relation) => !data.servicesIds?.includes(relation.serviceId));
 
-    await this.prismaService.servicesOnScheduling.createMany({
-      data: data.servicesIds.map((serviceId) => ({
-        schedulingId: updatedScheduling.id,
-        serviceId,
-      })),
-    });
+            const createRelations = data.servicesIds.filter((id) => !relations.some((relation) => id === relation.serviceId));
+            
+            await Promise.all(removeRelations.map(async (removeRelation) => { await this.prismaService.servicesOnScheduling.delete({ where: { serviceId_schedulingId: { serviceId: removeRelation.serviceId, schedulingId: id } } }) }))
 
-    const services = await this.prismaService.services.findMany({
-      where: { id: { in: data.servicesIds } },
-    });
+            await Promise.all(createRelations.map(async (createRelationId) => { await this.prismaService.servicesOnScheduling.create({ data: { schedulingId: id, serviceId: createRelationId } }) }))
+        }
 
-    return new SchedulingResponseDto(updatedScheduling, services);
-  }
+        return updateScheduling;
+    }
+
+    async getAllServicesBySchedulingId(id: string): Promise<Services[]> {
+        const relations = await this.prismaService.servicesOnScheduling.findMany({ where: { schedulingId: id } });
+        const services: Services[] = [];
+        await Promise.all(relations.map(async (rel) => {
+            const service: Services | null = await this.prismaService.services.findUnique({ where: { id: rel.serviceId } });
+            if (service) {
+                services.push(service);
+            }
+        }));
+
+        return services;
+    }
 
   async findByClientId(clientId: string): Promise<SchedulingResponseDto[]> {
     const schedulings = await this.prismaService.scheduling.findMany({

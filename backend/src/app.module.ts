@@ -5,6 +5,7 @@ import { EmailModule } from './email/email.module';
 import { EmployeeModule } from './employee/employee.module';
 import { SchedulingModule } from './scheduling/scheduling.module';
 import { ServicesModule } from './services/services.module';
+import { SchedulingModule } from './scheduling/scheduling.module';
 
 @Module({
   imports: [

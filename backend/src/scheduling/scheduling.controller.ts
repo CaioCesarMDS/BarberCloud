@@ -16,4 +16,9 @@ export class SchedulingController {
   async getByClientId(@Param('clientId') clientId: string) {
     return this.schedulingService.findByClientId(clientId);
   }
+  
+  @Put('/update/:id')
+    async updateScheduling(@Param('id') id: string, @Body() data: SchedulingUpdateDto): Promise<SchedulingResponseDto> {
+        return await this.schedulingService.update(id, data);
+    }
 }
