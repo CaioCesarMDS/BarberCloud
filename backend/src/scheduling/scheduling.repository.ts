@@ -50,20 +50,13 @@ export class SchedulingRepository implements ISchedulingRepositoryInterface {
             const relations: { serviceId: number; schedulingId: string; }[] = await this.prismaService.servicesOnScheduling
                 .findMany({ where: { schedulingId: updateScheduling.id } });
 
-            const createRelations: { serviceId: number; schedulingId: string; }[] = relations;
+            const removeRelations = relations.filter((relation) => !data.servicesIds?.includes(relation.serviceId));
 
-            createRelations.filter((relation) => {
-                if (data.servicesIds) {
-                    data.servicesIds.some((id) => relation.serviceId !== id)
-                }
-            });
+            const createRelations = data.servicesIds.filter((id) => !relations.some((relation) => id === relation.serviceId));
+            
+            await Promise.all(removeRelations.map(async (removeRelation) => { await this.prismaService.servicesOnScheduling.delete({ where: { serviceId_schedulingId: { serviceId: removeRelation.serviceId, schedulingId: id } } }) }))
 
-            const removeRelations: number[] = data.servicesIds
-
-            removeRelations.filter(async (id) => relations.some((relation) => relation.serviceId !== id));
-
-            console.log(createRelations);
-            console.log(removeRelations);
+            await Promise.all(createRelations.map(async (createRelationId) => { await this.prismaService.servicesOnScheduling.create({ data: { schedulingId: id, serviceId: createRelationId } }) }))
         }
 
         return updateScheduling;
@@ -71,14 +64,13 @@ export class SchedulingRepository implements ISchedulingRepositoryInterface {
 
     async getAllServicesBySchedulingId(id: string): Promise<Services[]> {
         const relations = await this.prismaService.servicesOnScheduling.findMany({ where: { schedulingId: id } });
-
         const services: Services[] = [];
-        relations.map(async (rel) => {
+        await Promise.all(relations.map(async (rel) => {
             const service: Services | null = await this.prismaService.services.findUnique({ where: { id: rel.serviceId } });
             if (service) {
                 services.push(service);
             }
-        })
+        }));
 
         return services;
     }
