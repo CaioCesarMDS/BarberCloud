@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { $Enums, ScheduleStatus, Scheduling, Services } from '@prisma/client';
+import { ScheduleStatus, Scheduling, Services } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { SchedulingRequestDto } from './dtos/scheduling-request.dto';
-import { SchedulingResponseDto } from './dtos/scheduling-response.dto';
 import { ISchedulingRepositoryInterface } from './interfaces/scheduling-repository.interface';
 import { SchedulingUpdateDto } from './dtos/scheduling-update.dto';
-import { Decimal } from '@prisma/client/runtime/library';
+import { SchedulingWithAll } from './types/scheduling-with-all.type';
 
 @Injectable()
 export class SchedulingRepository implements ISchedulingRepositoryInterface {
@@ -85,7 +84,25 @@ export class SchedulingRepository implements ISchedulingRepositoryInterface {
         return services;
     }
 
-    async findByClientId(clientId: string): Promise<SchedulingResponseDto[]> {
+    async findSchedulingById(id: string): Promise<SchedulingWithAll | null> {
+        const scheduling = await this.prismaService.scheduling.findUnique({
+            where: { id },
+            include: {
+                services: {
+                    include: {
+                        service: true,
+                    },
+                },
+                employee: true,
+                barbershop: true,
+                client: true
+            }
+        });
+
+        return scheduling;
+    }
+
+    async findAllByClientId(clientId: string): Promise<SchedulingWithAll[]> {
         const schedulings = await this.prismaService.scheduling.findMany({
             where: { clientId },
             include: {
@@ -96,38 +113,113 @@ export class SchedulingRepository implements ISchedulingRepositoryInterface {
                 },
                 employee: true,
                 barbershop: true,
+                client: true
             },
             orderBy: {
                 dateTime: 'desc',
             },
         });
 
-        return schedulings.map((scheduling) => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-            const services: Services[] = scheduling.services.map((s) => s.service);
-            return new SchedulingResponseDto(scheduling, services);
-        });
+        return schedulings;
     }
 
-    findAllByClientId(clientId: string): Promise<Scheduling[]> {
+    async findAllByClientName(name: string): Promise<SchedulingWithAll[]> {
+        const client = await this.prismaService.client.findFirst({ where: { name: name } })
+
+        const clientId = client?.id
+
+        const schedulings = await this.prismaService.scheduling.findMany({
+            where: { clientId },
+            include: {
+                services: {
+                    include: {
+                        service: true,
+                    },
+                },
+                employee: true,
+                barbershop: true,
+                client: true
+            },
+            orderBy: {
+                dateTime: 'desc',
+            },
+        });
+
+        return schedulings;
+    }
+
+    async findAllByEmployeeId(employeeId: string): Promise<SchedulingWithAll[]> {
+        const schedulings = await this.prismaService.scheduling.findMany({
+            where: { employeeId },
+            include: {
+                services: {
+                    include: {
+                        service: true,
+                    },
+                },
+                employee: true,
+                barbershop: true,
+                client: true
+            },
+            orderBy: {
+                dateTime: 'desc',
+            },
+        });
+
+        return schedulings;
+    }
+
+    async findAllByEmployeeName(name: string): Promise<SchedulingWithAll[]> {
+        const employee = await this.prismaService.client.findFirst({ where: { name: name } })
+
+        const employeeId = employee?.id
+
+        const schedulings = await this.prismaService.scheduling.findMany({
+            where: { employeeId },
+            include: {
+                services: {
+                    include: {
+                        service: true,
+                    },
+                },
+                employee: true,
+                barbershop: true,
+                client: true
+            },
+            orderBy: {
+                dateTime: 'desc',
+            },
+        });
+
+        return schedulings;
+    }
+
+    async findAllByBarbershopId(barbershopId: string): Promise<SchedulingWithAll[]> {
+        const schedulings = await this.prismaService.scheduling.findMany({
+            where: { barbershopId },
+            include: {
+                services: {
+                    include: {
+                        service: true,
+                    },
+                },
+                employee: true,
+                barbershop: true,
+                client: true
+            },
+            orderBy: {
+                dateTime: 'desc',
+            },
+        });
+
+        return schedulings;
+    }
+
+    findAllByBarbershopIdAndIntervalOfDate(barbershopId: string, from: Date, to: Date): Promise<SchedulingWithAll[]> {
         throw new Error('Method not implemented.');
     }
-    findAllByClientName(name: string): Promise<Scheduling[]> {
-        throw new Error('Method not implemented.');
-    }
-    findAllByEmployeeId(EmployeeId: string): Promise<Scheduling[]> {
-        throw new Error('Method not implemented.');
-    }
-    findAllByEmployeeName(id: string): Promise<Scheduling[]> {
-        throw new Error('Method not implemented.');
-    }
-    findAllByBarbershopId(barbershopId: string): Promise<Scheduling[]> {
-        throw new Error('Method not implemented.');
-    }
-    findAllByBarbershopIdAndIntervalOfDate(barbershopId: string, from: Date, to: Date): Promise<Scheduling[]> {
-        throw new Error('Method not implemented.');
-    }
-    findAllByBarbershopIdAndDate(barbershopId: string, date: Date): Promise<Scheduling[]> {
+
+    findAllByBarbershopIdAndDate(barbershopId: string, date: Date): Promise<SchedulingWithAll[]> {
         throw new Error('Method not implemented.');
     }
 }
