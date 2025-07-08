@@ -6,7 +6,7 @@ import DashboardLayout from "@/app/_components/DashboardLayout";
 import { SearchInput } from "@/app/_components/SearchInput";
 import SubscribedBarberCard from "@/app/_components/SubscribedBarberCard";
 import { api } from "@/app/_services/api";
-import { Barbershop } from "@/app/_types/barbeshop";
+import { Barbershop } from "@/app/_types/barbershop";
 import ClientDetails from "@/app/_types/clientDetails";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
@@ -17,7 +17,7 @@ interface SubscribedBarbershop extends Barbershop {
   subscribeIn: string;
 }
 
-export default function BookingPage() {
+export default function BarbershopsPage() {
   const router = useRouter();
 
   const [subscribedBarbershops, setSubscribedBarbershops] = useState<SubscribedBarbershop[]>([]);
@@ -50,7 +50,7 @@ export default function BookingPage() {
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const mapped: SubscribedBarbershop[] = data.map((item: any) => ({
-        id: item.barbershopId, 
+        id: item.barbershopId,
         name: item.name,
         imageUrl: item.imageUrl,
         timeOpen: item.timeOpen,

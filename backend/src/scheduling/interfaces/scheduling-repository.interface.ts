@@ -1,5 +1,7 @@
+
 import { Scheduling, Services } from '@prisma/client';
 import { SchedulingRequestDto } from '../dtos/scheduling-request.dto';
+import { SchedulingResponseDto } from '../dtos/scheduling-response.dto';
 
 export interface ISchedulingRepositoryInterface {
     create(data: SchedulingRequestDto): Promise<Scheduling>;

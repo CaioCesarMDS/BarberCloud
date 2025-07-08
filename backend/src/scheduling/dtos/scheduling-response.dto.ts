@@ -3,7 +3,6 @@ import Decimal from 'decimal.js';
 import { StatusEnum } from '../enums/status.enum';
 
 export class SchedulingResponseDto {
-
   readonly id!: string;
   readonly clientId!: string;
   readonly employeeId!: string;

@@ -1,42 +1,49 @@
 import { Injectable } from '@nestjs/common';
 import { ScheduleStatus, Scheduling, Services } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
-import { ISchedulingRepositoryInterface } from './interfaces/scheduling-repository.interface';
 import { SchedulingRequestDto } from './dtos/scheduling-request.dto';
-import { IServicesOnScheduling } from './interfaces/servicesOnScheduling.interface';
-import { relative } from 'path';
-import { SchedulingUpdateDto } from './dtos/scheduling-update.dto';
+import { SchedulingResponseDto } from './dtos/scheduling-response.dto';
+import { ISchedulingRepositoryInterface } from './interfaces/scheduling-repository.interface';
 
 @Injectable()
 export class SchedulingRepository implements ISchedulingRepositoryInterface {
-    constructor(private readonly prismaService: PrismaService) { }
-    async create(data: SchedulingRequestDto): Promise<Scheduling> {
-        const newScheduling = await this.prismaService.scheduling.create({
-            data: {
-                clientId: data.clientId,
-                employeeId: data.employeeId,
-                barbershopId: data.barbershopId,
-                dateTime: data.dateTime,
-                priceTotal: data.totalPrice,
-                status: data.status as unknown as ScheduleStatus
-            }
-        })
+  constructor(private readonly prismaService: PrismaService) {}
 
-        data.servicesIds.map(async (serviceId) => {
-            await this.prismaService.servicesOnScheduling.create({
-                data: {
-                    schedulingId: newScheduling.id,
-                    serviceId: serviceId
-                }
-            });
-        })
+  async create(data: SchedulingRequestDto): Promise<SchedulingResponseDto> {
+    const newScheduling = await this.prismaService.scheduling.create({
+      data: {
+        clientId: data.clientId,
+        employeeId: data.employeeId,
+        barbershopId: data.barbershopId,
+        dateTime: data.dateTime,
+        priceTotal: data.totalPrice,
+        status: 'PENDING',
+      },
+    });
 
-        return newScheduling;
-    }
+    await this.prismaService.servicesOnScheduling.createMany({
+      data: data.servicesIds.map((serviceId) => ({
+        schedulingId: newScheduling.id,
+        serviceId,
+      })),
+    });
 
-    async remove(id: string): Promise<Scheduling> {
-        return await this.prismaService.scheduling.delete({ where: { id: id } })
-    }
+    const services = await this.prismaService.services.findMany({
+      where: { id: { in: data.servicesIds } },
+    });
+
+    return new SchedulingResponseDto(newScheduling, services);
+  }
+
+  async remove(id: string): Promise<SchedulingResponseDto> {
+    const deletedScheduling = await this.prismaService.scheduling.delete({
+      where: { id },
+      include: {
+        services: {
+          include: { service: true },
+        },
+      },
+    });
 
     async update(id: string, data: SchedulingUpdateDto): Promise<Scheduling> {
         const updateScheduling = await this.prismaService.scheduling.update({
@@ -75,31 +82,27 @@ export class SchedulingRepository implements ISchedulingRepositoryInterface {
         return services;
     }
 
-    async findAllByClientId(clientId: string): Promise<Scheduling[]> {
-        throw new Error('Method not implemented.');
-    }
+  async findByClientId(clientId: string): Promise<SchedulingResponseDto[]> {
+    const schedulings = await this.prismaService.scheduling.findMany({
+      where: { clientId },
+      include: {
+        services: {
+          include: {
+            service: true,
+          },
+        },
+        employee: true,
+        barbershop: true,
+      },
+      orderBy: {
+        dateTime: 'desc',
+      },
+    });
 
-    async findAllByClientName(name: string): Promise<Scheduling[]> {
-        throw new Error('Method not implemented.');
-    }
-
-    async findAllByEmployeeId(EmployeeId: string): Promise<Scheduling[]> {
-        throw new Error('Method not implemented.');
-    }
-
-    async findAllByEmployeeName(id: string): Promise<Scheduling[]> {
-        throw new Error('Method not implemented.');
-    }
-
-    async findAllByBarbershopId(barbershopId: string): Promise<Scheduling[]> {
-        throw new Error('Method not implemented.');
-    }
-
-    async findAllByBarbershopIdAndIntervalOfDate(barbershopId: string, from: Date, to: Date): Promise<Scheduling[]> {
-        throw new Error('Method not implemented.');
-    }
-
-    async findAllByBarbershopIdAndDate(barbershopId: string, date: Date): Promise<Scheduling[]> {
-        throw new Error('Method not implemented.');
-    }
+    return schedulings.map((scheduling) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+      const services: Services[] = scheduling.services.map((s) => s.service);
+      return new SchedulingResponseDto(scheduling, services);
+    });
+  }
 }

@@ -16,8 +16,8 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { CreateEmployeeDTO } from './dtos/create-employee.dto';
 import { EmployeeUpdateDTO } from './dtos/employee-update.dto';
-import { EmployeeService } from './employee.service';
 import { EmployeeResponseDto } from './dtos/employee.request.dto';
+import { EmployeeService } from './employee.service';
 
 @Controller('/employee')
 export class EmployeeController {
@@ -47,13 +47,21 @@ export class EmployeeController {
   }
 
   @UseGuards(AuthGuard, RolesGuard)
-  @Get('search/all')
+  @Get('search/name')
   @Roles('ADMIN')
   getAllEmployeesByName(@Query('name') name: string) {
     if (!name?.trim()) {
       return new BadRequestException('Name query parameter is required');
     }
     return this.employeeService.findAllByName(name);
+  }
+
+  @UseGuards(AuthGuard, RolesGuard)
+  @Get('search/all/:barbershopId')
+  getAllEmployeesByBarbershopId(
+    @Param('barbershopId') barbershopId: string,
+  ): Promise<EmployeeResponseDto[]> {
+    return this.employeeService.findAllByBarbershopId(barbershopId);
   }
 
   @UseGuards(AuthGuard, RolesGuard)

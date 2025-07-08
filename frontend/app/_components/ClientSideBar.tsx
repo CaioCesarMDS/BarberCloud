@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, History, LayoutDashboard, User } from "lucide-react";
+import { Calendar, History, LayoutDashboard, Scissors, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -9,7 +9,8 @@ export default function ClientSideBar() {
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/client/dashboard" },
-    { icon: Calendar, label: "Agendar", path: "/client/booking" },
+    { icon: Scissors, label: "Barbearias", path: "/client/barbershop" },
+    { icon: Calendar, label: "Agendar", path: "/client/scheduling" },
     { icon: History, label: "Histórico", path: "/client/history" },
     { icon: User, label: "Meu Perfil", path: "/client/profile" },
   ];

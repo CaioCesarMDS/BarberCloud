@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { EmailModule } from './email/email.module';
 import { EmployeeModule } from './employee/employee.module';
+import { SchedulingModule } from './scheduling/scheduling.module';
 import { ServicesModule } from './services/services.module';
 import { SchedulingModule } from './scheduling/scheduling.module';
 
@@ -13,7 +14,7 @@ import { SchedulingModule } from './scheduling/scheduling.module';
     EmployeeModule,
     EmailModule,
     ServicesModule,
-    SchedulingModule
+    SchedulingModule,
   ],
   controllers: [],
   providers: [],

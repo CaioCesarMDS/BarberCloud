@@ -41,7 +41,8 @@ model Barbershop {
   services                  Services[]
   User                      Employee[]
 
-  address AddressBarbershop @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  address    AddressBarbershop @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  Scheduling Scheduling[]
 }
 
 model AddressBarbershop {
@@ -101,8 +102,9 @@ model Scheduling {
   priceTotal   Decimal                @db.Money
   services     ServicesOnScheduling[]
 
-  client   Client   @relation(fields: [clientId], references: [id])
-  employee Employee @relation(fields: [employeeId], references: [id])
+  client     Client     @relation(fields: [clientId], references: [id])
+  employee   Employee   @relation(fields: [employeeId], references: [id])
+  barbershop Barbershop @relation(fields: [barbershopId], references: [id])
 }
 
 enum Role {

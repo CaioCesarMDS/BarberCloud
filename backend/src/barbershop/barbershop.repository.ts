@@ -7,7 +7,7 @@ import { BarbershopUpdateDto } from './dtos/barbershop.update.dto';
 
 @Injectable()
 export class BarbershopRepository {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async createAddress(data: BarbershopRequestDto): Promise<AddressBarbershop> {
     return await this.prisma.addressBarbershop.create({
@@ -103,28 +103,40 @@ export class BarbershopRepository {
   }
 
   async getQuantityOfSubscribersById(id: string) {
-    return await this.prisma.clientSubscribeBarbershop.count({ where: { barbershopId: id } })
+    return await this.prisma.clientSubscribeBarbershop.count({
+      where: { barbershopId: id },
+    });
   }
 
-  async getQuantityOfSubscribersByIdOfIntervalDate(id: string, from: Date, to: Date) {
-    return await this.prisma.clientSubscribeBarbershop.count({ where: { barbershopId: id, subscribeIn: { gte: from, lte: to } } });
+  async getQuantityOfSubscribersByIdOfIntervalDate(
+    id: string,
+    from: Date,
+    to: Date,
+  ) {
+    return await this.prisma.clientSubscribeBarbershop.count({
+      where: { barbershopId: id, subscribeIn: { gte: from, lte: to } },
+    });
   }
 
   async getQuantityOfServicesInSchedulesById(id: string) {
     return await this.prisma.scheduling.findMany({
       where: { barbershopId: id },
       include: {
-        _count: { select: { services: true } }
-      }
+        _count: { select: { services: true } },
+      },
     });
   }
 
-  async getQuantityOfServicesInSchedulesByIdOfIntervalDate(id: string, from: Date, to: Date) {
+  async getQuantityOfServicesInSchedulesByIdOfIntervalDate(
+    id: string,
+    from: Date,
+    to: Date,
+  ) {
     return await this.prisma.scheduling.findMany({
       where: { barbershopId: id, dateTime: { gte: from, lte: to } },
       include: {
-        _count: { select: { services: true } }
-      }
+        _count: { select: { services: true } },
+      },
     });
   }
 }

@@ -30,4 +30,8 @@ export class SchedulingService {
             throw new BadRequestException(error, 'error in update a new scheduling')
         }
     }
+  
+  async findByClientId(clientId: string) {
+    return this.schedulingRepository.findByClientId(clientId);
+  }
 }
