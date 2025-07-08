@@ -1,11 +1,11 @@
 
 import { Scheduling, Services } from '@prisma/client';
 import { SchedulingRequestDto } from '../dtos/scheduling-request.dto';
-import { SchedulingResponseDto } from '../dtos/scheduling-response.dto';
+import { SchedulingUpdateDto } from '../dtos/scheduling-update.dto';
 
 export interface ISchedulingRepositoryInterface {
     create(data: SchedulingRequestDto): Promise<Scheduling>;
-    update(id: string, data: SchedulingRequestDto): Promise<Scheduling>;
+    update(id: string, data: SchedulingUpdateDto): Promise<Scheduling>;
     remove(id: string): Promise<Scheduling>;
     getAllServicesBySchedulingId(id: string): Promise<Services[]>
     findAllByClientId(clientId: string): Promise<Scheduling[]>;

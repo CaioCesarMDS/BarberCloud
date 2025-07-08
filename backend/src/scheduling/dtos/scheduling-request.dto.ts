@@ -7,6 +7,7 @@ import {
   IsUUID,
   IsEnum,
 } from 'class-validator';
+import { StatusEnum } from '../enums/status.enum';
 
 export class SchedulingRequestDto {
   @IsUUID()

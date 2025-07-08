@@ -251,7 +251,6 @@ async function seedDatabase() {
             status: status,
             dateTime: randDateFuture(),
             priceTotal: total,
-            status: 'PENDING',
           },
         });
 
