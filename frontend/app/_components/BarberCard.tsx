@@ -17,7 +17,15 @@ import {
   DropdownMenuTrigger,
 } from "./shadcn/ui/dropdown-menu";
 
-export default function BarberCard({ barbershop, client }: { barbershop: Barbershop; client: ClientDetails }) {
+export default function BarberCard({
+  barbershop,
+  client,
+  onSubscribeSuccess,
+}: {
+  barbershop: Barbershop;
+  client: ClientDetails;
+  onSubscribeSuccess: () => void;
+}) {
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   const subscribe = async () => {
@@ -26,6 +34,7 @@ export default function BarberCard({ barbershop, client }: { barbershop: Barbers
       if (response.status === 201) {
         console.log("Subscription successful:", response.data);
         setIsSubscribed(true);
+        onSubscribeSuccess();
       }
     } catch (error) {
       if (error instanceof AxiosError) {

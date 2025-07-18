@@ -33,7 +33,7 @@ export default function BarbershopProfile({ params }: BarbershopProfileProps) {
   const [client, setClient] = useState<ClientDetails | null>(null);
 
   const [selectedBarber, setSelectedBarber] = useState<string>();
-  const [selectedService, setSelectedService] = useState<number | null>(null);
+  const [selectedServices, setSelectedServices] = useState<number[] | null>(null);
 
   const [hour, setHour] = useState<string>();
   const [date, setDate] = useState<Date>(new Date());
@@ -72,16 +72,24 @@ export default function BarbershopProfile({ params }: BarbershopProfileProps) {
     fetchData();
   }, [id, router]);
 
+  const toggleService = (serviceId: number) => {
+    setSelectedServices((prev) =>
+      (prev ?? []).includes(serviceId) ? (prev ?? []).filter((id) => id !== serviceId) : [...(prev ?? []), serviceId]
+    );
+  };
+
   const handleScheduling = async () => {
-    if (!selectedBarber || !selectedService || !hour || !date || !client || !barbershop) {
+    if (!selectedBarber || !selectedServices || !hour || !date || !client || !barbershop) {
       toast.error("Preencha todos os dados antes de agendar.");
       return;
     }
 
     try {
-      const servicePrice = services?.find((s) => s.id === selectedService)?.price;
+      const servicePrices = services?.filter((s) => selectedServices.includes(s.id)).map((s) => s.price) ?? [];
 
-      if (!servicePrice) {
+      const totalPrice = servicePrices.map(Number).reduce((acc, price) => acc + price, 0);
+
+      if (!totalPrice) {
         toast.error("Serviço inválido.");
         return;
       }
@@ -95,8 +103,8 @@ export default function BarbershopProfile({ params }: BarbershopProfileProps) {
         clientId: client.id,
         employeeId: selectedBarber,
         dateTime: fullDateTime,
-        totalPrice: Number(servicePrice),
-        servicesIds: [selectedService],
+        totalPrice: Number(totalPrice),
+        servicesIds: selectedServices,
       };
 
       await api.post("/scheduling/create", payload);
@@ -117,7 +125,7 @@ export default function BarbershopProfile({ params }: BarbershopProfileProps) {
     }
   };
 
-  const canProceed = !!selectedBarber && !!selectedService && !!hour && !!date;
+  const canProceed = !!selectedBarber && selectedServices && selectedServices.length > 0 && !!hour && !!date;
 
   if (isLoading) return <p className="p-6 text-muted-foreground">Carregando barbearia...</p>;
   if (!barbershop) return null;
@@ -153,9 +161,9 @@ export default function BarbershopProfile({ params }: BarbershopProfileProps) {
                 {services.map((service) => (
                   <div
                     key={service.id}
-                    onClick={() => setSelectedService(service.id)}
+                    onClick={() => toggleService(service.id)}
                     className={`cursor-pointer rounded-lg border-2 p-4 transition-all hover:shadow-md ${
-                      selectedService === service.id
+                      (selectedServices ?? []).includes(service.id)
                         ? "border-barber-blue bg-blue-50"
                         : "border-gray-200 hover:border-barber-blue"
                     }`}
@@ -265,8 +273,14 @@ export default function BarbershopProfile({ params }: BarbershopProfileProps) {
                       <div className="text-barber-gray">{barbers?.find((b) => b.id === selectedBarber)?.name}</div>
                     </div>
                     <div>
-                      <span className="font-medium text-barber-blue">Serviço:</span>
-                      <div className="text-barber-gray">{services?.find((s) => s.id === selectedService)?.name}</div>
+                      <span className="font-medium text-barber-blue">Serviços:</span>
+                      <ul className="text-barber-gray list-disc list-inside">
+                        {services
+                          ?.filter((s) => selectedServices?.includes(s.id))
+                          .map((s) => (
+                            <li key={s.id}>{s.name}</li>
+                          ))}
+                      </ul>
                     </div>
                   </div>
 
@@ -293,7 +307,11 @@ export default function BarbershopProfile({ params }: BarbershopProfileProps) {
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-lg font-semibold text-barber-blue">Total:</span>
                     <span className="text-2xl font-bold text-green-600">
-                      R$ {services?.find((s) => s.id === selectedService)?.price}
+                      R$
+                      {services
+                        ?.filter((s) => selectedServices?.includes(s.id))
+                        .reduce((acc, s) => acc + Number(s.price), 0)
+                        .toFixed(2)}
                     </span>
                   </div>
 
