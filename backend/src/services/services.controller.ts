@@ -35,7 +35,7 @@ export class ServicesController {
     return await this.servicesService.getServiceById(id);
   }
 
-  @Get('search/all/:barbershopId')
+  @Get('all/:barbershopId')
   async getAllServicesByBarbershopId(
     @Param('barbershopId') barbershopId: string,
   ): Promise<ServicesResponseDto[]> {

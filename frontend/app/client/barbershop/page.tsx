@@ -129,7 +129,7 @@ export default function BarbershopsPage() {
   };
 
   return client ? (
-    <DashboardLayout sidebar={<ClientSidebar />} title="Minha Área">
+    <DashboardLayout sidebar={<ClientSidebar />} title="Suas Inscrições">
       <div className="mb-8 sm:max-w-md md:max-w-lg lg:max-w-xl">
         <SearchInput placeholder="Pesquise..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
       </div>

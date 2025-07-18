@@ -88,7 +88,7 @@ const ClientDashboard: React.FC = () => {
 
   if (user) {
     return (
-      <DashboardLayout sidebar={<ClientSidebar />} title="Minha Área">
+      <DashboardLayout sidebar={<ClientSidebar />} title="Suas Configurações">
         <Toaster />
         <div className="space-y-6 flex flex-col items-center">
           <div className="w-[85vw] bg-gradient-to-r from-barber-blue to-barber-blue-light rounded-xl p-4 text-white">
