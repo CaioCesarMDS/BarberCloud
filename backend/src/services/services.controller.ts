@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { Services } from '@prisma/client';
@@ -16,6 +17,7 @@ import { ServicesRequestDto } from './dtos/services-request.dto';
 import { ServicesResponseDto } from './dtos/services-response.dto';
 import { ServicesUpdateDto } from './dtos/services-update.dto';
 import { ServicesService } from './services.service';
+import { ServiceWithTotal } from './types/service-popular.type';
 
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('/services')
@@ -34,7 +36,7 @@ export class ServicesController {
   async getServiceById(@Param('id') id: number): Promise<ServicesResponseDto> {
     return await this.servicesService.getServiceById(id);
   }
-
+  
   @Get('all/:barbershopId')
   async getAllServicesByBarbershopId(
     @Param('barbershopId') barbershopId: string,
@@ -67,7 +69,7 @@ export class ServicesController {
   async deleteServiceById(@Param('id') id: number): Promise<Services> {
     return await this.servicesService.removeService(id);
   }
-
+  
   @Roles('ADMIN')
   @Get('/count/:barbershopId')
   async countServices(
@@ -75,4 +77,21 @@ export class ServicesController {
   ): Promise<number> {
     return await this.servicesService.getCountTotalServices(barbershopId);
   }
+
+  @Get('most-popular/query')
+  async getServiceMostPopularByBarbershopId(@Query('barbershopId') barbershopId: string): Promise<ServiceWithTotal> {
+    return await this.servicesService.findServiceMostPopularByBarbershopId(barbershopId);
+  }
+
+  @Get('most-popular')
+  async getServiceMostPopularByClientId(@Query('clientId') clientId: string): Promise<ServiceWithTotal> {
+    return await this.servicesService.findServiceMostPopularByClientId(clientId);
+  }
+
+  @Roles('ADMIN', 'EMPLOYEE')
+  @Get('most-popular')
+  async getServiceMostPopularByEmployeeId(@Query('employeeId') employeeId: string): Promise<ServiceWithTotal> {
+    return await this.servicesService.findServiceMostPopularByEmployeeId(employeeId);
+  }
+  
 }

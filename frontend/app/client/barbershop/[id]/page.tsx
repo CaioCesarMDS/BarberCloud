@@ -53,7 +53,7 @@ export default function BarbershopProfile({ params }: BarbershopProfileProps) {
         const [barbershopRes, barbersRes, servicesRes, authRes] = await Promise.all([
           api.get(`/barbershop/${id}`),
           api.get(`/employee/search/all/${id}`),
-          api.get(`/services/search/all/${id}`),
+          api.get(`/services/all/${id}`),
           api.get("auth/me"),
         ]);
 
@@ -103,6 +103,7 @@ export default function BarbershopProfile({ params }: BarbershopProfileProps) {
         clientId: client.id,
         employeeId: selectedBarber,
         dateTime: fullDateTime,
+        status: "PENDING",
         totalPrice: Number(totalPrice),
         servicesIds: selectedServices,
       };

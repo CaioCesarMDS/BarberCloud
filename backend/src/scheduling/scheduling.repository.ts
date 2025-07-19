@@ -218,8 +218,4 @@ export class SchedulingRepository implements ISchedulingRepositoryInterface {
     findAllByBarbershopIdAndIntervalOfDate(barbershopId: string, from: Date, to: Date): Promise<SchedulingWithAll[]> {
         throw new Error('Method not implemented.');
     }
-
-    findAllByBarbershopIdAndDate(barbershopId: string, date: Date): Promise<SchedulingWithAll[]> {
-        throw new Error('Method not implemented.');
-    }
 }

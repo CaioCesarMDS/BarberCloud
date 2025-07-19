@@ -40,13 +40,18 @@ export class SchedulingController {
   }
 
   @Get('all/employee/')
-  async getByEmployeeId(@Query('employeeId') employeeId: string) {
+  async getAllByEmployeeId(@Query('employeeId') employeeId: string) {
     return this.schedulingService.findAllByEmployeeId(employeeId);
   }
 
   @Get('all/employee/')
-  async getByemployeeName(@Query('employeeName') employeeName: string) {
+  async getAllByemployeeName(@Query('employeeName') employeeName: string) {
     return this.schedulingService.findAllByEmployeeName(employeeName);
+  }
+
+  @Get('all/barbershop/')
+  async getAllByBarbershopId(@Query('barbershopId') barbershopId: string) {
+    return this.schedulingService.findAllByBarbershopId(barbershopId);
   }
 
 }

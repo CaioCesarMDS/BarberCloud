@@ -120,4 +120,21 @@ export class SchedulingService {
             throw new BadRequestException(error, 'error in find all schedulings by employeeId')
         }
     }
+
+    async findAllByBarbershopId(barbershopId: string): Promise<SchedulingResponseDto[]> {
+        try {
+            const schedulings: SchedulingWithAll[] = await this.schedulingRepository.findAllByBarbershopId(barbershopId);
+
+            if (schedulings) {
+                return schedulings.map((scheduling) => {
+                    const services: Services[] = scheduling.services.map((s) => s.service);
+                    return new SchedulingResponseDto(scheduling);
+                });
+            } else {
+                throw new BadRequestException('Schedulings with BarbershopId not found');
+            }
+        } catch (error) {
+            throw new BadRequestException(error, 'error in find all schedulings by BarbershopId')
+        }
+    }
 }
