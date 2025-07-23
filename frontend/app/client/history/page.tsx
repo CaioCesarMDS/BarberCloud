@@ -27,7 +27,7 @@ const ClientHistory = () => {
     const [user, setUser] = useState<User | null>(null);
     const [filterPeriod, setFilterPeriod] = useState('all');
     const [schedulings, setSchedulings] = useState<Scheduling[]>([]);
-    const [totalSpent, setTotalSpent] = useState<Decimal>(new Decimal(0)); 
+    const [totalSpent, setTotalSpent] = useState<Decimal>(new Decimal(0));
     const isFirstRender = useRef(true)
 
     const fetchAllSchedulings = async (clientId: string) => {
@@ -78,40 +78,38 @@ const ClientHistory = () => {
             return;
         }
 
-        setTotalSpent(schedulings.reduce((acc, scheduling) => acc.plus(new Decimal(scheduling.totalPrice)), new Decimal(0)));
-        
+        setTotalSpent(schedulings.filter((scheduling) => scheduling.status === 'DONE').reduce((acc, scheduling) => acc.plus(new Decimal(scheduling.totalPrice)), new Decimal(0)));
+
     }, [schedulings]);
-    
+
     // const averageRating = schedulings.reduce((acc, service) => acc + service.rating, 0) / schedulings.length;
     const favoriteBarber = 'João Santos'; // Poderia ser calculado baseado na frequência
-    
-    const getStars = (rating: number) => {
-        return '★'.repeat(rating) + '☆'.repeat(5 - rating);
-    };
-    
-    const getStatusColor = (status: string) => {
+
+    function getStatusColor(status: string) {
         switch (status) {
-            case 'Concluído':
-                return 'bg-green-100 text-green-800';
-                case 'Cancelado':
-                    return 'bg-red-100 text-red-800';
-                    default:
-                return 'bg-gray-100 text-gray-800';
+            case "PENDING":
+                return "bg-yellow-200 text-yellow-800";
+            case "DONE":
+                return "bg-green-200 text-green-800";
+            case "CANCEL":
+                return "bg-red-200 text-red-800";
+            default:
+                return "bg-gray-200 text-gray-800";
         }
-    };
+    }
 
     return (
         <DashboardLayout
             sidebar={<ClientSidebar />}
             title="Histórico de Atendimentos"
-            >
+        >
             <Toaster />
-            <div className="space-y-6">
+            <div className="space-y-2 sm:space-y-6">
                 {/* Header */}
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-barber-blue">Meu Histórico</h1>
-                        <p className="text-barber-gray">Acompanhe todos os seus atendimentos realizados</p>
+                        <h1 className="text-xl md:text-3xl font-bold text-barber-blue">Meu Histórico</h1>
+                        <p className="text-sm md:text-md text-barber-gray">Acompanhe todos os seus atendimentos realizados</p>
                     </div>
 
                     <div className="flex gap-2">
@@ -134,14 +132,14 @@ const ClientHistory = () => {
                 </div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-6">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Total de Agendamentos</CardTitle>
                             <Calendar className="h-4 w-4 text-barber-blue" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-barber-blue">{schedulings.length}</div>
+                            <div className="text-2xl font-bold text-barber-blue">{schedulings.filter((scheduling) => scheduling.status === 'DONE').length}</div>
                             <p className="text-xs text-barber-gray">atendimentos realizados</p>
                         </CardContent>
                     </Card>
@@ -189,8 +187,7 @@ const ClientHistory = () => {
                             Lista completa de todos os seus atendimentos
                         </CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
+                    <CardContent className="space-y-2 sm:space-y-4 h-full h-[calc(100vh-495px)] sm:h-[calc(100vh-455px)] overflow-y-auto">
                             {schedulings.map((scheduling) => (
                                 <div key={scheduling.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -262,49 +259,20 @@ const ClientHistory = () => {
                                             </Button>
                                         ) : ( )}
                                         */}
-                                            <Button variant="outline" size="sm">
-                                                Ver Detalhes
-                                            </Button>
+                                        <Button variant="outline" size="sm">
+                                            Ver Detalhes
+                                        </Button>
                                     </div>
                                 </div>
                             ))}
-                        </div>
+                        
 
-                        {/* Load More */}
+                        {/* Load More
                         <div className="text-center mt-6">
                             <Button variant="outline">
                                 Carregar Mais Atendimentos
                             </Button>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Summary by Service */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-barber-blue">Resumo por Tipo de Serviço</CardTitle>
-                        <CardDescription>
-                            Seus serviços mais utilizados
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="text-center p-4 border rounded-lg">
-                                <div className="text-2xl font-bold text-barber-blue">2</div>
-                                <div className="text-sm text-barber-gray">Corte + Barba</div>
-                                <div className="text-sm font-semibold text-green-600">R$ 80</div>
-                            </div>
-                            <div className="text-center p-4 border rounded-lg">
-                                <div className="text-2xl font-bold text-barber-blue">2</div>
-                                <div className="text-sm text-barber-gray">Corte Masculino</div>
-                                <div className="text-sm font-semibold text-green-600">R$ 50</div>
-                            </div>
-                            <div className="text-center p-4 border rounded-lg">
-                                <div className="text-2xl font-bold text-barber-blue">1</div>
-                                <div className="text-sm text-barber-gray">Barba</div>
-                                <div className="text-sm font-semibold text-green-600">R$ 20</div>
-                            </div>
-                        </div>
+                        </div> */}
                     </CardContent>
                 </Card>
             </div>

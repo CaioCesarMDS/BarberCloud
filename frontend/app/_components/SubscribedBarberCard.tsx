@@ -25,8 +25,8 @@ export default function SubscribedBarberCard({ barbershop, onUnsubscribe }: Prop
     router.push(`/client/barbershop/${barbershop.id}`);
   };
   return (
-    <Card className="w-full overflow-hidden mb-4 sm:max-w-md md:max-w-lg lg:max-w-xl">
-      <CardContent className="flex items-center gap-6 p-4">
+    <Card className="w-full overflow-hidden mb-4 lg:max-w-lg xl:max-w-xl">
+      <CardContent className="flex items-center gap-3 lg:gap-6 p-2 lg:p-4 mr-0">
         <div className="w-32 h-32 relative flex-shrink-0">
           <Image
             src={barbershop.imageUrl}
@@ -36,12 +36,12 @@ export default function SubscribedBarberCard({ barbershop, onUnsubscribe }: Prop
             sizes="100vw"
           />
         </div>
-        <div className="flex flex-col gap-6">
-          <h2 className="text-lg font-semibold">{barbershop.name}</h2>
-          <div className="flex items-center gap-10">
+        <div className="flex flex-col gap-4 xl:gap-6">
+          <h2 className="text-md md:text-lg font-semibold">{barbershop.name}</h2>
+          <div className="w-full flex flex-col xl:flex-row items-center gap-2 md:gap-4 xl:gap-6">
             <DropdownMenu>
-              <DropdownMenuTrigger className="p-2 bg-primary text-primary-foreground shadow hover:bg-primary/90 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors">
-                Inscrito <ChevronDown />
+              <DropdownMenuTrigger className="px-4 py-2 text-xs sm:text-sm xl:text-md w-full h-10 bg-primary text-primary-foreground shadow hover:bg-primary/90 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-colors">
+                Inscrito <ChevronDown className="w-5 h-5 xl:w-7 xl:h-7" />
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuLabel>Inscrição</DropdownMenuLabel>
@@ -51,12 +51,12 @@ export default function SubscribedBarberCard({ barbershop, onUnsubscribe }: Prop
             </DropdownMenu>
             <Button
               onClick={goToBarbeshop}
-              className="p-2 h-10  bg-primary text-primary-foreground shadow hover:bg-primary/90 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors"
+              className="px-4 py-2 text-xs md:text-sm xl:text-md h-10 w-full bg-primary text-primary-foreground shadow hover:bg-primary/90 inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors"
             >
               Agendar Horário
             </Button>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs md:text-sm xl:text-md text-muted-foreground">
             Horário: {barbershop.timeOpen} - {barbershop.timeClose}
           </p>
         </div>

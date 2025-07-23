@@ -86,7 +86,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, sidebar, ti
     <div className="min-h-screen bg-barber-cream">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-barber-gray-light">
-        <div className="flex items-center justify-between px-4 py-3">
+        <div className="flex items-center justify-between px-0 py-2 sm:px-4 sm:py-3">
           <div className="flex items-center space-x-4">
             {/* Mobile menu */}
             <Sheet>
@@ -138,10 +138,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, sidebar, ti
 
       <div className="flex">
         {/* Desktop Sidebar */}
-        <aside className="hidden lg:block w-64 bg-barber-blue min-h-screen">{sidebar}</aside>
+        <aside className="h-[calc(100vh-65px)] hidden lg:block w-64 bg-barber-blue">{sidebar}</aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">{children}</main>
+        <main className="h-[calc(100vh-65px)] flex-1 p-1 md:p-2 xl:p-6">{children}</main>
       </div>
     </div>
   );

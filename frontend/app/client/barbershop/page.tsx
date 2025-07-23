@@ -5,6 +5,7 @@ import ClientSidebar from "@/app/_components/ClientSideBar";
 import DashboardLayout from "@/app/_components/DashboardLayout";
 import { SearchInput } from "@/app/_components/SearchInput";
 import SubscribedBarberCard from "@/app/_components/SubscribedBarberCard";
+import { Card, CardHeader, CardContent, CardTitle } from "@/app/_components/shadcn/ui/card";
 import { api } from "@/app/_services/api";
 import { Barbershop } from "@/app/_types/barbershop";
 import ClientDetails from "@/app/_types/clientDetails";
@@ -130,43 +131,54 @@ export default function BarbershopsPage() {
 
   return client ? (
     <DashboardLayout sidebar={<ClientSidebar />} title="Suas Inscrições">
-      <div className="mb-8 sm:max-w-md md:max-w-lg lg:max-w-xl">
-        <SearchInput placeholder="Pesquise..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
-      </div>
-      {isLoading && <p className="text-muted-foreground">Procurando...</p>}
-
-      {!isLoading && searched && barbershops.length === 0 && (
-        <p className="text-muted-foreground">Nenhum resultado encontrado.</p>
-      )}
-
-      {!isLoading && barbershops.length > 0 && (
-        <div className="space-y-4">
-          {barbershops.map((barbershop) => (
-            <BarberCard
-              key={barbershop.id}
-              barbershop={barbershop}
-              client={client}
-              onSubscribeSuccess={() => fetchUserSubscriptions(client.id)}
-            />
-          ))}
-        </div>
-      )}
-      <div className="mt-8 border-t border-gray-200 pt-6">
-        {subscribedBarbershops.length > 0 && (
-          <>
-            <h2 className="text-lg font-bold mb-2">Suas barbearias</h2>
-            <div className="space-y-4 mb-6">
-              {subscribedBarbershops.map((barbershop) => (
-                <SubscribedBarberCard
-                  key={`${barbershop.id}-${barbershop.subscribeIn}`}
-                  barbershop={barbershop}
-                  onUnsubscribe={handleUnsubscribe}
-                />
-              ))}
+      <div className="h-full w-full grid justify-center md:grid md:grid-cols-2 md:p-4 gap-2">
+        <Card className="p-1 w-[calc(100vw-6vw)] sm:w-[calc(100vw-10vw)] md:w-[calc(100vw-60vw)] lg:w-[calc(100vw-65vw)]">
+          <CardHeader className="p-2">
+            <div className="w-full mb-8">
+              <SearchInput placeholder="Pesquise..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
             </div>
-          </>
-        )}
+          </CardHeader>
+          <CardContent className="p-1 h-full h-[calc(100vh-30vh)] md:p-4 overflow-y-auto">
+          {isLoading && <p className="text-muted-foreground">Procurando...</p>}
+
+          {!isLoading && searched && barbershops.length === 0 && (
+            <p className="text-muted-foreground">Nenhum resultado encontrado.</p>
+            )}
+
+          {!isLoading && barbershops.length > 0 && (
+            <div className="space-y-4">
+              {barbershops.map((barbershop) => (
+                <BarberCard
+                  key={barbershop.id}
+                  barbershop={barbershop}
+                  client={client}
+                  onSubscribeSuccess={() => fetchUserSubscriptions(client.id)}
+                  />
+                  ))}
+            </div>
+          )}
+          </CardContent>
+        </Card>
+          <Card className="p-1 w-[calc(100vw-6vw)] sm:w-[calc(100vw-10vw)] md:w-[calc(100vw-60vw)] lg:w-[calc(100vw-65vw)]">
+        <CardHeader>
+          <CardTitle className="text-barber-blue text-2xl">Suas barbearias</CardTitle>
+        </CardHeader>
+        <CardContent className="p-1 h-full h-[calc(100vh-30vh)] md:p-4 overflow-y-auto">
+          {subscribedBarbershops.length > 0 && (
+              <div className="space-y-4 mb-6">
+                {subscribedBarbershops.map((barbershop) => (
+                  <SubscribedBarberCard
+                    key={`${barbershop.id}-${barbershop.subscribeIn}`}
+                    barbershop={barbershop}
+                    onUnsubscribe={handleUnsubscribe}
+                    />
+                    ))}
+              </div>
+          )}
+          </CardContent>
+          </Card>
       </div>
+
     </DashboardLayout>
   ) : (
     <div className="mb-8 sm:max-w-md md:max-w-lg lg:max-w-xl">

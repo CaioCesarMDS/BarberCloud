@@ -22,7 +22,7 @@ export default function ClientSideBar() {
         <p className="text-sm text-barber-cream opacity-75">Área do Cliente</p>
       </div>
 
-      <ul className="space-y-2 px-3">
+      <ul className="space-y-2 px-2 lg:px-4">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathnName === item.path;
@@ -31,7 +31,7 @@ export default function ClientSideBar() {
             <li key={item.path}>
               <Link
                 href={item.path}
-                className={`flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors ${
+                className={`flex items-center space-x-2 lg:space-x-4 px-2 lg:px-4 py-3 rounded-lg transition-colors ${
                   isActive ? "bg-white text-barber-blue" : "text-white hover:bg-barber-blue-light"
                 }`}
               >
