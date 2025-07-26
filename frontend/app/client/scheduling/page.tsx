@@ -2,7 +2,6 @@
 
 import ClientSideBar from "@/app/_components/ClientSideBar";
 import DashboardLayout from "@/app/_components/DashboardLayout";
-import Header from "@/app/_components/Headerr";
 import SubscribedBarberCard from "@/app/_components/SubscribedBarberCard";
 import { Avatar, AvatarFallback } from "@/app/_components/shadcn/ui/avatar";
 import { Badge } from "@/app/_components/shadcn/ui/badge";
@@ -69,8 +68,7 @@ export default function SchedulingPage() {
       setLoading(false);
     }
   }
-  
-  
+
   useEffect(() => {
     fetchSchedulings();
     fetchUserSubscriptions();
@@ -122,7 +120,7 @@ export default function SchedulingPage() {
             {!schedulings.length && (
               <p>Você não tem agendamentos pendentes.</p>
             )}
-            
+
             {!!schedulings.length && (
               <div className="space-y-4">
               {schedulings.filter((service) => service.status === 'PENDING').map((service) => {
