@@ -18,6 +18,7 @@ import { CreateEmployeeDTO } from './dtos/create-employee.dto';
 import { EmployeeUpdateDTO } from './dtos/employee-update.dto';
 import { EmployeeResponseDto } from './dtos/employee.request.dto';
 import { EmployeeService } from './employee.service';
+import { EmployeeWithServiceCount } from './types/employee-service-count';
 
 @Controller('/employee')
 export class EmployeeController {
@@ -60,7 +61,7 @@ export class EmployeeController {
   @Get('search/all/:barbershopId')
   getAllEmployeesByBarbershopId(
     @Param('barbershopId') barbershopId: string,
-  ): Promise<EmployeeResponseDto[]> {
+  ): Promise<EmployeeWithServiceCount[]> {
     return this.employeeService.findAllByBarbershopId(barbershopId);
   }
 

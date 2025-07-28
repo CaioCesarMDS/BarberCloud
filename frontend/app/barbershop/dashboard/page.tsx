@@ -184,157 +184,160 @@ const Dashboard = () => {
           sidebar={<AdminSidebar />}
           title="Dashboard Administrativo"
         >
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Welcome Section */}
             <div className="bg-gradient-to-r from-barber-blue to-barber-blue-light rounded-xl p-6 text-white">
               <h1 className="text-2xl font-bold mb-2">Bem-vindo de volta! 👋</h1>
               <p className="opacity-90">Aqui está um resumo do seu negócio hoje</p>
             </div>
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {statsCards.map((stat, index) => {
-                const Icon = stat.icon;
-                return (
-                  <Card key={index} className="hover:shadow-lg transition-shadow">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium text-barber-gray">
-                        {stat.title}
-                      </CardTitle>
-                      <Icon className="h-4 w-4 text-barber-blue" />
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold text-barber-blue">{stat.value}</div>
-                      <p className="text-xs text-barber-gray">
-                        <span className={`font-medium ${stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                          }`}>
-                          {stat.change}
-                        </span>
-                        {' '}{stat.description}
-                      </p>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
+            <div className="p-2 space-y-4 h-[calc(100vh-40vh)] overflow-y-auto">
 
-            {/* Charts Row */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Revenue Chart */}
+              {/* Stats Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ">
+                {statsCards.map((stat, index) => {
+                  const Icon = stat.icon;
+                  return (
+                    <Card key={index} className="hover:shadow-lg transition-shadow">
+                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium text-barber-gray">
+                          {stat.title}
+                        </CardTitle>
+                        <Icon className="h-4 w-4 text-barber-blue" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-barber-blue">{stat.value}</div>
+                        <p className="text-xs text-barber-gray">
+                          <span className={`font-medium ${stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
+                            }`}>
+                            {stat.change}
+                          </span>
+                          {' '}{stat.description}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+
+              {/* Charts Row */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Revenue Chart */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-barber-blue">Faturamento Mensal</CardTitle>
+                    <CardDescription>
+                      Receita dos últimos 6 meses
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <AreaChart data={revenueData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip formatter={(value) => [`R$ ${value}`, 'Faturamento']} />
+                        <Area
+                          type="monotone"
+                          dataKey="value"
+                          stroke="#1e3a5f"
+                          fill="#1e3a5f"
+                          fillOpacity={0.1}
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                {/* Services Distribution */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-barber-blue">Distribuição de Serviços</CardTitle>
+                    <CardDescription>
+                      Serviços mais populares
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={servicesData}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          dataKey="value"
+                          label={({ name, percent }) => `46.8%`}
+                        >
+                          {servicesData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Weekly Bookings */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-barber-blue">Faturamento Mensal</CardTitle>
+                  <CardTitle className="text-barber-blue">Agendamentos da Semana</CardTitle>
                   <CardDescription>
-                    Receita dos últimos 6 meses
+                    Distribuição de agendamentos por dia
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <AreaChart data={revenueData}>
+                    <BarChart data={dailyBookings}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
+                      <XAxis dataKey="day" />
                       <YAxis />
-                      <Tooltip formatter={(value) => [`R$ ${value}`, 'Faturamento']} />
-                      <Area
-                        type="monotone"
-                        dataKey="value"
-                        stroke="#1e3a5f"
-                        fill="#1e3a5f"
-                        fillOpacity={0.1}
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              {/* Services Distribution */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-barber-blue">Distribuição de Serviços</CardTitle>
-                  <CardDescription>
-                    Serviços mais populares
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={servicesData}
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={80}
-                        dataKey="value"
-                        label={({ name, percent }) => `46.8%`}
-                      >
-                        {servicesData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                      </Pie>
                       <Tooltip />
-                    </PieChart>
+                      <Bar dataKey="bookings" fill="#1e3a5f" radius={[4, 4, 0, 0]} />
+                    </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
-            </div>
 
-            {/* Weekly Bookings */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-barber-blue">Agendamentos da Semana</CardTitle>
-                <CardDescription>
-                  Distribuição de agendamentos por dia
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={dailyBookings}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="day" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="bookings" fill="#1e3a5f" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
+              {/* Quick Actions */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+                  <CardContent className="flex items-center space-x-4 p-6">
+                    <div className="bg-barber-blue rounded-full p-3">
+                      <Users className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-barber-blue">Gerenciar Clientes</h3>
+                      <p className="text-sm text-barber-gray">Adicionar novos clientes</p>
+                    </div>
+                  </CardContent>
+                </Card>
 
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="cursor-pointer hover:shadow-lg transition-shadow">
-                <CardContent className="flex items-center space-x-4 p-6">
-                  <div className="bg-barber-blue rounded-full p-3">
-                    <Users className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-barber-blue">Gerenciar Clientes</h3>
-                    <p className="text-sm text-barber-gray">Adicionar novos clientes</p>
-                  </div>
-                </CardContent>
-              </Card>
+                <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+                  <CardContent className="flex items-center space-x-4 p-6">
+                    <div className="bg-barber-blue rounded-full p-3">
+                      <Calendar className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-barber-blue">Ver Agenda</h3>
+                      <p className="text-sm text-barber-gray">Verificar agendamentos</p>
+                    </div>
+                  </CardContent>
+                </Card>
 
-              <Card className="cursor-pointer hover:shadow-lg transition-shadow">
-                <CardContent className="flex items-center space-x-4 p-6">
-                  <div className="bg-barber-blue rounded-full p-3">
-                    <Calendar className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-barber-blue">Ver Agenda</h3>
-                    <p className="text-sm text-barber-gray">Verificar agendamentos</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="cursor-pointer hover:shadow-lg transition-shadow">
-                <CardContent className="flex items-center space-x-4 p-6">
-                  <div className="bg-barber-blue rounded-full p-3">
-                    <Scissors className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-barber-blue">Configurar Serviços</h3>
-                    <p className="text-sm text-barber-gray">Gerenciar preços e tipos</p>
-                  </div>
-                </CardContent>
-              </Card>
+                <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+                  <CardContent className="flex items-center space-x-4 p-6">
+                    <div className="bg-barber-blue rounded-full p-3">
+                      <Scissors className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-barber-blue">Configurar Serviços</h3>
+                      <p className="text-sm text-barber-gray">Gerenciar preços e tipos</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </DashboardLayout>

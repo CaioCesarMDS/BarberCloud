@@ -5,16 +5,40 @@ import { CreateEmployeeDTO } from './dtos/create-employee.dto';
 import { EmployeeUpdateDTO } from './dtos/employee-update.dto';
 import { EmployeeResponseDto } from './dtos/employee.request.dto';
 import { IEmployeeRepositoryInterface } from './interfaces/employee-repository.interface';
+import { EmployeeWithServiceCount } from './types/employee-service-count';
 
 @Injectable()
 export class EmployeeRepository implements IEmployeeRepositoryInterface {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) { }
 
-  async findAllById(id: string): Promise<EmployeeResponseDto[]> {
-    const employees = await this.prismaService.employee.findMany({
-      where: { barbershopId: id },
-    });
-    return employees.map((employee) => new EmployeeResponseDto(employee));
+  async findAllByBarbershopIdWithServicesCount(barbershopId: string): Promise<EmployeeWithServiceCount[]> {
+    const result = await this.prismaService.$queryRaw<EmployeeWithServiceCount[]>`
+      SELECT
+      e.id,
+      e.name,
+      e.email,
+      e.phone,
+      e.birth,
+      e."barbershopId",
+      e.role,
+      COUNT(s.id) AS "totalServicesRealizeds"
+    FROM "Employee" e
+    LEFT JOIN "Scheduling" sc ON sc."employeeId" = e.id AND sc.status = 'DONE'
+    LEFT JOIN "ServicesOnScheduling" sos ON sos."schedulingId" = sc.id
+    LEFT JOIN "Services" s ON s.id = sos."serviceId"
+    WHERE e."barbershopId" = ${barbershopId}
+    GROUP BY e.id
+    ORDER BY "totalServicesRealizeds" DESC;
+  `;
+
+    if (result) {
+      return result.map((rs) => ({
+        ...rs,
+        totalServicesRealizeds: Number(rs.totalServicesRealizeds),
+      }));
+    } else {
+      return [];
+    }
   }
 
   create(data: CreateEmployeeDTO, hashedPassword: string): Promise<Employee> {

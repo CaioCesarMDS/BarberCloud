@@ -6,4 +6,5 @@ export interface Barber {
   phone: string;
   role: string;
   barbershopId: string;
+  totalServicesRealizeds: number;
 }

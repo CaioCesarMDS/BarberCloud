@@ -1,4 +1,5 @@
 // src/barbershop/barbershop.repository.ts
+import { subDays, startOfWeek, endOfWeek } from 'date-fns';
 import { Injectable } from '@nestjs/common';
 import { AddressBarbershop, Barbershop } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
@@ -7,7 +8,7 @@ import { BarbershopUpdateDto } from './dtos/barbershop.update.dto';
 
 @Injectable()
 export class BarbershopRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async createAddress(data: BarbershopRequestDto): Promise<AddressBarbershop> {
     return await this.prisma.addressBarbershop.create({
@@ -139,4 +140,57 @@ export class BarbershopRepository {
       },
     });
   }
+
+  async getStatus(barbershopId: string) {
+    const today = new Date();
+    const thirtyDaysAgo = subDays(today, 30);
+    const startWeek = startOfWeek(today, { weekStartsOn: 1 }); // segunda-feira
+    const endWeek = endOfWeek(today, { weekStartsOn: 1 });     // domingo
+
+    const status = await this.prisma.barbershop.findUnique({
+      where: { id: barbershopId },
+      select: {
+        id: true,
+        name: true,
+
+        // número de clientes inscritos
+        clientSubscribeBarbershop: {
+          select: { clientId: true },
+        },
+
+        // agendamentos nos últimos 30 dias
+        Scheduling: {
+          where: {
+            dateTime: {
+              gte: thirtyDaysAgo,
+              lte: today,
+            },
+            status: 'DONE', // apenas concluídos contam como faturamento
+          },
+          select: {
+            priceTotal: true,
+            services: {
+              select: { serviceId: true },
+            },
+          },
+        },
+
+        // agendamentos da semana atual
+        _count: {
+          select: {
+            Scheduling: {
+              where: {
+                dateTime: {
+                  gte: startWeek,
+                  lte: endWeek,
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    console.log(status)
+  }
+
 }
