@@ -72,11 +72,11 @@ const ClientDashboard: React.FC = () => {
   return (
     <DashboardLayout sidebar={<ClientSidebar />} title="Minha Área">
       <Toaster />
-      <div className="space-y-6">
+      <div className="space-y-4">
         <div className="bg-gradient-to-r from-barber-blue to-barber-blue-light rounded-xl p-6 text-white">
           <h1 className="text-2xl font-bold mb-2">{`Bem vindo, ${user?.name}`} ✨</h1>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Próximo Agendamento</CardTitle>
@@ -136,7 +136,7 @@ const ClientDashboard: React.FC = () => {
               </div>
               <CardDescription>Seus atendimentos agendados</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className= "h-[calc(100vh-80vh)] overflow-y-auto">
               {schedulings.length > 0 ? (
                 <div className="space-y-4">
                   {schedulings

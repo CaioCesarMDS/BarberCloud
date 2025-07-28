@@ -89,7 +89,7 @@ export default function SchedulingPage() {
 
   return (
     <DashboardLayout sidebar={<ClientSideBar />} title="Seus Agendamentos">
-      <div className="h-full max-w mx-auto xl:p-6 grid md:grid-cols-2 sm:grid-cols-1 gap-4">
+      <div className="h-full max-w mx-auto xl:p-2 2xl:p-6 grid md:grid-cols-2 sm:grid-cols-1 gap-4">
         <Card>
           <CardHeader className="p-2 sm:p-3">
             <CardTitle className="text-barber-blue text-sm md:text-md">Inscrições</CardTitle>

@@ -138,45 +138,45 @@ export default function BarbershopsPage() {
               <SearchInput placeholder="Pesquise..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
             </div>
           </CardHeader>
-          <CardContent className="p-1 h-full h-[calc(100vh-30vh)] md:p-4 overflow-y-auto">
-          {isLoading && <p className="text-muted-foreground">Procurando...</p>}
+          <CardContent className="p-1 h-[calc(100vh-40vh)] md:p-4 overflow-y-auto">
+            {isLoading && <p className="text-muted-foreground">Procurando...</p>}
 
-          {!isLoading && searched && barbershops.length === 0 && (
-            <p className="text-muted-foreground">Nenhum resultado encontrado.</p>
+            {!isLoading && searched && barbershops.length === 0 && (
+              <p className="text-muted-foreground">Nenhum resultado encontrado.</p>
             )}
 
-          {!isLoading && barbershops.length > 0 && (
-            <div className="space-y-4">
-              {barbershops.map((barbershop) => (
-                <BarberCard
-                  key={barbershop.id}
-                  barbershop={barbershop}
-                  client={client}
-                  onSubscribeSuccess={() => fetchUserSubscriptions(client.id)}
+            {!isLoading && barbershops.length > 0 && (
+              <div className="space-y-4">
+                {barbershops.map((barbershop) => (
+                  <BarberCard
+                    key={barbershop.id}
+                    barbershop={barbershop}
+                    client={client}
+                    onSubscribeSuccess={() => fetchUserSubscriptions(client.id)}
                   />
-                  ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
-          <Card className="p-1 w-[calc(100vw-6vw)] sm:w-[calc(100vw-10vw)] md:w-[calc(100vw-60vw)] lg:w-[calc(100vw-65vw)]">
-        <CardHeader>
-          <CardTitle className="text-barber-blue text-2xl">Suas barbearias</CardTitle>
-        </CardHeader>
-        <CardContent className="p-1 h-full h-[calc(100vh-30vh)] md:p-4 overflow-y-auto">
-          {subscribedBarbershops.length > 0 && (
+        <Card className="p-1 w-[calc(100vw-6vw)] sm:w-[calc(100vw-10vw)] md:w-[calc(100vw-60vw)] lg:w-[calc(100vw-65vw)]">
+          <CardHeader>
+            <CardTitle className="text-barber-blue text-2xl">Suas barbearias</CardTitle>
+          </CardHeader>
+          <CardContent className="p-1 h-full h-[calc(100vh-40vh)] md:p-4 overflow-y-auto">
+            {subscribedBarbershops.length > 0 && (
               <div className="space-y-4 mb-6">
                 {subscribedBarbershops.map((barbershop) => (
                   <SubscribedBarberCard
                     key={`${barbershop.id}-${barbershop.subscribeIn}`}
                     barbershop={barbershop}
                     onUnsubscribe={handleUnsubscribe}
-                    />
-                    ))}
+                  />
+                ))}
               </div>
-          )}
+            )}
           </CardContent>
-          </Card>
+        </Card>
       </div>
 
     </DashboardLayout>
