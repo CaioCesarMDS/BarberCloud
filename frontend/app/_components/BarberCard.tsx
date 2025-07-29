@@ -78,20 +78,28 @@ export default function BarberCard({
     <Card className="h-full w-full overflow-hidden mb-4 md:max-w-lg lg:max-w-xl">
       <CardContent className="flex items-center gap-3 sm:gap-6 p-2 sm:p-4">
         <div className="w-32 h-32 relative flex-shrink-0">
-          <Image
-            src={barbershop.imageUrl}
-            alt={`Imagem da barbearia ${barbershop.name}`}
-            fill
-            className="object-cover rounded-md"
-            sizes="100vw"
-          />
+          {barbershop.imageUrl && barbershop.imageUrl.startsWith("http") && (
+            <Image
+              src={barbershop.imageUrl}
+              alt={`Imagem da barbearia ${barbershop.name}`}
+              fill
+              className="object-cover rounded-md"
+              sizes="100vw"
+            />
+          )}
         </div>
 
         {/* Infos à direita */}
         <div className="flex flex-col gap-6">
           <h2 className="text-md md:text-lg font-semibold">{barbershop.name}</h2>
-          {!isSubscribed && <Button className="px-4 py-2 text-xs md:text-sm lg:text-md h-10 w-full bg-primary text-primary-foreground shadow hover:bg-primary/90 inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors"
-          onClick={subscribe}>Inscrever-se</Button>}
+          {!isSubscribed && (
+            <Button
+              className="px-4 py-2 text-xs md:text-sm lg:text-md h-10 w-full bg-primary text-primary-foreground shadow hover:bg-primary/90 inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors"
+              onClick={subscribe}
+            >
+              Inscrever-se
+            </Button>
+          )}
           {isSubscribed && (
             <DropdownMenu>
               <DropdownMenuTrigger className="text-xs sm:text-sm lg:text-md p-2 bg-primary text-primary-foreground shadow hover:bg-primary/90 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">

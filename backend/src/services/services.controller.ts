@@ -36,7 +36,7 @@ export class ServicesController {
   async getServiceById(@Param('id') id: number): Promise<ServicesResponseDto> {
     return await this.servicesService.getServiceById(id);
   }
-  
+
   @Get('all/:barbershopId')
   async getAllServicesByBarbershopId(
     @Param('barbershopId') barbershopId: string,
@@ -69,7 +69,7 @@ export class ServicesController {
   async deleteServiceById(@Param('id') id: number): Promise<Services> {
     return await this.servicesService.removeService(id);
   }
-  
+
   @Roles('ADMIN')
   @Get('/count/:barbershopId')
   async countServices(
@@ -79,19 +79,30 @@ export class ServicesController {
   }
 
   @Get('most-popular/query')
-  async getServiceMostPopularByBarbershopId(@Query('barbershopId') barbershopId: string): Promise<ServiceWithTotal> {
-    return await this.servicesService.findServiceMostPopularByBarbershopId(barbershopId);
+  async getServiceMostPopularByBarbershopId(
+    @Query('barbershopId') barbershopId: string,
+  ): Promise<ServiceWithTotal | null> {
+    return await this.servicesService.findServiceMostPopularByBarbershopId(
+      barbershopId,
+    );
   }
 
   @Get('most-popular')
-  async getServiceMostPopularByClientId(@Query('clientId') clientId: string): Promise<ServiceWithTotal> {
-    return await this.servicesService.findServiceMostPopularByClientId(clientId);
+  async getServiceMostPopularByClientId(
+    @Query('clientId') clientId: string,
+  ): Promise<ServiceWithTotal> {
+    return await this.servicesService.findServiceMostPopularByClientId(
+      clientId,
+    );
   }
 
   @Roles('ADMIN', 'EMPLOYEE')
   @Get('most-popular')
-  async getServiceMostPopularByEmployeeId(@Query('employeeId') employeeId: string): Promise<ServiceWithTotal> {
-    return await this.servicesService.findServiceMostPopularByEmployeeId(employeeId);
+  async getServiceMostPopularByEmployeeId(
+    @Query('employeeId') employeeId: string,
+  ): Promise<ServiceWithTotal> {
+    return await this.servicesService.findServiceMostPopularByEmployeeId(
+      employeeId,
+    );
   }
-  
 }
