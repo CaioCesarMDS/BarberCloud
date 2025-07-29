@@ -76,4 +76,8 @@ export class BarbershopService {
     }
     return results;
   }
+
+  async getBarbershopStatus(barbershopId: string) {
+    this.barbershopRepository.getStatus(barbershopId);
+  }
 }

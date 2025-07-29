@@ -1,6 +1,7 @@
 import { Employee } from '@prisma/client';
 import { EmployeeUpdateDTO } from '../dtos/employee-update.dto';
 import { EmployeeResponseDto } from '../dtos/employee.request.dto';
+import { EmployeeWithServiceCount } from '../types/employee-service-count';
 
 export interface IEmployeeRepositoryInterface {
   create(data: EmployeeUpdateDTO, hashedPassword: string): Promise<Employee>;
@@ -10,7 +11,7 @@ export interface IEmployeeRepositoryInterface {
     EmployeeData: EmployeeUpdateDTO,
     hashedPassword?: string,
   ): Promise<Employee | null>;
-  findAllById(id: string): Promise<EmployeeResponseDto[]>;
+  findAllByBarbershopIdWithServicesCount(id: string): Promise<EmployeeWithServiceCount[]>;
   findAllByName(name: string): Promise<EmployeeResponseDto[]>;
   findById(id: string): Promise<Employee | null>;
   findByEmail(email: string): Promise<Employee | null>;

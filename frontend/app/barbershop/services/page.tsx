@@ -273,13 +273,13 @@ const AdminServices = () => {
 
                 {/* Services Table */}
                 <Card>
-                    <CardHeader>
+                    <CardHeader className='pb-2'>
                         <CardTitle>Lista de Serviços</CardTitle>
                         <CardDescription>
                             Todos os serviços disponíveis na barbearia
                         </CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className='h-[calc(100vh-75vh)] overflow-y-auto'>
                         <Table>
                             <TableHeader>
                                 <TableRow>
