@@ -129,6 +129,7 @@ const AdminServices = () => {
 
     const fetchServices = async () => {
         try {
+            console.log("barbershopId:", admin?.barbershopId);
             const { data: servicesData } = await api.get(`/services/all/${admin?.barbershopId}`);
             const { data: total } = await api.get(`/services/count/${admin?.barbershopId}`);
             const { data: service } = await api.get(`/services/most-popular/query`, { params: {barbershopId: admin?.barbershopId} });
@@ -266,7 +267,7 @@ const AdminServices = () => {
                                     <p className="text-xs text-barber-gray">Mais popular entre seus clientes</p>
                                 </>
                             )}
-                            
+
                         </CardContent>
                     </Card>
                 </div>
@@ -285,9 +286,9 @@ const AdminServices = () => {
                                 <TableRow>
                                     <TableHead>Serviço</TableHead>
                                     <TableHead>Preço</TableHead>
-                                    {/* 
+                                    {/*
                                     é bom implementar isso aqui talvez ?
-                                    <TableHead>Status</TableHead> 
+                                    <TableHead>Status</TableHead>
                                     */}
                                     <TableHead className="w-[100px]">Ações</TableHead>
                                 </TableRow>
@@ -314,7 +315,7 @@ const AdminServices = () => {
                                                 R$ {parseFloat(service.price).toFixed(2)}
                                             </span>
                                         </TableCell>
-                                        {/* 
+                                        {/*
                                         Status na tabela. implement talvez ?
                                         <TableCell>
                                             <Badge

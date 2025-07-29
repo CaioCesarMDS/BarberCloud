@@ -28,13 +28,15 @@ export default function SubscribedBarberCard({ barbershop, onUnsubscribe }: Prop
     <Card className="w-full overflow-hidden mb-4 lg:max-w-lg 2xl:max-w-xl">
       <CardContent className="flex items-center gap-3 lg:gap-6 p-2 lg:p-4 mr-0">
         <div className="w-32 h-32 relative flex-shrink-0">
-          <Image
-            src={barbershop.imageUrl}
-            alt={`Imagem da barbearia ${barbershop.name}`}
-            fill
-            className="object-cover rounded-md"
-            sizes="100vw"
-          />
+          {barbershop.imageUrl && barbershop.imageUrl.startsWith("http") && (
+            <Image
+              src={barbershop.imageUrl}
+              alt={`Imagem da barbearia ${barbershop.name}`}
+              fill
+              className="object-cover rounded-md"
+              sizes="100vw"
+            />
+          )}
         </div>
         <div className="flex flex-col gap-4 2xl:gap-6">
           <h2 className="text-md md:text-lg font-semibold">{barbershop.name}</h2>

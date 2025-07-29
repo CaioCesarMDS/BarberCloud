@@ -121,6 +121,7 @@ const ClientDashboard: React.FC = () => {
             <CardContent>{schedulings.length}</CardContent>
           </Card>
         </div>
+
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>

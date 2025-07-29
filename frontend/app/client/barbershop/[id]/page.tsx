@@ -138,12 +138,15 @@ export default function BarbershopProfile({ params }: BarbershopProfileProps) {
           <h1 className="text-3xl font-bold mb-4">{barbershop.name}</h1>
 
           <div className="relative w-full h-64 mb-6">
-            <Image
-              src={barbershop.imageUrl}
-              alt={`Imagem da barbearia ${barbershop.name}`}
-              fill
-              className="object-cover rounded-lg"
-            />
+            {barbershop.imageUrl && barbershop.imageUrl.startsWith("http") && (
+              <Image
+                src={barbershop.imageUrl}
+                alt={`Imagem da barbearia ${barbershop.name}`}
+                fill
+                className="object-cover rounded-md"
+                sizes="100vw"
+              />
+            )}
           </div>
 
           <p className="text-muted-foreground mb-4">
