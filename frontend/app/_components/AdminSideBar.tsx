@@ -6,7 +6,8 @@ import {
   Scissors, 
   Settings, 
   BarChart3,
-  User
+  User,
+  Calendar
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -16,14 +17,15 @@ const AdminSidebar: React.FC = () => {
     { icon: LayoutDashboard, label: 'Dashboard', path: '/barbershop/dashboard' },
     { icon: Users, label: 'Clientes', path: '/barbershop/clients' },
     { icon: User, label: 'Barbeiros', path: '/barbershop/barbers' },
+    { icon: Calendar, label: 'Agenda', path: '/barbershop/agenda' },
     { icon: Scissors, label: 'Serviços', path: '/barbershop/services' },
     { icon: BarChart3, label: 'Relatórios', path: '/barbershop/reports' },
     { icon: Settings, label: 'Configurações', path: '/barbershop/settings'}
   ];
 
   return (
-    <nav className="h-full pt-6">
-      <div className="px-4 mb-8">
+    <nav className="h-full pt-4">
+      <div className="px-4 mb-6">
         <h2 className="text-lg font-semibold text-white mb-2">Administração</h2>
         <p className="text-sm text-barber-cream opacity-75">Painel do Proprietário</p>
       </div>
