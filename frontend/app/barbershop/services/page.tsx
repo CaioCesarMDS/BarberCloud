@@ -40,6 +40,7 @@ const AdminServices = () => {
         role: "ADMIN";
     }
 
+    const [mostPopular, setMostPopular] = useState<Service | null>(null);
     const [showNewService, setShowNewService] = useState<boolean>(false);
     const [showEditService, setShowEditService] = useState<boolean>(false);
     const [editService, setEditService] = useState<Service | null>(null);
@@ -128,10 +129,14 @@ const AdminServices = () => {
 
     const fetchServices = async () => {
         try {
+            console.log("barbershopId:", admin?.barbershopId);
             const { data: servicesData } = await api.get(`/services/all/${admin?.barbershopId}`);
             const { data: total } = await api.get(`/services/count/${admin?.barbershopId}`);
+            const { data: service } = await api.get(`/services/most-popular/query`, { params: {barbershopId: admin?.barbershopId} });
             setServices(servicesData);
             setTotalServices(total);
+            console.log(service);
+            setMostPopular(service);
         } catch (error) {
             console.log("Erro ao buscar serviços:", error);
             toast.error("Erro ao buscar serviços");
@@ -157,7 +162,7 @@ const AdminServices = () => {
     }, [router]);
 
     useEffect(() => {
-        if(isFirstRender.current) {
+        if (isFirstRender.current) {
             isFirstRender.current = false;
             return;
         }
@@ -218,7 +223,7 @@ const AdminServices = () => {
                 </Dialog>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Total de Serviços</CardTitle>
@@ -237,7 +242,9 @@ const AdminServices = () => {
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-barber-blue">
-                                R$ {(services.reduce((acc, service) => acc + parseFloat(service.price), 0) / totalServices).toFixed(2)}
+
+                                R$ {!services.length && ("0")}
+                                {!!services.length && (services.reduce((acc, service) => acc + parseFloat(service.price), 0) / totalServices).toFixed(2)}
                             </div>
                             <p className="text-xs text-barber-gray">Valor médio dos serviços</p>
                         </CardContent>
@@ -248,38 +255,56 @@ const AdminServices = () => {
                             <CardTitle className="text-sm font-medium">Mais Popular</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-lg font-bold text-barber-blue">Not implemented</div>
-                            <p className="text-xs text-barber-gray">Not implemented</p>
+                            {!mostPopular && (
+                                <>
+                                    <div className="text-lg font-bold text-barber-blue">Nenhum</div>
+                                    <p className="text-xs text-barber-gray">Você não ainda não tem agendamentos</p>
+                                </>
+                            )}
+                            {mostPopular && (
+                                <>
+                                    <div className="text-lg font-bold text-barber-blue">{mostPopular.name}</div>
+                                    <p className="text-xs text-barber-gray">Mais popular entre seus clientes</p>
+                                </>
+                            )}
+
                         </CardContent>
                     </Card>
                 </div>
 
                 {/* Services Table */}
                 <Card>
-                    <CardHeader>
+                    <CardHeader className='pb-2'>
                         <CardTitle>Lista de Serviços</CardTitle>
                         <CardDescription>
                             Todos os serviços disponíveis na barbearia
                         </CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className='h-[calc(100vh-75vh)] overflow-y-auto'>
                         <Table>
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Serviço</TableHead>
                                     <TableHead>Preço</TableHead>
-                                    <TableHead>Popularidade</TableHead>
-                                    {/* 
+                                    {/*
                                     é bom implementar isso aqui talvez ?
-                                    <TableHead>Status</TableHead> 
+                                    <TableHead>Status</TableHead>
                                     */}
                                     <TableHead className="w-[100px]">Ações</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
+                                {!services.length && (
+                                    <TableRow>
+                                        <TableCell colSpan={4}>
+                                            <p className="font-medium text-lg text-barber-gray text-center">Sua Barbearia não tem nenhum serviço cadastrado.</p>
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+
                                 {services.map((service) => (
                                     <TableRow key={service.id}>
-                                        <TableCell>
+                                        <TableCell align='center'>
                                             <div>
                                                 <div className="font-medium text-barber-blue">{service.name}</div>
                                                 <div className="text-sm text-barber-gray">{service.description}</div>
@@ -290,18 +315,7 @@ const AdminServices = () => {
                                                 R$ {parseFloat(service.price).toFixed(2)}
                                             </span>
                                         </TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center space-x-2">
-                                                <div className="w-full bg-gray-200 rounded-full h-2">
-                                                    <div
-                                                        className="bg-barber-blue h-2 rounded-full"
-                                                        style={{ width: `not-implemented %` }}
-                                                    ></div>
-                                                </div>
-                                                <span className="text-sm text-barber-gray">not-implemented %</span>
-                                            </div>
-                                        </TableCell>
-                                        {/* 
+                                        {/*
                                         Status na tabela. implement talvez ?
                                         <TableCell>
                                             <Badge

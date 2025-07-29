@@ -9,6 +9,7 @@ import { ServicesRequestDto } from './dtos/services-request.dto';
 import { ServicesResponseDto } from './dtos/services-response.dto';
 import { ServicesUpdateDto } from './dtos/services-update.dto';
 import { ServicesRepository } from './services.repository';
+import { ServiceWithTotal } from './types/service-popular.type';
 
 @Injectable()
 export class ServicesService {
@@ -175,6 +176,71 @@ export class ServicesService {
       throw new InternalServerErrorException(
         error,
         'Error in find all by barbershop Id',
+      );
+    }
+  }
+
+  async findServiceMostPopularByBarbershopId(
+    barbershopId: string,
+  ): Promise<ServiceWithTotal | null> {
+    try {
+      const service =
+        await this.servicesRepository.findServiceMostPopularByBarbershopId(
+          barbershopId,
+        );
+      return service;
+    } catch (error) {
+      console.error('Erro interno ao buscar serviço mais popular:', error);
+      throw new InternalServerErrorException(
+        'Erro ao buscar serviço mais popular',
+      );
+    }
+  }
+
+  async findServiceMostPopularByEmployeeId(
+    employeeId: string,
+  ): Promise<ServiceWithTotal> {
+    try {
+      const service: ServiceWithTotal | null =
+        await this.servicesRepository.findServiceMostPopularByEmployeeId(
+          employeeId,
+        );
+
+      if (service) {
+        return service;
+      } else {
+        throw new BadRequestException(
+          'Schedulings with BarbershopId not found',
+        );
+      }
+    } catch (error) {
+      throw new BadRequestException(
+        error,
+        'error in find most popular service on schedulings by BarbershopId',
+      );
+    }
+  }
+
+  async findServiceMostPopularByClientId(
+    clientId: string,
+  ): Promise<ServiceWithTotal> {
+    try {
+      const service: ServiceWithTotal | null =
+        await this.servicesRepository.findServiceMostPopularByClientId(
+          clientId,
+        );
+
+      if (service) {
+        return service;
+      } else {
+        throw new BadRequestException(
+          'Schedulings with BarbershopId not found',
+        );
+      }
+    } catch (error) {
+      throw new BadRequestException(
+        error,
+        'error in find most popular service on schedulings by BarbershopId',
       );
     }
   }

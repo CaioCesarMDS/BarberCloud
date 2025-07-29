@@ -16,5 +16,4 @@ export interface ISchedulingRepositoryInterface {
     findAllByEmployeeName(id: string): Promise<SchedulingWithAll[]>;
     findAllByBarbershopId(barbershopId: string): Promise<SchedulingWithAll[]>;
     findAllByBarbershopIdAndIntervalOfDate(barbershopId: string, from: Date, to: Date): Promise<SchedulingWithAll[]>;
-    findAllByBarbershopIdAndDate(barbershopId: string, date: Date): Promise<SchedulingWithAll[]>;
 }

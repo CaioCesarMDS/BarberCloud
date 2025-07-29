@@ -23,45 +23,46 @@ services:
     volumes:
       - redis_data:/data
     restart: unless-stopped
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "3001:3001"
-      - "5555:5555"
-    depends_on:
-      - db
-      - redis
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - DATABASE_URL=${DATABASE_URL}
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
-      - REDIS_USERNAME=${REDIS_USERNAME}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - JWT_SECRET=${JWT_SECRET}
-      - JWT_PASSWORD=${JWT_PASSWORD}
-      - JWT_EXPIRATION=${JWT_EXPIRATION}
-      - EMAIL_HOST=${EMAIL_HOST}
-      - EMAIL_PORT=${EMAIL_PORT}
-      - EMAIL_USERNAME=${EMAIL_USERNAME}
-      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
-    command: sh -c "npx prisma migrate deploy && node dist/src/main"
+    
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3001:3001"
+  #     - "5555:5555"
+  #   depends_on:
+  #     - db
+  #     - redis
+  #   environment:
+  #     - POSTGRES_USER=${POSTGRES_USER}
+  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+  #     - POSTGRES_DB=${POSTGRES_DB}
+  #     - DATABASE_URL=${DATABASE_URL}
+  #     - REDIS_HOST=${REDIS_HOST}
+  #     - REDIS_PORT=${REDIS_PORT}
+  #     - REDIS_USERNAME=${REDIS_USERNAME}
+  #     - REDIS_PASSWORD=${REDIS_PASSWORD}
+  #     - JWT_SECRET=${JWT_SECRET}
+  #     - JWT_PASSWORD=${JWT_PASSWORD}
+  #     - JWT_EXPIRATION=${JWT_EXPIRATION}
+  #     - EMAIL_HOST=${EMAIL_HOST}
+  #     - EMAIL_PORT=${EMAIL_PORT}
+  #     - EMAIL_USERNAME=${EMAIL_USERNAME}
+  #     - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+  #   command: sh -c "npx prisma migrate deploy && node dist/src/main"
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    environment:
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-      - JWT_PASSWORD=${JWT_PASSWORD}
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - backend
+  #   environment:
+  #     - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+  #     - JWT_PASSWORD=${JWT_PASSWORD}
 
 volumes:
   devbarber_pgdata:

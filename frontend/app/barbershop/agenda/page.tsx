@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DashboardLayout from '../../_components/DashboardLayout';
 import BarberSidebar from '../../_components/BarberSideBar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../_components/shadcn/ui/card';
@@ -9,8 +9,13 @@ import { Badge } from '../../_components/shadcn/ui/badge';
 import { Avatar, AvatarFallback } from '../../_components/shadcn/ui/avatar';
 import { Calendar, Clock, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import AdminSidebar from '@/app/_components/AdminSideBar';
+import { api } from '@/app/_services/api';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 const Agenda = () => {
+
+    const router = useRouter();
 
     interface User {
         id: string;
@@ -95,6 +100,38 @@ const Agenda = () => {
                 return 'bg-gray-100 text-gray-800 border-gray-200';
         }
     };
+
+    const fetchUser = async () => {
+        try {
+            const { data: authData } = await api.get("/auth/me");
+            const { data: userData } = await api.get(`/employee/${authData.id}`);
+            setUser(userData);
+            if (userData.role === "ADMIN") {
+                setIsAdmin(true);
+            } else if (userData.role === "EMPLOYEE") {
+                setIsBarber(true);
+            }
+        } catch (error) {
+            console.log("Erro ao buscar informações do usuário:", error);
+            toast.info("Erro ao buscar informações do usuário.")
+            router.push("/barbershop/signin");
+        }
+    };
+
+    useEffect(() => {
+        const token = localStorage.getItem("barber-token");
+        if (!token) {
+            router.push("/barbershop/signin");
+            return;
+        }
+        fetchUser();
+    }, [router]);
+
+    useEffect(() => {
+        if (user) {
+            console.log(user)
+        }
+    }, [user]);
 
     return (
         <main>

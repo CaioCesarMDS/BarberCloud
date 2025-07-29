@@ -7,7 +7,7 @@ import { Card, CardContent } from "./shadcn/ui/card";
 export default function Header() {
   return (
     <Card>
-      <CardContent className="px-5 py-4 flex justify-between items-center">
+      <CardContent className="px-2 py-2 sm:px-5 sm:py-4 flex justify-between items-center">
         <Link href="/">
           <Image src="/logo.png" alt="IF Barber logo" width={50} height={50} />
         </Link>
